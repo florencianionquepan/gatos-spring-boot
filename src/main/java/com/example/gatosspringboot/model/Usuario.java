@@ -23,7 +23,7 @@ public class Usuario implements Serializable {
     private String mail;
     private String contrasenia;
 
-    @ManyToMany()
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name="roles_usuarios",
             joinColumns = @JoinColumn(name="usuario_id"),
