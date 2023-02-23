@@ -20,15 +20,19 @@ public class Gato implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String nombre;
 
+    @Column(nullable = false, length = 15)
+    private String nombre;
     @ElementCollection(targetClass=String.class)
     private List<String> srcFoto;
+    @Column(nullable = false, length = 10)
     private String edad;
+    @Column(nullable = false, length = 10)
     private String sexo;
     private String descripcion;
-    private String raza;
+    @Column(nullable = false, length = 15)
     private String color;
+    @Column(nullable = false, length = 15)
     private String tipoPelo;
     @OneToOne
     @JoinColumn(name = "ficha_vet")

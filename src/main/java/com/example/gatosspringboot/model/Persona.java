@@ -19,13 +19,22 @@ import java.util.List;
 @NoArgsConstructor
 public abstract class Persona implements Serializable {
     @Id
+    @Column(length = 20)
     private String dni;
+
+    @Column(nullable = false, length = 15)
     private String nombre;
+    @Column(nullable = false, length = 15)
     private String apellido;
+    @Column(nullable = false, length = 30)
     private String tel;
+    @Column(nullable = false, length = 20)
     private String email;
+    @Column(nullable = false)
     private LocalDate fechaNac;
+    @Column(nullable = false, length = 30)
     private String dire;
+    @Column(nullable = false, length = 30)
     private String localidad;
     @OneToMany(mappedBy = "solicitante", fetch = FetchType.LAZY)
     private List<Solicitud> listaSol;

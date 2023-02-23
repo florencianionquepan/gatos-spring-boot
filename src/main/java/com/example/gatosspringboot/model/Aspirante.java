@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -17,7 +18,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Aspirante extends Persona implements Serializable {
+
+    @NotNull
     private LocalDate fechaSol;
+    @NotNull
     private String tipoVoluntariado;
     @ManyToOne
     @JoinColumn(name="estado_id")
