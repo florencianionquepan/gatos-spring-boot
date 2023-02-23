@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name="estados")
@@ -20,8 +21,8 @@ public class Estado implements Serializable {
     private int id;
     private String estado;
     @OneToMany(mappedBy = "estado")
-    private Solicitud solicitud;
+    private List<Solicitud> listaSolicitudes;
 
     @OneToMany(mappedBy = "estado")
-    private Aspirante aspirante;
+    private List<Aspirante> listaAspirantes;
 }
