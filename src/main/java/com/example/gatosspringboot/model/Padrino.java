@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name="padrinos")
-@PrimaryKeyJoinColumn(referencedColumnName = "dni")
+@PrimaryKeyJoinColumn(referencedColumnName = "id")
 @Getter
 @Setter
 @AllArgsConstructor

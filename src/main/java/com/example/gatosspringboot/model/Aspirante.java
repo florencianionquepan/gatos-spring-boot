@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name="aspirantes")
-@PrimaryKeyJoinColumn(referencedColumnName = "dni")
+@PrimaryKeyJoinColumn(referencedColumnName = "id")
 @Getter
 @Setter
 @AllArgsConstructor
