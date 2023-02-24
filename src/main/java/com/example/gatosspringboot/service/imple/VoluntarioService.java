@@ -33,7 +33,14 @@ public class VoluntarioService implements IVoluntarioService {
 
     @Override
     public Voluntario modiVolunt(Voluntario vol, Long id) {
+        //chequear que no se pase un dni existente.
         vol.setId(id);
         return this.voluRepo.save(vol);
     }
+
+    @Override
+    public boolean existeVol(Long id) {
+        return this.voluRepo.existsById(id);
+    }
+
 }
