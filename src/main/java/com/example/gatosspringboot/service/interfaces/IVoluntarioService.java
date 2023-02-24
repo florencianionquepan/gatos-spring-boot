@@ -9,6 +9,7 @@ public interface IVoluntarioService {
     List<Voluntario> verTodos();
     Voluntario altaVolunt(Voluntario vol);
     Voluntario modiVolunt(Voluntario vol, Long id);
+    boolean existeVol(Long id);
 
 
 }
