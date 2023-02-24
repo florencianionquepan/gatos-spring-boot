@@ -24,8 +24,7 @@ public class VoluntarioService implements IVoluntarioService {
 
     @Override
     public Voluntario altaVolunt(Voluntario vol) {
-        Optional<Voluntario> oVoluDni=this.voluRepo.findByDni(vol.getDni());
-        if(oVoluDni.isPresent()){
+        if(this.existeDni(vol.getDni())){
             return null;
         }
         return this.voluRepo.save(vol);
@@ -33,7 +32,12 @@ public class VoluntarioService implements IVoluntarioService {
 
     @Override
     public Voluntario modiVolunt(Voluntario vol, Long id) {
-        //chequear que no se pase un dni existente.
+        if(!this.voluRepo.existsById(id)){
+            return null;
+        }
+        if(this.existeDni(vol.getDni())){
+            return null;
+        }
         vol.setId(id);
         return this.voluRepo.save(vol);
     }
@@ -41,6 +45,15 @@ public class VoluntarioService implements IVoluntarioService {
     @Override
     public boolean existeVol(Long id) {
         return this.voluRepo.existsById(id);
+    }
+
+    private boolean existeDni(String dni){
+        boolean existe=false;
+        Optional<Voluntario> oVolu=this.voluRepo.findByDni(dni);
+        if(oVolu.isPresent()){
+            existe=true;
+        }
+        return existe;
     }
 
 }
