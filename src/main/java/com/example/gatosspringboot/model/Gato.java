@@ -38,18 +38,18 @@ public class Gato implements Serializable {
     @JoinColumn(name = "ficha_vet")
     private Ficha fichaVet;
 
-    @OneToMany(mappedBy = "gato", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "gato", fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
     private List<Solicitud> listaSol;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name="volunt_dni")
     private Voluntario voluntario;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name="transito_dni")
     private Transito transito;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name="padrino_dni")
     private Padrino padrino;
 
