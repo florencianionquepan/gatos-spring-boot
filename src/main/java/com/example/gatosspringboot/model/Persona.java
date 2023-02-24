@@ -19,9 +19,10 @@ import java.util.List;
 @NoArgsConstructor
 public abstract class Persona implements Serializable {
     @Id
-    @Column(length = 20)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(length = 20, unique = true)
     private String dni;
-
     @Column(nullable = false, length = 15)
     private String nombre;
     @Column(nullable = false, length = 15)
