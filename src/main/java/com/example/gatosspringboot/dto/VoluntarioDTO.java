@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VoluntarioDTO extends PersonaDTO {
-    private List<Gato> gatitos;
+    private List<GatoDTO> gatitos;
     private UsuarioRespDTO usuario;
 }
