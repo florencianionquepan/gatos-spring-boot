@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,7 @@ public class Gato implements Serializable {
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name="volunt_dni")
+    @JsonIgnoreProperties(value="listaGatos")
     private Voluntario voluntario;
 
     @ManyToOne(cascade = CascadeType.MERGE)
