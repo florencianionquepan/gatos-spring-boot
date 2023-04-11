@@ -7,5 +7,6 @@ import java.util.List;
 public interface ISolicitudService {
     List<Solicitud> verSolicitudes();
     Solicitud altaSolicitud(Solicitud solicitud);
-    Solicitud modiSolicitud(Solicitud solicitud, Long id);
+    Solicitud aceptarAdopcion(Solicitud solicitud, Long id);
+    Solicitud rechazarSolicitud(Solicitud solicitud, Long id);
 }
