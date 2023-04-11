@@ -23,8 +23,6 @@ public class Solicitud implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
-    private LocalDate fechaSol;
     @ManyToOne
     @JoinColumn(name="solicitante_dni")
     @NotNull
