@@ -55,6 +55,6 @@ public class Gato implements Serializable {
     @JoinColumn(name="padrino_dni")
     private Padrino padrino;
 
-    private LocalDate adoptado;
+    private LocalDate adoptadoFecha;
 
 }
