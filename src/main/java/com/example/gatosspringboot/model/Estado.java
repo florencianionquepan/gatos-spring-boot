@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -19,10 +20,11 @@ public class Estado implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
-    private String estado;
-    @OneToMany(mappedBy = "estado")
+    private LocalDate fecha;
+    private EstadoNombre estado;
+    @ManyToMany(mappedBy = "estado")
     private List<Solicitud> listaSolicitudes;
 
-    @OneToMany(mappedBy = "estado")
+    @ManyToMany(mappedBy = "estado")
     private List<Aspirante> listaAspirantes;
 }
