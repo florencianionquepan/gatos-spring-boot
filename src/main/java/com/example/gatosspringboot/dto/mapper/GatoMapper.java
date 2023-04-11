@@ -32,7 +32,7 @@ public class GatoMapper implements IGatoMapper{
         Voluntario volEntity=volMap.mapToEntity(dto.getVoluntario());
         gato.setVoluntario(volEntity);
         gato.setPadrino(dto.getPadrino());
-        gato.setAdoptado(dto.getAdoptado());
+        gato.setAdoptadoFecha(dto.getAdoptado());
         return gato;
     }
 
