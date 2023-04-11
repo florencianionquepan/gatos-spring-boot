@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.service.imple;
 
+import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Voluntario;
 import com.example.gatosspringboot.repository.database.GatoRepository;
@@ -29,7 +30,11 @@ public class GatoService implements IGatoService {
     @Override
     public Gato altaGato(Gato gato) {
         if(!this.voluService.existeVol(gato.getVoluntario().getId())){
-            return null;
+            throw new NonExistingException(
+                    String.format("El voluntario con email %d no existe"
+                            ,gato.getVoluntario().getEmail()
+                    )
+            );
         }
         this.addGatoVol(gato);
         //queda tambien avisar al padrino y transito
@@ -54,12 +59,14 @@ public class GatoService implements IGatoService {
         volBD.setListaGatos(gatitosVol);
     }
 
+    //Para cuando actualizas el voluntario del gato
     private void removeGatoVolViejo(Long id){
         Gato gatoAnte=this.buscarPorId(id);
         if(gatoAnte.getVoluntario()!=null){
             Voluntario voluntAnte=gatoAnte.getVoluntario();
             List<Gato> gatosVolAnte=voluntAnte.getListaGatos();
             gatosVolAnte.remove(gatoAnte);
+            voluntAnte.setListaGatos(gatosVolAnte);
         }
     }
 
