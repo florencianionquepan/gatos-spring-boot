@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,4 +39,8 @@ public class Solicitud implements Serializable {
     @JoinColumn(name="estado_id")
     @NotNull
     private Estado estado;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value="aspirantes")
+    private Socio socio;
 }
