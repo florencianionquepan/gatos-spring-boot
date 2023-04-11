@@ -10,4 +10,5 @@ public interface IGatoService {
     Gato altaGato(Gato gato);
     Gato modiGato(Gato gato, Long id);
     boolean existeGato(Long id);
+    Gato adoptarGato(Long id);
 }
