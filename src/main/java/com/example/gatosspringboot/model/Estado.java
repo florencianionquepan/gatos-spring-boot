@@ -26,9 +26,10 @@ public class Estado implements Serializable {
     @NotNull
     private EstadoNombre estado;
     private String motivo;
-    @ManyToMany(mappedBy = "estado")
+
+    @ManyToMany(mappedBy = "estados")
     private List<Solicitud> listaSolicitudes;
 
-    @ManyToMany(mappedBy = "estado")
+    @ManyToMany(mappedBy = "estados")
     private List<Aspirante> listaAspirantes;
 }
