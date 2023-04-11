@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
@@ -20,8 +21,11 @@ public class Estado implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
+    @NotNull
     private LocalDate fecha;
+    @NotNull
     private EstadoNombre estado;
+    private String motivo;
     @ManyToMany(mappedBy = "estado")
     private List<Solicitud> listaSolicitudes;
 
