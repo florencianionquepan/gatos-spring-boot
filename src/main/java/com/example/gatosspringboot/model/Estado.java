@@ -20,7 +20,7 @@ import java.util.List;
 public class Estado implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private Long id;
     @NotNull
     private LocalDate fecha;
     @NotNull
