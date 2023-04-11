@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name="aspirantes")
@@ -20,10 +22,14 @@ import java.time.LocalDate;
 public class Aspirante extends Persona implements Serializable {
 
     @NotNull
-    private LocalDate fechaSol;
+    private List<TipoVoluntariado> tiposVoluntariado;
+    @ManyToMany(cascade=CascadeType.MERGE)
+    @JoinTable(
+            name="aspirante_estado",
+            joinColumns = @JoinColumn(name="aspirante_id"),
+            inverseJoinColumns = @JoinColumn(name="estado_id")
+    )
+    @JsonIgnoreProperties(value = "listaAspirantes")
     @NotNull
-    private String tipoVoluntariado;
-    @ManyToOne
-    @JoinColumn(name="estado_id")
     private Estado estado;
 }
