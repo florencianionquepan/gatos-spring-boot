@@ -35,8 +35,13 @@ public class Solicitud implements Serializable {
     @NotNull
     private Gato gato;
 
-    @ManyToOne
-    @JoinColumn(name="estado_id")
+    @ManyToMany(cascade=CascadeType.MERGE)
+    @JoinTable(
+            name="solicitud_estado",
+            joinColumns = @JoinColumn(name="solicitud_id"),
+            inverseJoinColumns = @JoinColumn(name="estado_id")
+    )
+    @JsonIgnoreProperties(value = "listaSolicitudes")
     @NotNull
     private Estado estado;
 
