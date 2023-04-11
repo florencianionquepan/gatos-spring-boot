@@ -22,7 +22,10 @@ import java.util.List;
 public class Aspirante extends Persona implements Serializable {
 
     @NotNull
+    @ElementCollection(targetClass = TipoVoluntariado.class)
+    @Enumerated(EnumType.STRING)
     private List<TipoVoluntariado> tiposVoluntariado;
+
     @ManyToMany(cascade=CascadeType.MERGE)
     @JoinTable(
             name="aspirante_estado",
@@ -31,5 +34,5 @@ public class Aspirante extends Persona implements Serializable {
     )
     @JsonIgnoreProperties(value = "listaAspirantes")
     @NotNull
-    private Estado estado;
+    private List<Estado> estados;
 }
