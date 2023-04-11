@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name="solicitudes")
@@ -41,7 +42,7 @@ public class Solicitud implements Serializable {
     )
     @JsonIgnoreProperties(value = "listaSolicitudes")
     @NotNull
-    private Estado estado;
+    private List<Estado> estados;
 
     @ManyToOne
     @JsonIgnoreProperties(value="aspirantes")
