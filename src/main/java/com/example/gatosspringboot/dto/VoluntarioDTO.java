@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Getter
@@ -13,6 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VoluntarioDTO extends PersonaDTO {
-    private List<GatoDTO> gatitos;
+
     private UsuarioRespDTO usuario;
 }
