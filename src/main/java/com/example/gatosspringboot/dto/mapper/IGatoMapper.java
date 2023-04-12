@@ -7,9 +7,7 @@ import java.util.List;
 
 public interface IGatoMapper {
     Gato mapToEntity(GatoDTO dto);
-
     GatoDTO mapToDto(Gato entity);
-
     List<GatoDTO> mapListToDto(List<Gato> entities);
 
 }
