@@ -45,9 +45,6 @@ public class VoluntarioController {
     @PostMapping
     public ResponseEntity<?> altaVoluntario(@RequestBody Voluntario volunt){
         Voluntario volNuevo=this.volService.altaVolunt(volunt);
-        if(volNuevo==null){
-            return this.notSuccessResponse("El voluntario no pudo ser creado",0);
-        }
         return ResponseEntity.status(HttpStatus.CREATED).body(volNuevo);
     }
 
@@ -55,10 +52,9 @@ public class VoluntarioController {
     public ResponseEntity<?> modiVoluntario(@RequestBody Voluntario volunt,
                                          @PathVariable Long id){
         Voluntario volModi=this.volService.modiVolunt(volunt, id);
-        if(volModi==null){
-            return this.notSuccessResponse("El voluntario no pudo ser modificado",0);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(volModi);
+        mensajeBody.put("Success",Boolean.TRUE);
+        mensajeBody.put("data",volModi);
+        return ResponseEntity.ok(mensajeBody);
     }
 
 
