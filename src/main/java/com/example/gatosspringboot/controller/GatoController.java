@@ -1,11 +1,14 @@
 package com.example.gatosspringboot.controller;
 
+import com.example.gatosspringboot.dto.GatoDTO;
+import com.example.gatosspringboot.dto.mapper.IGatoMapper;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +18,14 @@ import java.util.Map;
 public class GatoController {
 
     private final IGatoService gatoSer;
+    private final IGatoMapper mapper;
 
     public Map<String,Object> mensajeBody= new HashMap<>();
 
-    public GatoController(IGatoService gatoSer) {
+    public GatoController(IGatoService gatoSer,
+                          IGatoMapper mapper) {
         this.gatoSer = gatoSer;
+        this.mapper = mapper;
     }
 
     private ResponseEntity<?> successResponse(List<?> lista){
@@ -42,13 +48,20 @@ public class GatoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> altaGato(@RequestBody Gato gato){
-        Gato nuevo=this.gatoSer.altaGato(gato);
-        if(nuevo==null){
-            return this.notSuccessResponse("El gato no pudo ser creado",0);
-        }
+    public ResponseEntity<?> altaGato(@RequestBody @Valid GatoDTO dto){
+        Gato nuevo=this.gatoSer.altaGato(this.mapper.mapToEntity(dto));
         mensajeBody.put("Success",Boolean.TRUE);
-        mensajeBody.put("data",nuevo);
+        mensajeBody.put("data",this.mapper.mapToDto(nuevo));
         return ResponseEntity.status(HttpStatus.CREATED).body(mensajeBody);
+    }
+
+    @PutMapping("/id")
+    public ResponseEntity<?> modiGato(@RequestBody GatoDTO dto,
+                                      @PathVariable Long id){
+        Gato modi=this.gatoSer.modiGato(this.mapper.mapToEntity(dto),id);
+        GatoDTO resp=this.mapper.mapToDto(modi);
+        mensajeBody.put("Success",Boolean.TRUE);
+        mensajeBody.put("data",resp);
+        return ResponseEntity.ok(mensajeBody);
     }
 }
