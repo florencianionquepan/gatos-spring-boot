@@ -29,8 +29,8 @@ public class EstadoService implements IEstadoService {
     }
 
     @Override
-    public Estado estadoAprobado(Long id) {
-        Estado aprobado=this.buscarById(id);
+    public Estado crearAprobado() {
+        Estado aprobado=new Estado();
         LocalDate fecha=LocalDate.now();
         aprobado.setFecha(fecha);
         aprobado.setEstado(EstadoNombre.APROBADA);
@@ -38,8 +38,8 @@ public class EstadoService implements IEstadoService {
     }
 
     @Override
-    public Estado estadoRechazado(Long id) {
-        Estado rechazado=this.buscarById(id);
+    public Estado crearRechazado() {
+        Estado rechazado=new Estado();
         LocalDate fecha=LocalDate.now();
         rechazado.setFecha(fecha);
         rechazado.setEstado(EstadoNombre.RECHAZADA);
