@@ -29,8 +29,8 @@ public class GatoMapper implements IGatoMapper{
         gato.setTipoPelo(dto.getTipoPelo());
         gato.setFichaVet(dto.getFichaVet());
         gato.setListaSol(dto.getSolicitudes());
-        Voluntario volEntity=volMap.mapToEntity(dto.getVoluntario());
-        gato.setVoluntario(volEntity);
+        //Voluntario volEntity=volMap.mapToEntity(dto.getVoluntario());
+        //gato.setVoluntario(volEntity);
         gato.setPadrino(dto.getPadrino());
         gato.setAdoptadoFecha(dto.getAdoptado());
         return gato;
