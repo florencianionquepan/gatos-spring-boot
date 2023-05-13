@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class Persona implements Serializable {
+public class Persona implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,5 +39,4 @@ public abstract class Persona implements Serializable {
     private String localidad;
     @OneToMany(mappedBy = "solicitante", fetch = FetchType.LAZY)
     private List<Solicitud> listaSol;
-
 }
