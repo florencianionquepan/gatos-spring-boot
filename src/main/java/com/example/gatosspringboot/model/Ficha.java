@@ -24,8 +24,5 @@ public class Ficha implements Serializable {
     private LocalDate ultimaTripleFelina;
     private LocalDate ultimaAntirrabica;
     private String comentarios;
-    @OneToOne
-    @JoinColumn(name = "gato_id")
-    private Gato gato;
 
 }
