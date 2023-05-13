@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +24,6 @@ public class Cuota implements Serializable {
     private double montoMensual;
     @ManyToOne
     @JoinColumn(name="padrino_dni")
+    @JsonIgnoreProperties(value="listaCuotas")
     private Padrino padrino;
 }
