@@ -32,7 +32,7 @@ public class Usuario implements Serializable {
             joinColumns = @JoinColumn(name="usuario_id"),
             inverseJoinColumns = @JoinColumn (name="rol_id")
     )
+    @JsonIgnoreProperties(value="usuarios")
     private List<Rol> roles;
-
 
 }
