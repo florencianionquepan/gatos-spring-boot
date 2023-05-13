@@ -40,6 +40,7 @@ public class Gato implements Serializable {
     private Ficha fichaVet;
 
     @OneToMany(mappedBy = "gato", fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties(value="gato")
     private List<Solicitud> listaSol;
 
     @ManyToOne(cascade = CascadeType.MERGE)
@@ -49,10 +50,12 @@ public class Gato implements Serializable {
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name="transito_dni")
+    @JsonIgnoreProperties(value="listaGatos")
     private Transito transito;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name="padrino_dni")
+    @JsonIgnoreProperties(value="listaGatos")
     private Padrino padrino;
 
     private LocalDate adoptadoFecha;
