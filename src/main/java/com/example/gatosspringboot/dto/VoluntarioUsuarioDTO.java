@@ -1,11 +1,11 @@
 package com.example.gatosspringboot.dto;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.Valid;
 
 @Getter
 @Setter
