@@ -24,6 +24,8 @@ public class Solicitud implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    private LocalDate fechaSolicitud;
+
     @ManyToOne
     @JoinColumn(name="solicitante_dni")
     @NotNull
@@ -40,11 +42,7 @@ public class Solicitud implements Serializable {
             joinColumns = @JoinColumn(name="solicitud_id"),
             inverseJoinColumns = @JoinColumn(name="estado_id")
     )
-    @JsonIgnoreProperties(value = "listaSolicitudes")
+
     @NotNull
     private List<Estado> estados;
-
-    @ManyToOne
-    @JsonIgnoreProperties(value="aspirantes")
-    private Socio socio;
 }
