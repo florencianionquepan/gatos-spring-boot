@@ -6,6 +6,7 @@ import com.example.gatosspringboot.model.Voluntario;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -42,6 +43,7 @@ public class VoluntarioController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> verTodos(){
         List<Voluntario> lista=this.volService.verTodos();
         return this.successResponse(lista);
