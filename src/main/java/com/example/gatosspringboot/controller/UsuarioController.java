@@ -1,7 +1,7 @@
 package com.example.gatosspringboot.controller;
 
 import com.example.gatosspringboot.dto.UsuarioReqDTO;
-import com.example.gatosspringboot.dto.UsuarioRespDTO;
+import com.example.gatosspringboot.dto.UsuarioEmailDTO;
 import com.example.gatosspringboot.dto.mapper.IUsuarioMapper;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
@@ -34,7 +34,7 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public List<UsuarioRespDTO> obtenerTodos(){
+    public List<UsuarioEmailDTO> obtenerTodos(){
         return this.usMap.mapListToDto(this.usService.verTodos());
     }
 

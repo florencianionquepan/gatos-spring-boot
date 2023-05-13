@@ -1,7 +1,7 @@
 package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.UsuarioReqDTO;
-import com.example.gatosspringboot.dto.UsuarioRespDTO;
+import com.example.gatosspringboot.dto.UsuarioEmailDTO;
 import com.example.gatosspringboot.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,14 +24,14 @@ public class UsuarioMapper implements IUsuarioMapper{
     }
 
     @Override
-    public UsuarioRespDTO mapToDto(Usuario entity) {
-        UsuarioRespDTO dto=new UsuarioRespDTO();
+    public UsuarioEmailDTO mapToDto(Usuario entity) {
+        UsuarioEmailDTO dto=new UsuarioEmailDTO();
         dto.setMail(entity.getMail());
         return dto;
     }
 
     @Override
-    public List<UsuarioRespDTO> mapListToDto(List<Usuario> usuarios) {
+    public List<UsuarioEmailDTO> mapListToDto(List<Usuario> usuarios) {
         return usuarios.stream()
                 .map(this::mapToDto).collect(Collectors.toList());
     }

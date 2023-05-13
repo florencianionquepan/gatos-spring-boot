@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UsuarioRespDTO {
+public class UsuarioEmailDTO {
     @NotNull
     @Email
     private String mail;

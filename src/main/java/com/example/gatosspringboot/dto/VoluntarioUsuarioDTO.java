@@ -13,5 +13,5 @@ import javax.validation.Valid;
 @AllArgsConstructor
 public class VoluntarioUsuarioDTO {
     @Valid
-    private UsuarioRespDTO usuario;
+    private UsuarioEmailDTO usuario;
 }
