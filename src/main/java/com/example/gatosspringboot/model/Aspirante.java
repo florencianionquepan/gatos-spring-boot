@@ -32,7 +32,11 @@ public class Aspirante extends Persona implements Serializable {
             joinColumns = @JoinColumn(name="aspirante_id"),
             inverseJoinColumns = @JoinColumn(name="estado_id")
     )
-    @JsonIgnoreProperties(value = "listaAspirantes")
+
     @NotNull
     private List<Estado> estados;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value="aspirantes")
+    private Socio socio;
 }
