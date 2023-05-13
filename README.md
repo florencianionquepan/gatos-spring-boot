@@ -2,4 +2,4 @@
  Backend para página de adopcion de gatitos
  
  ## Diagrama de clases
-![DIAG_CLASE](https://github.com/florencianionquepan/gatos-spring-boot/assets/85314154/a21084b3-c2d5-4eab-8609-9bfaed56a2e2)
+![Captura desde 2023-05-13 12-56-50](https://github.com/florencianionquepan/gatos-spring-boot/assets/85314154/571231fc-427e-423e-a22b-fcfff55eefd5)
