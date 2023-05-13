@@ -12,14 +12,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class UsuarioMapper implements IUsuarioMapper{
-    @Autowired
-    PasswordEncoder passwordEncored;
 
     @Override
     public Usuario mapToEntity(UsuarioReqDTO dto) {
         Usuario user=new Usuario();
         user.setMail(dto.getMail());
-        user.setContrasenia(passwordEncored.encode(dto.getPassword()));
+        user.setContrasenia(dto.getPassword());
         return user;
     }
 
