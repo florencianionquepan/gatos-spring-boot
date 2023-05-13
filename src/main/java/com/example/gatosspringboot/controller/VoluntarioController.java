@@ -1,5 +1,7 @@
 package com.example.gatosspringboot.controller;
 
+import com.example.gatosspringboot.dto.VoluntarioDTO;
+import com.example.gatosspringboot.dto.mapper.IVoluntarioMapper;
 import com.example.gatosspringboot.model.Voluntario;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
 import org.springframework.http.HttpStatus;
@@ -15,9 +17,12 @@ import java.util.Map;
 public class VoluntarioController {
 
     private final IVoluntarioService volService;
+    private final IVoluntarioMapper mapper;
 
-    public VoluntarioController(IVoluntarioService volService) {
+    public VoluntarioController(IVoluntarioService volService,
+                                IVoluntarioMapper mapper) {
         this.volService = volService;
+        this.mapper = mapper;
     }
 
     public Map<String,Object> mensajeBody= new HashMap<>();
@@ -43,12 +48,14 @@ public class VoluntarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> altaVoluntario(@RequestBody Voluntario volunt){
-        Voluntario volNuevo=this.volService.altaVolunt(volunt);
-        return ResponseEntity.status(HttpStatus.CREATED).body(volNuevo);
+    public ResponseEntity<?> altaVoluntario(@RequestBody VoluntarioDTO volunt){
+        Voluntario volNuevo=this.volService.altaVolunt(this.mapper.mapToEntity(volunt));
+        VoluntarioDTO dtoNuevo=this.mapper.mapToDto(volNuevo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtoNuevo);
     }
 
     @PutMapping("/{id}")
+    //Se usa para modificar algun dato personal o agregar/remover gatos de su lista
     public ResponseEntity<?> modiVoluntario(@RequestBody Voluntario volunt,
                                          @PathVariable Long id){
         Voluntario volModi=this.volService.modiVolunt(volunt, id);
