@@ -9,6 +9,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class VoluntarioMapper implements IVoluntarioMapper{
+
+    private final IUsuarioEmailMapper userMapper;
+
+    public VoluntarioMapper(IUsuarioEmailMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
     @Override
     public Voluntario mapToEntity(VoluntarioDTO volu) {
         Voluntario ent=new Voluntario();
@@ -21,7 +28,7 @@ public class VoluntarioMapper implements IVoluntarioMapper{
         ent.setFechaNac(volu.getFechaNac());
         ent.setDire(volu.getDire());
         ent.setLocalidad(volu.getLocalidad());
-        //ent.setListaGatos(volu.getGatitos());
+        ent.setUsuario(this.userMapper.mapToEntity(volu.getUsuario()));
         return ent;
     }
 
@@ -37,7 +44,7 @@ public class VoluntarioMapper implements IVoluntarioMapper{
         dto.setFechaNac(entity.getFechaNac());
         dto.setDire(entity.getDire());
         dto.setLocalidad(entity.getLocalidad());
-        //dto.setGatitos(entity.);
+        dto.setUsuario(this.userMapper.mapToDto(entity.getUsuario()));
         return dto;
     }
 
