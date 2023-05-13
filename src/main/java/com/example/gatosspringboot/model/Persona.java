@@ -38,5 +38,5 @@ public class Persona implements Serializable {
     @Column(nullable = false, length = 30)
     private String localidad;
     @OneToMany(mappedBy = "solicitante", fetch = FetchType.LAZY)
-    private List<Solicitud> listaSol;
+    private List<Solicitud> solicitudes;
 }
