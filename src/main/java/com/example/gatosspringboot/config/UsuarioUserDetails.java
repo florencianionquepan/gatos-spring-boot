@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//crea un UsuarioUserDetails a partir de un Usuario
 public class UsuarioUserDetails implements UserDetails {
 
     private String email;
