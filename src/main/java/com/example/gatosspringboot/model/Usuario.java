@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Usuario implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
     private String mail;
