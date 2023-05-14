@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Cuota implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate fechaPago;
     private double montoMensual;
