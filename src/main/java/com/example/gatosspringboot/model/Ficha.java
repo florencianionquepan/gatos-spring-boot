@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class Ficha implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate ultimaDesparasitacion;
     private LocalDate ultimaTripleFelina;
