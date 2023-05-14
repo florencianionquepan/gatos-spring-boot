@@ -3,6 +3,7 @@ package com.example.gatosspringboot.config;
 import com.example.gatosspringboot.service.imple.UsuarioUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -43,7 +44,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/gatos").permitAll()
+                .requestMatchers("/gatos","/usuarios").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/voluntarios").authenticated()
                 .and().formLogin().and().build();
