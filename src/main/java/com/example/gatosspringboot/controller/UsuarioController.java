@@ -5,6 +5,7 @@ import com.example.gatosspringboot.dto.UsuarioEmailDTO;
 import com.example.gatosspringboot.dto.mapper.IUsuarioMapper;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> nuevoUsuario(@RequestBody UsuarioReqDTO dto){
+    public ResponseEntity<?> nuevoUsuario(@RequestBody @Valid UsuarioReqDTO dto){
         Usuario user=this.usMap.mapToEntity(dto);
         String newUser=this.usService.altaUsuarioCompleto(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
