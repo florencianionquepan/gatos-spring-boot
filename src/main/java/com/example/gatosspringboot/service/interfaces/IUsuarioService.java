@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface IUsuarioService {
     List<Usuario> verTodos();
-    Usuario altaUsuario(Usuario us);
+    String altaUsuarioCompleto(Usuario us);
+    String altaUsuarioEmail(String email);
 }
