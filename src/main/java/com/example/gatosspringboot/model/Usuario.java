@@ -26,7 +26,7 @@ public class Usuario implements Serializable {
     @NotNull
     private String contrasenia;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     @JoinTable(
             name="roles_usuarios",
             joinColumns = @JoinColumn(name="usuario_id"),
