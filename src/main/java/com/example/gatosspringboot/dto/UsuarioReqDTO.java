@@ -1,5 +1,8 @@
 package com.example.gatosspringboot.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Getter
@@ -8,7 +11,10 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class UsuarioReqDTO {
-    private Long id;
+    @NotNull
+    @Email
     private String mail;
+    @NotNull
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$).{8,}$", message = "La contraseña debe tener al menos 8 caracteres, una letra y un número.")
     private String password;
 }
