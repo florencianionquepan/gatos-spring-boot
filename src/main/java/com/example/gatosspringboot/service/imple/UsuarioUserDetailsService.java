@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
+//Bueca un usuario segun email y lo convierte en UserDetails
 public class UsuarioUserDetailsService implements UserDetailsService {
 
     @Autowired
