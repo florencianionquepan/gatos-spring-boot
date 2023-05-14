@@ -41,11 +41,8 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<?> nuevoUsuario(@RequestBody UsuarioReqDTO dto){
         Usuario user=this.usMap.mapToEntity(dto);
-        if(this.usService.altaUsuario(user)==null){
-            return this.notSuccessResponse("El usuario no pudo ser creado", 0);
-        }
-        Usuario newUser=this.usService.altaUsuario(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.usMap.mapToDto(newUser));
+        String newUser=this.usService.altaUsuarioCompleto(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
 
