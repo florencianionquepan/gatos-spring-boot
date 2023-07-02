@@ -1,11 +1,18 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
+import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.model.Voluntario;
 import com.example.gatosspringboot.repository.database.VoluntarioRepository;
+import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +20,13 @@ import java.util.Optional;
 public class VoluntarioService implements IVoluntarioService {
 
     private final VoluntarioRepository voluRepo;
+    private final IUsuarioService serUser;
+    private Logger logger= LoggerFactory.getLogger(VoluntarioService.class);
 
-    public VoluntarioService(VoluntarioRepository voluRepo) {
+    public VoluntarioService(VoluntarioRepository voluRepo,
+                             IUsuarioService serUser) {
         this.voluRepo = voluRepo;
+        this.serUser = serUser;
     }
 
     @Override
@@ -24,6 +35,7 @@ public class VoluntarioService implements IVoluntarioService {
     }
 
     @Override
+    @Transactional
     public Voluntario altaVolunt(Voluntario vol) {
         if(this.existeDni(vol.getDni())){
             throw new RuntimeException(
@@ -31,6 +43,10 @@ public class VoluntarioService implements IVoluntarioService {
                     ,vol.getDni())
             );
         }
+        Usuario creado=this.serUser.altaUsuarioVoluntario(vol.getEmail());
+        //logger.info("Usuario creado: "+creado);
+        //logger.info("Voluntario: "+vol);
+        vol.setUsuario(creado);
         return this.voluRepo.save(vol);
     }
 
