@@ -9,6 +9,7 @@ import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,25 @@ public class UsuarioService implements IUsuarioService {
                     (String.format("El email %d ya se encuentra registrado",email)
                     );
         }
+    }
+
+    public Usuario altaUsuarioVoluntario(String email){
+        Usuario nuevoUsuario=new Usuario();
+        nuevoUsuario.setMail(email);
+        nuevoUsuario.setContrasenia(this.generarPasswordAleatoria());
+        Usuario usuarioCreado=this.usRepo.save(nuevoUsuario);
+        //envio email
+        return usuarioCreado;
+    }
+
+    private String generarPasswordAleatoria(){
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] randomBytes = new byte[4];
+        StringBuilder sb = new StringBuilder();
+        for (byte b : randomBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 
 }
