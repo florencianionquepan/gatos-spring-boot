@@ -29,7 +29,7 @@ public class Persona implements Serializable {
     private String apellido;
     @Column(nullable = false, length = 30)
     private String tel;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String email;
     @Column(nullable = false)
     private LocalDate fechaNac;
@@ -39,4 +39,20 @@ public class Persona implements Serializable {
     private String localidad;
     @OneToMany(mappedBy = "solicitante", fetch = FetchType.LAZY)
     private List<Solicitud> solicitudes;
+
+    @Override
+    public String toString() {
+        return "Persona{" +
+                "id=" + id +
+                ", dni='" + dni + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", tel='" + tel + '\'' +
+                ", email='" + email + '\'' +
+                ", fechaNac=" + fechaNac +
+                ", dire='" + dire + '\'' +
+                ", localidad='" + localidad + '\'' +
+                ", solicitudes=" + solicitudes +
+                '}';
+    }
 }
