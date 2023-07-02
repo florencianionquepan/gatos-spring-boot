@@ -5,6 +5,7 @@ import com.example.gatosspringboot.model.Rol;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.RolRepository;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;
+import com.example.gatosspringboot.service.interfaces.IEmailService;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,16 @@ public class UsuarioService implements IUsuarioService {
     private final UsuarioRepository usRepo;
     private final PasswordEncoder passwordEncoder;
     private final RolRepository rolRepo;
+    private final IEmailService emailService;
 
     public UsuarioService(UsuarioRepository usRepo,
                           PasswordEncoder passwordEncoder,
-                          RolRepository rolRepo) {
+                          RolRepository rolRepo,
+                          IEmailService emailService) {
         this.usRepo = usRepo;
         this.passwordEncoder = passwordEncoder;
         this.rolRepo = rolRepo;
+        this.emailService = emailService;
     }
 
     @Override
@@ -44,18 +48,29 @@ public class UsuarioService implements IUsuarioService {
         );
         us.setRoles(roles);
         us.setContrasenia(passwordEncoder.encode(us.getContrasenia()));
-        this.usRepo.save(us);
-        return us.getMail();
+        Usuario creado=this.usRepo.save(us);
+        return creado.getMail();
     }
 
     @Override
     public Usuario altaUsuarioVoluntario(String email) {
         Usuario nuevoUsuario=new Usuario();
         nuevoUsuario.setMail(email);
-        nuevoUsuario.setContrasenia(this.generarPasswordAleatoria());
-        Usuario usuarioCreado=this.usRepo.save(nuevoUsuario);
-        //envio email
-        return usuarioCreado;
+        String password=this.generarPasswordAleatoria();
+        nuevoUsuario.setContrasenia(password);
+        String emailUsuarioCreado=this.altaUsuarioCompleto(nuevoUsuario);
+        if(!emailUsuarioCreado.isEmpty()){
+            String subject="Su cuenta como voluntario ha sido generada!";
+            String content="Puede iniciar sesión con su email y su contraseña: "+password;
+            this.emailService.sendMessage(email,subject,content);
+        }
+        Optional<Usuario> oUsuario=this.usRepo.findByEmail(emailUsuarioCreado);
+        if(oUsuario.isEmpty()) {
+            throw new ExistingException
+                    (String.format("Fallo al crear el usuario")
+                    );
+        }
+        return oUsuario.get();
     }
 
     //No se admiten emails repetidos
@@ -71,6 +86,7 @@ public class UsuarioService implements IUsuarioService {
     private String generarPasswordAleatoria(){
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[4];
+        secureRandom.nextBytes(randomBytes);
         StringBuilder sb = new StringBuilder();
         for (byte b : randomBytes) {
             sb.append(String.format("%02x", b));
