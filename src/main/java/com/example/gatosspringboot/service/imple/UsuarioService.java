@@ -49,8 +49,13 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
-    public String altaUsuarioEmail(String email) {
-        return null;
+    public Usuario altaUsuarioVoluntario(String email) {
+        Usuario nuevoUsuario=new Usuario();
+        nuevoUsuario.setMail(email);
+        nuevoUsuario.setContrasenia(this.generarPasswordAleatoria());
+        Usuario usuarioCreado=this.usRepo.save(nuevoUsuario);
+        //envio email
+        return usuarioCreado;
     }
 
     //No se admiten emails repetidos
@@ -61,15 +66,6 @@ public class UsuarioService implements IUsuarioService {
                     (String.format("El email %d ya se encuentra registrado",email)
                     );
         }
-    }
-
-    public Usuario altaUsuarioVoluntario(String email){
-        Usuario nuevoUsuario=new Usuario();
-        nuevoUsuario.setMail(email);
-        nuevoUsuario.setContrasenia(this.generarPasswordAleatoria());
-        Usuario usuarioCreado=this.usRepo.save(nuevoUsuario);
-        //envio email
-        return usuarioCreado;
     }
 
     private String generarPasswordAleatoria(){

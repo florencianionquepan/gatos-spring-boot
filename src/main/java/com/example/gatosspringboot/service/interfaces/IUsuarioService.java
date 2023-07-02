@@ -7,6 +7,5 @@ import java.util.List;
 public interface IUsuarioService {
     List<Usuario> verTodos();
     String altaUsuarioCompleto(Usuario us);
-    String altaUsuarioEmail(String email);
-    Usuario altaUsuarioVoluntario();
+    Usuario altaUsuarioVoluntario(String email);
 }
