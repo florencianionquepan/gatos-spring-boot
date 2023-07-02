@@ -22,7 +22,7 @@ public class Voluntario extends Persona implements Serializable {
     @JsonIgnoreProperties(value="voluntario")
     private List<Gato> listaGatos;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name="us_id")
     private Usuario usuario;
 
