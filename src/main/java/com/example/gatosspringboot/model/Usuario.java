@@ -1,10 +1,7 @@
 package com.example.gatosspringboot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -35,4 +32,12 @@ public class Usuario implements Serializable {
     @JsonIgnoreProperties(value="usuarios")
     private List<Rol> roles;
 
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id=" + id +
+                ", mail='" + mail + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
 }
