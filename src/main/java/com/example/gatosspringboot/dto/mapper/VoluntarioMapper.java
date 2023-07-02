@@ -28,7 +28,7 @@ public class VoluntarioMapper implements IVoluntarioMapper{
         ent.setFechaNac(volu.getFechaNac());
         ent.setDire(volu.getDire());
         ent.setLocalidad(volu.getLocalidad());
-        ent.setUsuario(this.userMapper.mapToEntity(volu.getUsuario()));
+        //ent.setUsuario(this.userMapper.mapToEntity(volu.getUsuario()));
         return ent;
     }
 
@@ -44,7 +44,7 @@ public class VoluntarioMapper implements IVoluntarioMapper{
         dto.setFechaNac(entity.getFechaNac());
         dto.setDire(entity.getDire());
         dto.setLocalidad(entity.getLocalidad());
-        dto.setUsuario(this.userMapper.mapToDto(entity.getUsuario()));
+        //dto.setUsuario(this.userMapper.mapToDto(entity.getUsuario()));
         return dto;
     }
 

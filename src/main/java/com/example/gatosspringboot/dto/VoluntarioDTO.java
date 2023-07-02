@@ -14,6 +14,6 @@ import jakarta.validation.Valid;
 //Se utiliza para dar de alta
 //necesita datos de persona + email
 public class VoluntarioDTO extends PersonaDTO {
-    @Valid
-    private UsuarioEmailDTO usuario;
+    //@Valid
+    //private UsuarioEmailDTO usuario;
 }
