@@ -26,4 +26,12 @@ public class Voluntario extends Persona implements Serializable {
     @JoinColumn(name="us_id")
     private Usuario usuario;
 
+    @Override
+    public String toString() {
+        return "Voluntario{" +
+                super.toString() +
+                "listaGatos=" + listaGatos +
+                ", usuario=" + usuario +
+                '}';
+    }
 }
