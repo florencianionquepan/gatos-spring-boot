@@ -8,4 +8,5 @@ public interface IUsuarioService {
     List<Usuario> verTodos();
     String altaUsuarioCompleto(Usuario us);
     Usuario altaUsuarioVoluntario(String email);
+    String modiPassword(Usuario user, String oldPassword);
 }

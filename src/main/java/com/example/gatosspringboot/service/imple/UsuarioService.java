@@ -7,6 +7,8 @@ import com.example.gatosspringboot.repository.database.RolRepository;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ public class UsuarioService implements IUsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final RolRepository rolRepo;
     private final IEmailService emailService;
+    private Logger logger= LoggerFactory.getLogger(UsuarioService.class);
 
     public UsuarioService(UsuarioRepository usRepo,
                           PasswordEncoder passwordEncoder,
@@ -68,6 +71,30 @@ public class UsuarioService implements IUsuarioService {
         if(oUsuario.isEmpty()) {
             throw new ExistingException
                     (String.format("Fallo al crear el usuario")
+                    );
+        }
+        return oUsuario.get();
+    }
+
+    @Override
+    public String modiPassword(Usuario user, String oldPassword) {
+        Usuario guardado=this.buscarByEmail(user.getMail());
+        String oldPassEncriptada=guardado.getContrasenia();
+        if(!passwordEncoder.matches(oldPassword, oldPassEncriptada)){
+            throw new ExistingException
+                    (String.format("No es posible verificar tu identidad para modificar la contraseña")
+                    );
+        }
+        user.setContrasenia(passwordEncoder.encode(user.getContrasenia()));
+        Usuario modi=this.usRepo.save(user);
+        return modi.getMail();
+    }
+
+    private Usuario buscarByEmail(String email){
+        Optional<Usuario> oUsuario=this.usRepo.findByEmail(email);
+        if(oUsuario.isEmpty()){
+            throw new ExistingException
+                    (String.format("El usuario con el email %d no existe",email)
                     );
         }
         return oUsuario.get();
