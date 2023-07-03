@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+//LO USAMOS AL CREAR UN GATO
 public class VoluntarioUsuarioDTO {
     @Valid
     private UsuarioEmailDTO usuario;
