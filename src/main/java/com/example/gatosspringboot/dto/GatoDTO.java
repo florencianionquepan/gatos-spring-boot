@@ -1,6 +1,5 @@
 package com.example.gatosspringboot.dto;
 
-import com.example.gatosspringboot.model.Ficha;
 import com.example.gatosspringboot.model.Padrino;
 import com.example.gatosspringboot.model.Solicitud;
 import lombok.AllArgsConstructor;
@@ -19,6 +18,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+//para crear nuevo gato
+//queda mapear Padrino y solicitudes
 public class GatoDTO {
 
     private Long id;
@@ -43,12 +44,12 @@ public class GatoDTO {
     @NotEmpty
     private String tipoPelo;
 
-    private Ficha fichaVet;
+    private FichaDTO fichaDTO;
 
     private List<Solicitud> solicitudes;
 
     @Valid
-    private VoluntarioUsuarioDTO voluntario;
+    private VoluntarioUsuarioDTO voluntarioDTO;
 
     private Padrino padrino;
 
