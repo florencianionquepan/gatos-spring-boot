@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+//lo uso para crear un nuevo voluntario
 public class VoluntarioMapper implements IVoluntarioMapper{
 
     private final IUsuarioEmailMapper userMapper;

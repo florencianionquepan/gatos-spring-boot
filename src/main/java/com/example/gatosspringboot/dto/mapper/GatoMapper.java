@@ -2,19 +2,23 @@ package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.GatoDTO;
 import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Voluntario;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class GatoMapper implements IGatoMapper{
 
-    private final IVoluntarioMapper volMap;
+    private final IVoluntarioUsuarioMapper volMap;
+    private final IFichaMapper fichaMap;
 
-    public GatoMapper(IVoluntarioMapper volMap) {
+    public GatoMapper(IVoluntarioUsuarioMapper volMap,
+                      IFichaMapper fichaMap) {
         this.volMap = volMap;
+        this.fichaMap = fichaMap;
     }
+
 
     @Override
     public Gato mapToEntity(GatoDTO dto) {
@@ -27,10 +31,9 @@ public class GatoMapper implements IGatoMapper{
         gato.setDescripcion(dto.getDescripcion());
         gato.setColor(dto.getColor());
         gato.setTipoPelo(dto.getTipoPelo());
-        gato.setFichaVet(dto.getFichaVet());
+        gato.setFichaVet(this.fichaMap.mapToEntity(dto.getFichaDTO()));
         gato.setListaSol(dto.getSolicitudes());
-        //Voluntario volEntity=volMap.mapToEntity(dto.getVoluntario());
-        //gato.setVoluntario(volEntity);
+        gato.setVoluntario(this.volMap.mapToEntity(dto.getVoluntarioDTO()));
         gato.setPadrino(dto.getPadrino());
         gato.setAdoptadoFecha(dto.getAdoptado());
         return gato;
@@ -38,11 +41,27 @@ public class GatoMapper implements IGatoMapper{
 
     @Override
     public GatoDTO mapToDto(Gato entity) {
-        return null;
+        GatoDTO dto=new GatoDTO();
+        dto.setId(entity.getId());
+        dto.setNombre(entity.getNombre());
+        dto.setFotos(entity.getSrcFoto());
+        dto.setEdad(entity.getEdad());
+        dto.setSexo(entity.getSexo());
+        dto.setDescripcion(entity.getDescripcion());
+        dto.setColor(entity.getColor());
+        dto.setTipoPelo(entity.getTipoPelo());
+        dto.setFichaDTO(this.fichaMap.mapToDto(entity.getFichaVet()));
+        dto.setSolicitudes(entity.getListaSol());
+        dto.setVoluntarioDTO(this.volMap.mapToDto(entity.getVoluntario()));
+        dto.setPadrino(entity.getPadrino());
+        dto.setAdoptado(entity.getAdoptadoFecha());
+        return dto;
     }
 
     @Override
     public List<GatoDTO> mapListToDto(List<Gato> entities) {
-        return null;
+        return entities.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 }
