@@ -1,10 +1,7 @@
 package com.example.gatosspringboot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -24,4 +21,12 @@ public class Rol implements Serializable {
     @ManyToMany(mappedBy = "roles")
     @JsonIgnoreProperties(value="roles")
     private List<Usuario> usuarios;
+
+    @Override
+    public String toString() {
+        return "Rol{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                '}';
+    }
 }

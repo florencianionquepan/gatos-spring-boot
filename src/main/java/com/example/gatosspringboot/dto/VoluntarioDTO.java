@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 //Se utiliza para dar de alta
 //necesita datos de persona + email
 public class VoluntarioDTO extends PersonaDTO {
