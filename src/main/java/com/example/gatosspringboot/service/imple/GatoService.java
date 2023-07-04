@@ -95,6 +95,7 @@ public class GatoService implements IGatoService {
         List<Solicitud> solicituds=gatoSolicitado.getListaSol();
         solicituds.add(solicitud);
         gatoSolicitado.setListaSol(solicituds);
-        this.gatoRepo.save(gatoSolicitado);
+        //No es necesario guardar de nuevo la entidad gato ya que se guarda solicitud luego
+        //this.gatoRepo.save(gatoSolicitado);
     }
 }

@@ -38,7 +38,7 @@ public class Persona implements Serializable {
     private String dire;
     @Column(nullable = false, length = 30)
     private String localidad;
-    @OneToMany(mappedBy = "solicitante", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "solicitante", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value="solicitante")
     private List<Solicitud> solicitudes;
 

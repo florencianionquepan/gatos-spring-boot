@@ -50,10 +50,11 @@ public class PersonaService implements IPersonaService {
             List<Solicitud> solicitudes=perso.getSolicitudes();
             solicitudes.add(solicitud);
             perso.setSolicitudes(solicitudes);
+            solicitud.setSolicitante(perso);
         }else{
             solicitante.setSolicitudes(new ArrayList<>(Arrays.asList(solicitud)));
+            this.repo.save(solicitante);
         }
-        this.repo.save(solicitante);
     }
 
 }

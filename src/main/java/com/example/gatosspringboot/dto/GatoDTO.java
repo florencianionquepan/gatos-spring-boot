@@ -2,6 +2,7 @@ package com.example.gatosspringboot.dto;
 
 import com.example.gatosspringboot.model.Padrino;
 import com.example.gatosspringboot.model.Solicitud;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,9 +47,11 @@ public class GatoDTO {
 
     private FichaDTO fichaDTO;
 
+    @JsonIgnoreProperties(value="gato")
     private List<Solicitud> solicitudes;
 
     @Valid
+    @JsonIgnoreProperties(value={"usuario","solicitudes"})
     private VoluntarioEmailDTO voluntario;
 
     private Padrino padrino;
