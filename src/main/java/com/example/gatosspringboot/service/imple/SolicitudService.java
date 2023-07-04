@@ -1,13 +1,11 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
-import com.example.gatosspringboot.model.Estado;
-import com.example.gatosspringboot.model.EstadoNombre;
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Solicitud;
+import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.SolicitudRepository;
 import com.example.gatosspringboot.service.interfaces.IEstadoService;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
+import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import com.example.gatosspringboot.service.interfaces.ISolicitudService;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class SolicitudService implements ISolicitudService {
@@ -23,13 +20,16 @@ public class SolicitudService implements ISolicitudService {
     private final SolicitudRepository repo;
     private final IEstadoService estadoService;
     private final IGatoService gatoService;
+    private final IPersonaService persoService;
 
     public SolicitudService(SolicitudRepository repo,
                             IEstadoService estadoService,
-                            IGatoService gatoService) {
+                            IGatoService gatoService,
+                            IPersonaService persoService) {
         this.repo = repo;
         this.estadoService = estadoService;
         this.gatoService = gatoService;
+        this.persoService = persoService;
     }
 
     @Override
@@ -41,7 +41,9 @@ public class SolicitudService implements ISolicitudService {
     public Solicitud altaSolicitud(Solicitud solicitud) {
         Estado pendiente=estadoService.crearPendiente();
         solicitud.setEstados(new ArrayList<>(Arrays.asList(pendiente)));
-        //ver si a este estado hay que agregarle la solicitud a su lista
+        //si la persona no existe tambien la crea
+        this.persoService.addSolicitudPersona(solicitud);
+        this.gatoService.addSolicitudGato(solicitud);
         return this.repo.save(solicitud);
     }
 
