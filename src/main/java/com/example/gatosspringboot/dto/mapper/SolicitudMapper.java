@@ -2,10 +2,12 @@ package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.SolicitudDTO;
 import com.example.gatosspringboot.model.Solicitud;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class SolicitudMapper implements ISolicitudMapper{
 
     private final IPersonaMapper persoMap;
