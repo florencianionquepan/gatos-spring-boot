@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.dto;
 
 import com.example.gatosspringboot.model.Solicitud;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +36,6 @@ public class PersonaDTO {
     @Email
     private String email;
     @NotNull
-    @NotEmpty
     private LocalDate fechaNac;
     @NotNull
     @NotEmpty
@@ -43,5 +43,6 @@ public class PersonaDTO {
     @NotNull
     @NotEmpty
     private String localidad;
+    @JsonIgnoreProperties(value={"solicitante","gato"})
     private List<Solicitud> solicitudes;
 }

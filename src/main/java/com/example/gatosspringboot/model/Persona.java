@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,7 @@ public class Persona implements Serializable {
     @Column(nullable = false, length = 30)
     private String localidad;
     @OneToMany(mappedBy = "solicitante", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value="solicitante")
     private List<Solicitud> solicitudes;
 
     @Override
@@ -52,7 +54,6 @@ public class Persona implements Serializable {
                 ", fechaNac=" + fechaNac +
                 ", dire='" + dire + '\'' +
                 ", localidad='" + localidad + '\'' +
-                ", solicitudes=" + solicitudes +
                 '}';
     }
 }

@@ -60,4 +60,12 @@ public class Gato implements Serializable {
 
     private LocalDate adoptadoFecha;
 
+    @Override
+    public String toString() {
+        return "Gato{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", adoptadoFecha=" + adoptadoFecha +
+                '}';
+    }
 }

@@ -26,14 +26,16 @@ public class Solicitud implements Serializable {
 
     private LocalDate fechaSolicitud;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.MERGE)
     @JoinColumn(name="solicitante_dni")
     @NotNull
+    @JsonIgnoreProperties(value="solicitudes")
     private Persona solicitante;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.MERGE)
     @JoinColumn(name="gato_id")
     @NotNull
+    @JsonIgnoreProperties(value="listaSol")
     private Gato gato;
 
     @ManyToMany(cascade=CascadeType.MERGE)
@@ -42,7 +44,17 @@ public class Solicitud implements Serializable {
             joinColumns = @JoinColumn(name="solicitud_id"),
             inverseJoinColumns = @JoinColumn(name="estado_id")
     )
-
     @NotNull
     private List<Estado> estados;
+
+    @Override
+    public String toString() {
+        return "Solicitud{" +
+                "id=" + id +
+                ", fechaSolicitud=" + fechaSolicitud +
+                ", solicitante=" + solicitante +
+                ", gato=" + gato +
+                ", estados=" + estados +
+                '}';
+    }
 }

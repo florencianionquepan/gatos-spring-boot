@@ -26,4 +26,14 @@ public class Estado implements Serializable {
     @NotNull
     private EstadoNombre estado;
     private String motivo;
+
+    @Override
+    public String toString() {
+        return "Estado{" +
+                "id=" + id +
+                ", fecha=" + fecha +
+                ", estado=" + estado +
+                ", motivo='" + motivo + '\'' +
+                '}';
+    }
 }

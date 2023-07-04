@@ -13,6 +13,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GatoIdDTO {
     @NotNull
-    @NotEmpty
     private Long id;
 }
