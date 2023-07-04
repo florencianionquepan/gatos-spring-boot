@@ -49,7 +49,7 @@ public class GatoDTO {
     private List<Solicitud> solicitudes;
 
     @Valid
-    private VoluntarioUsuarioDTO voluntarioDTO;
+    private VoluntarioEmailDTO voluntario;
 
     private Padrino padrino;
 

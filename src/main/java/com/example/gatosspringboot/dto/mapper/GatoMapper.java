@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 @Component
 public class GatoMapper implements IGatoMapper{
 
-    private final IVoluntarioUsuarioMapper volMap;
+    private final IVoluntarioEmailMapper volMap;
     private final IFichaMapper fichaMap;
 
-    public GatoMapper(IVoluntarioUsuarioMapper volMap,
+    public GatoMapper(IVoluntarioEmailMapper volMap,
                       IFichaMapper fichaMap) {
         this.volMap = volMap;
         this.fichaMap = fichaMap;
@@ -33,7 +33,7 @@ public class GatoMapper implements IGatoMapper{
         gato.setTipoPelo(dto.getTipoPelo());
         gato.setFichaVet(this.fichaMap.mapToEntity(dto.getFichaDTO()));
         gato.setListaSol(dto.getSolicitudes());
-        gato.setVoluntario(this.volMap.mapToEntity(dto.getVoluntarioDTO()));
+        gato.setVoluntario(this.volMap.mapToEntity(dto.getVoluntario()));
         gato.setPadrino(dto.getPadrino());
         gato.setAdoptadoFecha(dto.getAdoptado());
         return gato;
@@ -52,7 +52,7 @@ public class GatoMapper implements IGatoMapper{
         dto.setTipoPelo(entity.getTipoPelo());
         dto.setFichaDTO(this.fichaMap.mapToDto(entity.getFichaVet()));
         dto.setSolicitudes(entity.getListaSol());
-        dto.setVoluntarioDTO(this.volMap.mapToDto(entity.getVoluntario()));
+        dto.setVoluntario(this.volMap.mapToDto(entity.getVoluntario()));
         dto.setPadrino(entity.getPadrino());
         dto.setAdoptado(entity.getAdoptadoFecha());
         return dto;
