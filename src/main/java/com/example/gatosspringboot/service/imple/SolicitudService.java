@@ -7,8 +7,11 @@ import com.example.gatosspringboot.service.interfaces.IEstadoService;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import com.example.gatosspringboot.service.interfaces.ISolicitudService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +24,7 @@ public class SolicitudService implements ISolicitudService {
     private final IEstadoService estadoService;
     private final IGatoService gatoService;
     private final IPersonaService persoService;
+    private Logger logger= LoggerFactory.getLogger(SolicitudService.class);
 
     public SolicitudService(SolicitudRepository repo,
                             IEstadoService estadoService,
@@ -40,7 +44,12 @@ public class SolicitudService implements ISolicitudService {
     @Override
     public Solicitud altaSolicitud(Solicitud solicitud) {
         Estado pendiente=estadoService.crearPendiente();
-        solicitud.setEstados(new ArrayList<>(Arrays.asList(pendiente)));
+        List<Estado> estados = new ArrayList<>();
+        estados.add(pendiente);
+        solicitud.setEstados(estados);
+        LocalDate fechaHoy=LocalDate.now();
+        solicitud.setFechaSolicitud(fechaHoy);
+        //logger.info("solicitud= "+solicitud);
         //si la persona no existe tambien la crea
         this.persoService.addSolicitudPersona(solicitud);
         this.gatoService.addSolicitudGato(solicitud);
