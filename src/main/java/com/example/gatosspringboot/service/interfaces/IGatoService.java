@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.service.interfaces;
 
 import com.example.gatosspringboot.model.Gato;
+import com.example.gatosspringboot.model.Solicitud;
 
 import java.util.List;
 
@@ -11,4 +12,5 @@ public interface IGatoService {
     Gato modiGato(Gato gato, Long id);
     boolean existeGato(Long id);
     Gato adoptarGato(Long id);
+    void addSolicitudGato(Solicitud solicitud);
 }

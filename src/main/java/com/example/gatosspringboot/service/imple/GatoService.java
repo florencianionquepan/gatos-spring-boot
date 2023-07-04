@@ -2,6 +2,7 @@ package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Gato;
+import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.model.Voluntario;
 import com.example.gatosspringboot.repository.database.GatoRepository;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
@@ -86,5 +87,14 @@ public class GatoService implements IGatoService {
         //notificarPadrino
         //notificarTransito
         return this.gatoRepo.save(gati);
+    }
+
+    @Override
+    public void addSolicitudGato(Solicitud solicitud) {
+        Gato gatoSolicitado=this.buscarPorId(solicitud.getGato().getId());
+        List<Solicitud> solicituds=gatoSolicitado.getListaSol();
+        solicituds.add(solicitud);
+        gatoSolicitado.setListaSol(solicituds);
+        this.gatoRepo.save(gatoSolicitado);
     }
 }
