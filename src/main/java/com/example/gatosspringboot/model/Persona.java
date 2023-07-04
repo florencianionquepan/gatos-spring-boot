@@ -29,7 +29,7 @@ public class Persona implements Serializable {
     private String apellido;
     @Column(nullable = false, length = 30)
     private String tel;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
     private LocalDate fechaNac;
