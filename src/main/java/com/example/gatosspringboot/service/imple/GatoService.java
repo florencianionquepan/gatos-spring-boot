@@ -30,13 +30,8 @@ public class GatoService implements IGatoService {
 
     @Override
     public Gato altaGato(Gato gato) {
-        if(!this.voluService.existeVol(gato.getVoluntario().getId())){
-            throw new NonExistingException(
-                    String.format("El voluntario con email %d no existe"
-                            ,gato.getVoluntario().getEmail()
-                    )
-            );
-        }
+        Voluntario volGato=this.voluService.buscarVolByEmail(gato.getVoluntario().getEmail());
+        gato.setVoluntario(volGato);
         this.addGatoVol(gato);
         //queda tambien avisar al padrino y transito
         return this.gatoRepo.save(gato);
@@ -52,12 +47,10 @@ public class GatoService implements IGatoService {
     }
 
     private void addGatoVol(Gato gato){
-        Voluntario vol=gato.getVoluntario();
-        Voluntario volBD=this.voluService.verTodos().stream()
-                .filter(v->v.getId()==vol.getId()).findAny().get();
-        List<Gato> gatitosVol=volBD.getListaGatos();
+        Voluntario volGato=this.voluService.buscarVolByEmail(gato.getVoluntario().getEmail());
+        List<Gato> gatitosVol=volGato.getListaGatos();
         gatitosVol.add(gato);
-        volBD.setListaGatos(gatitosVol);
+        volGato.setListaGatos(gatitosVol);
     }
 
     //Para cuando actualizas el voluntario del gato
