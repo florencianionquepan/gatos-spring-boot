@@ -1,15 +1,12 @@
 package com.example.gatosspringboot.dto;
 
 import com.example.gatosspringboot.model.Solicitud;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,6 +32,7 @@ public class PersonaDTO {
     private String tel;
     @NotNull
     @NotEmpty
+    @Email
     private String email;
     @NotNull
     @NotEmpty

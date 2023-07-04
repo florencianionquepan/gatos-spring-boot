@@ -10,6 +10,6 @@ import java.util.List;
 @Mapper(componentModel="spring")
 public interface IPersonaMapper {
     Persona mapToPersona(PersonaDTO dto);
-    PersonaDTO mapToEntity(Persona entity);
+    PersonaDTO mapToDto(Persona entity);
     List<Persona> mapToListDto(List<Persona> entities);
 }
