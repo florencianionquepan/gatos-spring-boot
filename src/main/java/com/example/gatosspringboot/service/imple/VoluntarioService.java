@@ -73,6 +73,18 @@ public class VoluntarioService implements IVoluntarioService {
         return this.voluRepo.existsById(id);
     }
 
+    @Override
+    public Voluntario buscarVolByEmail(String email) {
+        Optional<Voluntario> oVolu=this.voluRepo.findByEmail(email);
+        if(oVolu.isEmpty()){
+            throw new NonExistingException(
+                    String.format("El voluntario con email %d no existe",
+                            email)
+            );
+        }
+        return oVolu.get();
+    }
+
     private boolean existeDni(String dni){
         boolean existe=false;
         Optional<Voluntario> oVolu=this.voluRepo.findByDni(dni);
