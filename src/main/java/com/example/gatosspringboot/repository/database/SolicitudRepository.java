@@ -13,6 +13,9 @@ public interface SolicitudRepository extends CrudRepository<Solicitud,Long> {
     @Query("SELECT s FROM Solicitud s JOIN s.estados e WHERE e.estado = ?1")
     List<Solicitud> findByEstado(EstadoNombre nombre);
 
+    @Query("SELECT s FROM Solicitud s WHERE s.solicitante.dni = ?1")
+    List<Solicitud> findBySolicitante(String dni);
+
     @Query("SELECT s FROM Solicitud s WHERE s.gato.id = ?1")
     List<Solicitud> findByGato(Long id);
 
