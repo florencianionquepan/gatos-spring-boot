@@ -1,7 +1,16 @@
 package com.example.gatosspringboot.repository.database;
 
+import com.example.gatosspringboot.model.EstadoNombre;
 import com.example.gatosspringboot.model.Solicitud;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+@Repository
 public interface SolicitudRepository extends CrudRepository<Solicitud,Long> {
+
+    @Query("SELECT s FROM Solicitud s JOIN s.estados e WHERE e.estado = ?1")
+    List<Solicitud> findByEstado(EstadoNombre nombre);
+
 }
