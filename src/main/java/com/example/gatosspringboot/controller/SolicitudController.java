@@ -65,4 +65,11 @@ public class SolicitudController {
         return this.successResponse(dtos);
     }
 
+    @GetMapping("/gato/{id}")
+    private ResponseEntity<?> listarByGato(@PathVariable Long id){
+        List<Solicitud> solicitudes=this.service.verByGato(id);
+        List<SolicitudDTO> dtos=this.mapper.mapListToDto(solicitudes);
+        return this.successResponse(dtos);
+    }
+
 }
