@@ -2,6 +2,7 @@ package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.SolicitudDTO;
 import com.example.gatosspringboot.model.Solicitud;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,6 +31,9 @@ public class SolicitudMapper implements ISolicitudMapper{
     @Override
     public SolicitudDTO mapToDto(Solicitud entity) {
         SolicitudDTO dto=new SolicitudDTO();
+        dto.setId(entity.getId());
+        dto.setFechaSolicitud(entity.getFechaSolicitud());
+        dto.setEstados(entity.getEstados());
         dto.setSolicitante(this.persoMap.mapToDto(entity.getSolicitante()));
         dto.setGato(this.gatoMap.mapToDto(entity.getGato()));
         return dto;
