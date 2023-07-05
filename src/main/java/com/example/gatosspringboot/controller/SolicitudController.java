@@ -72,4 +72,11 @@ public class SolicitudController {
         return this.successResponse(dtos);
     }
 
+    @GetMapping("/solicitante/{dni}")
+    private ResponseEntity<?> listarBySoli(@PathVariable String dni){
+        List<Solicitud> solicitudes=this.service.verBySolicitante(dni);
+        List<SolicitudDTO> dtos=this.mapper.mapListToDto(solicitudes);
+        return this.successResponse(dtos);
+    }
+
 }
