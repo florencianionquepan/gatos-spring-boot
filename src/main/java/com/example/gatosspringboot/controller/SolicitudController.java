@@ -4,6 +4,7 @@ import com.example.gatosspringboot.dto.SolicitudDTO;
 import com.example.gatosspringboot.dto.mapper.ISolicitudMapper;
 import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.service.interfaces.ISolicitudService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +49,13 @@ public class SolicitudController {
         Solicitud creada=this.service.altaSolicitud(nueva);
         SolicitudDTO dtoCreado=this.mapper.mapToDto(creada);
         return ResponseEntity.status(HttpStatus.CREATED).body(dtoCreado);
+    }
+
+    @GetMapping
+    private ResponseEntity<?> listar(){
+        List<Solicitud> solicitudes=this.service.verSolicitudes();
+        List<SolicitudDTO> dtos=this.mapper.mapListToDto(solicitudes);
+        return this.successResponse(dtos);
     }
 
 }
