@@ -13,10 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SolicitudService implements ISolicitudService {
@@ -68,6 +66,14 @@ public class SolicitudService implements ISolicitudService {
     @Override
     public List<Solicitud> verRangoFechas(LocalDate desde, LocalDate hasta) {
         return this.repo.findBetweenDates(desde,hasta);
+    }
+
+    @Override
+    public List<Solicitud> verByGatoPendientes(Long idGato) {
+        return this.repo.findByGato(idGato).stream()
+                .filter(s->s.getEstados().stream()
+                        .anyMatch(e->e.getEstado().equals("PENDIENTE")))
+                .collect(Collectors.toList());
     }
 
     @Override
