@@ -4,6 +4,8 @@ import com.example.gatosspringboot.dto.AuthRequestDTO;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.service.interfaces.IJwtService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,7 @@ public class AuthController {
 
     private final IJwtService jwtService;
     private final AuthenticationManager authManager;
+    private Logger logger= LoggerFactory.getLogger(AuthController.class);
 
     public AuthController(IJwtService jwtService,
                           AuthenticationManager authManager) {
@@ -27,10 +30,11 @@ public class AuthController {
 
     @PostMapping
     public String authenticateAndGetToken(@RequestBody @Valid AuthRequestDTO authRequest){
-        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getMail(), authRequest.getPassword()));
-        if(authentication.isAuthenticated()){
+        try{
+            Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getMail(), authRequest.getPassword()));
+            //logger.info("a ver: "+authentication);
             return jwtService.generateToken(authRequest.getMail());
-        }else{
+        }catch (Exception e){
             throw new NonExistingException("Credenciales invalidas");
         }
     }
