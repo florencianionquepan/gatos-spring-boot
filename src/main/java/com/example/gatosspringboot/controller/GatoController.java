@@ -44,7 +44,8 @@ public class GatoController {
 
     @GetMapping
     public ResponseEntity<?> verTodos(){
-        return this.successResponse(this.gatoSer.verTodos());
+        List<Gato> gatos=this.gatoSer.verTodos();
+        return this.successResponse(this.mapper.mapListToDto(gatos));
     }
 
     @PostMapping
