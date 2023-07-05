@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.service.imple;
 
+import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.SolicitudRepository;
@@ -43,6 +44,8 @@ public class SolicitudService implements ISolicitudService {
 
     @Override
     public Solicitud altaSolicitud(Solicitud solicitud) {
+        //chequear primero que no haya hecho ya una solicitud por el mismo gato
+        this.solicitaMismoGato(solicitud);
         Estado pendiente=estadoService.crearPendiente();
         List<Estado> estados = new ArrayList<>();
         estados.add(pendiente);
@@ -54,6 +57,22 @@ public class SolicitudService implements ISolicitudService {
         this.persoService.addSolicitudPersona(solicitud);
         this.gatoService.addSolicitudGato(solicitud);
         return this.repo.save(solicitud);
+    }
+
+    private void solicitaMismoGato(Solicitud solicitud){
+        String dniSolicita=solicitud.getSolicitante().getDni();
+        boolean existeSolicitante=this.persoService.existeByDni(dniSolicita);
+        if(existeSolicitante){
+            Persona solicitante=this.persoService.findByDni(dniSolicita);
+            Long idGatoSolicitado=solicitud.getGato().getId();
+            List<Solicitud> solicitudesAnteriores=solicitante.getSolicitudes();
+            if(solicitudesAnteriores.stream()
+                    .anyMatch(soli -> soli.getGato().getId().equals(idGatoSolicitado))){
+                throw new ExistingException(
+                        String.format("Ya enviaste una solicitud por la adopcion de este gatito!")
+                );
+            };
+        }
     }
 
     @Override
