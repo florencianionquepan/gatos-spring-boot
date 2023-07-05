@@ -66,6 +66,11 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
+    public List<Solicitud> verRangoFechas(LocalDate desde, LocalDate hasta) {
+        return this.repo.findBetweenDates(desde,hasta);
+    }
+
+    @Override
     public Solicitud altaSolicitud(Solicitud solicitud) {
         //chequear primero que no haya hecho ya una solicitud por el mismo gato
         this.solicitaMismoGato(solicitud);
