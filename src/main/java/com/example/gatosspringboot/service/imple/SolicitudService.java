@@ -52,7 +52,6 @@ public class SolicitudService implements ISolicitudService {
         }
     }
 
-
     @Override
     public List<Solicitud> verByGato(Long idGato) {
         return this.repo.findByGato(idGato);
