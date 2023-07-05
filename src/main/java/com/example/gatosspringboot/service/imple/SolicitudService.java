@@ -54,6 +54,12 @@ public class SolicitudService implements ISolicitudService {
         }
     }
 
+
+    @Override
+    public List<Solicitud> verByGato(Long idGato) {
+        return this.repo.findByGato(idGato);
+    }
+
     @Override
     public Solicitud altaSolicitud(Solicitud solicitud) {
         //chequear primero que no haya hecho ya una solicitud por el mismo gato
