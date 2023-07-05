@@ -58,4 +58,11 @@ public class SolicitudController {
         return this.successResponse(dtos);
     }
 
+    @GetMapping("/estado/{estado}")
+    private ResponseEntity<?> listarByEstado(@PathVariable String estado){
+        List<Solicitud> solicitudes=this.service.verByEstado(estado);
+        List<SolicitudDTO> dtos=this.mapper.mapListToDto(solicitudes);
+        return this.successResponse(dtos);
+    }
+
 }
