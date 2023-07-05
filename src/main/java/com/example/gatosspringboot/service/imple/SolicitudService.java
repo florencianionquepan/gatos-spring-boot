@@ -43,6 +43,18 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
+    public List<Solicitud> verByEstado(String estado) {
+        EstadoNombre nombre=EstadoNombre.valueOf(estado.toUpperCase());
+        if (nombre==EstadoNombre.PENDIENTE ||
+                nombre==EstadoNombre.APROBADA ||
+                nombre==EstadoNombre.RECHAZADA) {
+            return this.repo.findByEstado(nombre);
+        } else {
+            throw new IllegalArgumentException("El estado proporcionado no es válido.");
+        }
+    }
+
+    @Override
     public Solicitud altaSolicitud(Solicitud solicitud) {
         //chequear primero que no haya hecho ya una solicitud por el mismo gato
         this.solicitaMismoGato(solicitud);
