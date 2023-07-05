@@ -25,18 +25,26 @@ public class ApiControllerAdvice {
         return new ExceptionDTO(HttpStatus.BAD_REQUEST.value(),"Validaciones",detalle);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NonExistingException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionDTO doesntExist(NonExistingException ex){
         return new ExceptionDTO(HttpStatus.BAD_REQUEST.value(), ex.getMessage(),null);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(ExistingException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionDTO doesntExist(ExistingException ex){
         return new ExceptionDTO(HttpStatus.BAD_REQUEST.value(), ex.getMessage(),null);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDTO handleIllegalArgumentException(IllegalArgumentException ex) {
+        String errorMessage = "El estado proporcionado no es válido.";
+        return new ExceptionDTO(HttpStatus.BAD_REQUEST.value(), errorMessage, null);
     }
 
 }
