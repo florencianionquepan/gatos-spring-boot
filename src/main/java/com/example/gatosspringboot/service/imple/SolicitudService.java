@@ -61,6 +61,11 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
+    public List<Solicitud> verBySolicitante(String dni) {
+        return this.repo.findBySolicitante(dni);
+    }
+
+    @Override
     public Solicitud altaSolicitud(Solicitud solicitud) {
         //chequear primero que no haya hecho ya una solicitud por el mismo gato
         this.solicitaMismoGato(solicitud);
