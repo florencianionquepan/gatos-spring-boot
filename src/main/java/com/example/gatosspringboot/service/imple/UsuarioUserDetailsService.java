@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 //Bueca un usuario segun email y lo convierte en UserDetails
+@Component
 public class UsuarioUserDetailsService implements UserDetailsService {
 
     @Autowired
