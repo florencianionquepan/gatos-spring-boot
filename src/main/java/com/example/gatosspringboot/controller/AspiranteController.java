@@ -1,13 +1,13 @@
 package com.example.gatosspringboot.controller;
 
 import com.example.gatosspringboot.dto.AspiranteDTO;
+import com.example.gatosspringboot.dto.mapper.IAspiranteMapper;
+import com.example.gatosspringboot.model.Aspirante;
 import com.example.gatosspringboot.service.interfaces.IAspiranteService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +18,13 @@ import java.util.Map;
 public class AspiranteController {
 
     private final IAspiranteService service;
+    private final IAspiranteMapper mapper;
     public Map<String,Object> mensajeBody= new HashMap<>();
 
-    public AspiranteController(IAspiranteService service) {
+    public AspiranteController(IAspiranteService service,
+                               IAspiranteMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     private ResponseEntity<?> successResponse(List<?> lista){
@@ -40,6 +43,14 @@ public class AspiranteController {
 
     @PostMapping
     public ResponseEntity<?> nuevo(@RequestBody @Valid AspiranteDTO dto){
-        return null;
+        Aspirante creado=this.service.altaAspirante(this.mapper.mapToEntity(dto));
+        AspiranteDTO dtoCreado=this.mapper.mapToDto(creado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtoCreado);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> verTodas(){
+        List<AspiranteDTO> dtos=this.mapper.mapToListDto(this.service.listarTodos());
+        return successResponse(dtos);
     }
 }
