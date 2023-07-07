@@ -46,7 +46,7 @@ public class AspiranteService implements IAspiranteService {
 
     @Override
     public List<Aspirante> listarTodos() {
-        return null;
+        return (List<Aspirante>) this.repo.findAll();
     }
 
     @Override
