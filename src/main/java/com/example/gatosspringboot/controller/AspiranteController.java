@@ -55,10 +55,11 @@ public class AspiranteController {
         List<AspiranteDTO> dtos=this.mapper.mapToListDto(this.service.listarTodos());
         return successResponse(dtos);
     }
+
     @PutMapping("/{id}/estados/aceptada")
     public ResponseEntity<?> aceptarAspirante(@PathVariable Long id,
                                               @Validated(PutValidationGroup.class) @RequestBody AspiranteDTO dto){
-        Aspirante aceptado=this.service.aceptarAspirante(this.mapper.mapToEntity(dto));
+        Aspirante aceptado=this.service.aceptarAspirante(this.mapper.mapToEntity(dto),id);
         AspiranteDTO dtoAceptado=this.mapper.mapToDto(aceptado);
         return successResponse(dtoAceptado);
     }
@@ -66,7 +67,7 @@ public class AspiranteController {
     @PutMapping("/{id}/estados/rechazada")
     public ResponseEntity<?> rechazarAspirante(@PathVariable Long id,
                                               @Validated(PutValidationGroup.class) @RequestBody AspiranteDTO dto){
-        Aspirante rechazado=this.service.rechazarAspirante(this.mapper.mapToEntity(dto));
+        Aspirante rechazado=this.service.rechazarAspirante(this.mapper.mapToEntity(dto),id);
         AspiranteDTO dtoRechazado=this.mapper.mapToDto(rechazado);
         return successResponse(rechazado);
     }

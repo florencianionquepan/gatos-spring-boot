@@ -34,13 +34,13 @@ public class AspiranteService implements IAspiranteService {
     @Override
     //aca debo traer el socio que lo acepto
     //se crea el voluntario/transito
-    public Aspirante aceptarAspirante(Aspirante aspirante) {
+    public Aspirante aceptarAspirante(Aspirante aspirante, Long id) {
         return null;
     }
 
     @Override
     //aca debo traer el socio que lo rechazo
-    public Aspirante rechazarAspirante(Aspirante aspirante) {
+    public Aspirante rechazarAspirante(Aspirante aspirante, Long id) {
         return null;
     }
 
