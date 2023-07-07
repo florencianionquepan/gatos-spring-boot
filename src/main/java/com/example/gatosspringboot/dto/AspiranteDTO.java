@@ -19,6 +19,7 @@ import java.util.List;
 public class AspiranteDTO extends PersonaDTO{
     @FieldTipoVoluntariado
     @NotNull
+    //VOLUNTARIO, TRANSITO, PADRINO
     private List<TipoVoluntariado> tiposVoluntariado;
 
     @NotNull(groups = PutValidationGroup.class)
