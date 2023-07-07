@@ -7,7 +7,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.List;
 
-public class TipoVoluntariadoValidator implements ConstraintValidator<FieldTipoVoluntariado, TipoVoluntariado> {
+public class TipoVoluntariadoValidator implements ConstraintValidator<FieldTipoVoluntariado, List<TipoVoluntariado>> {
 
     @Override
     public void initialize(FieldTipoVoluntariado constraintAnnotation) {
@@ -15,8 +15,13 @@ public class TipoVoluntariadoValidator implements ConstraintValidator<FieldTipoV
     }
 
     @Override
-    public boolean isValid(TipoVoluntariado tipoVoluntariado, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(List<TipoVoluntariado> tipoVoluntariados, ConstraintValidatorContext constraintValidatorContext) {
         List<TipoVoluntariado> valoresPosibles = Arrays.asList(TipoVoluntariado.values());
-        return valoresPosibles.contains(tipoVoluntariado);
+        for (TipoVoluntariado tipoVoluntariado : tipoVoluntariados) {
+            if (!valoresPosibles.contains(tipoVoluntariado)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
