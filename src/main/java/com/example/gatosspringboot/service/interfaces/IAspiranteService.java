@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface IAspiranteService {
     Aspirante altaAspirante(Aspirante aspirante);
-    Aspirante aceptarAspirante(Aspirante aspirante);
-    Aspirante rechazarAspirante(Aspirante aspirante);
+    Aspirante aceptarAspirante(Aspirante aspirante, Long id);
+    Aspirante rechazarAspirante(Aspirante aspirante, Long id);
     List<Aspirante> listarTodos();
     List<Aspirante> listarByEstado(Estado estado);
     List<Aspirante> listarBySocio(Socio socio);

@@ -1,27 +1,39 @@
 package com.example.gatosspringboot.service.imple;
 
-import com.example.gatosspringboot.model.Aspirante;
-import com.example.gatosspringboot.model.Estado;
-import com.example.gatosspringboot.model.Socio;
+import com.example.gatosspringboot.dto.mapper.IAspiranteVoluntarioMapper;
+import com.example.gatosspringboot.exception.NonExistingException;
+import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.AspiranteRepository;
 import com.example.gatosspringboot.service.interfaces.IAspiranteService;
 import com.example.gatosspringboot.service.interfaces.IEstadoService;
+import com.example.gatosspringboot.service.interfaces.ISocioService;
+import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AspiranteService implements IAspiranteService {
 
     private final AspiranteRepository repo;
     private final IEstadoService estadoService;
+    private final ISocioService socioSer;
+    private final IAspiranteVoluntarioMapper aspiVoluMap;
+    private final IVoluntarioService voluService;
 
     public AspiranteService(AspiranteRepository repo,
-                            IEstadoService estadoService) {
+                            IEstadoService estadoService,
+                            ISocioService socioSer,
+                            IAspiranteVoluntarioMapper aspiVoluMap,
+                            IVoluntarioService voluService) {
         this.repo = repo;
         this.estadoService = estadoService;
+        this.socioSer = socioSer;
+        this.aspiVoluMap = aspiVoluMap;
+        this.voluService = voluService;
     }
 
     @Override
@@ -35,13 +47,45 @@ public class AspiranteService implements IAspiranteService {
     //aca debo traer el socio que lo acepto
     //se crea el voluntario/transito
     public Aspirante aceptarAspirante(Aspirante aspirante, Long id) {
-        return null;
+        Aspirante aspi = this.buscarById(id);
+        //agregar estado aceptado
+        List<Estado> estados = aspi.getEstados();
+        Estado aceptado = estadoService.crearAprobado();
+        estados.add(aceptado);
+        //crearse como voluntario, padrino o transito
+        this.crearTipoVoluntariado(aspi);
+        //busco el socio q lo acepto por el email asi se manda segun la sesion
+        String emailSocio=aspi.getSocio().getEmail();
+        Socio socio=this.socioSer.buscarByEmail(emailSocio);
+        aspi.setSocio(socio);
+        return aspi;
     }
 
     @Override
     //aca debo traer el socio que lo rechazo
     public Aspirante rechazarAspirante(Aspirante aspirante, Long id) {
         return null;
+    }
+
+    private Aspirante buscarById(Long id){
+        Optional<Aspirante> oAspi=this.repo.findById(id);
+        if(oAspi.isEmpty()){
+            throw new NonExistingException(
+                    String.format("El aspirante con id %d no existe",id));
+        }
+        return oAspi.get();
+    }
+
+    //falta el padrino
+    private void crearTipoVoluntariado(Aspirante aspirante){
+        List<TipoVoluntariado> voluntariados=aspirante.getTiposVoluntariado();
+        if(voluntariados.contains("VOLUNTARIO")){
+            Voluntario volu=this.aspiVoluMap.mapAspiranteToVoluntario(aspirante);
+            this.voluService.altaVolunt(volu);
+        }
+        if(voluntariados.contains("TRANSITO")){
+            //darlo de alta como transito,
+        }
     }
 
     @Override
