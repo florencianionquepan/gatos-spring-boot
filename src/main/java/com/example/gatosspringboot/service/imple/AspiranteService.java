@@ -8,6 +8,9 @@ import com.example.gatosspringboot.service.interfaces.IAspiranteService;
 import com.example.gatosspringboot.service.interfaces.IEstadoService;
 import com.example.gatosspringboot.service.interfaces.ISocioService;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ public class AspiranteService implements IAspiranteService {
     private final ISocioService socioSer;
     private final IAspiranteVoluntarioMapper aspiVoluMap;
     private final IVoluntarioService voluService;
+    private Logger logger= LoggerFactory.getLogger(AspiranteService.class);
 
     public AspiranteService(AspiranteRepository repo,
                             IEstadoService estadoService,
@@ -44,6 +48,7 @@ public class AspiranteService implements IAspiranteService {
     }
 
     @Override
+    @Transactional
     //aca debo traer el socio que lo acepto
     //se crea el voluntario/transito
     public Aspirante aceptarAspirante(Aspirante aspirante, Long id) {
@@ -55,10 +60,10 @@ public class AspiranteService implements IAspiranteService {
         //crearse como voluntario, padrino o transito
         this.crearTipoVoluntariado(aspi);
         //busco el socio q lo acepto por el email asi se manda segun la sesion
-        String emailSocio=aspi.getSocio().getEmail();
+        String emailSocio=aspirante.getSocio().getEmail();
         Socio socio=this.socioSer.buscarByEmail(emailSocio);
         aspi.setSocio(socio);
-        return aspi;
+        return this.repo.save(aspi);
     }
 
     @Override
@@ -79,11 +84,12 @@ public class AspiranteService implements IAspiranteService {
     //falta el padrino
     private void crearTipoVoluntariado(Aspirante aspirante){
         List<TipoVoluntariado> voluntariados=aspirante.getTiposVoluntariado();
-        if(voluntariados.contains("VOLUNTARIO")){
+        if(voluntariados.contains(TipoVoluntariado.VOLUNTARIO)){
             Voluntario volu=this.aspiVoluMap.mapAspiranteToVoluntario(aspirante);
+            //logger.info("volu de aspirante service: "+volu);
             this.voluService.altaVolunt(volu);
         }
-        if(voluntariados.contains("TRANSITO")){
+        if(voluntariados.contains(TipoVoluntariado.TRANSITO)){
             //darlo de alta como transito,
         }
     }
