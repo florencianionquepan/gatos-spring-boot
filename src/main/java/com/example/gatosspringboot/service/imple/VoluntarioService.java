@@ -1,18 +1,21 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
+import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.model.Voluntario;
+import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.VoluntarioRepository;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +24,15 @@ public class VoluntarioService implements IVoluntarioService {
 
     private final VoluntarioRepository voluRepo;
     private final IUsuarioService serUser;
+    private final PersonaRepository persoRepo;
     private Logger logger= LoggerFactory.getLogger(VoluntarioService.class);
 
     public VoluntarioService(VoluntarioRepository voluRepo,
-                             IUsuarioService serUser) {
+                             IUsuarioService serUser,
+                             PersonaRepository persoRepo) {
         this.voluRepo = voluRepo;
         this.serUser = serUser;
+        this.persoRepo = persoRepo;
     }
 
     @Override
@@ -37,17 +43,16 @@ public class VoluntarioService implements IVoluntarioService {
     @Override
     @Transactional
     public Voluntario altaVolunt(Voluntario vol) {
-        if(this.existeDni(vol.getDni())){
-            throw new RuntimeException(
-                    String.format("El dni %d ya existe"
-                    ,vol.getDni())
-            );
-        }
         Usuario creado=this.serUser.altaUsuarioVoluntario(vol.getEmail());
         //logger.info("Usuario creado: "+creado);
         //logger.info("Voluntario: "+vol);
         vol.setUsuario(creado);
-        return this.voluRepo.save(vol);
+        Optional<Persona> oPersona=this.persoRepo.findById(vol.getId());
+        if(oPersona.isEmpty()){
+            return this.voluRepo.save(vol);
+        }
+        this.voluRepo.saveVoluntario(vol.getId(),creado.getId());
+        return vol;
     }
 
     @Override
