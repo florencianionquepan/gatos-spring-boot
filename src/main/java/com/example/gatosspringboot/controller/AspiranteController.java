@@ -2,10 +2,10 @@ package com.example.gatosspringboot.controller;
 
 import com.example.gatosspringboot.dto.AspiranteDTO;
 import com.example.gatosspringboot.dto.mapper.IAspiranteMapper;
+import com.example.gatosspringboot.dto.validator.PostValidationGroup;
 import com.example.gatosspringboot.dto.validator.PutValidationGroup;
 import com.example.gatosspringboot.model.Aspirante;
 import com.example.gatosspringboot.service.interfaces.IAspiranteService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -44,7 +44,7 @@ public class AspiranteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> nuevo(@RequestBody @Valid AspiranteDTO dto){
+    public ResponseEntity<?> nuevo(@RequestBody @Validated(PostValidationGroup.class) AspiranteDTO dto){
         Aspirante creado=this.service.altaAspirante(this.mapper.mapToEntity(dto));
         AspiranteDTO dtoCreado=this.mapper.mapToDto(creado);
         return ResponseEntity.status(HttpStatus.CREATED).body(dtoCreado);

@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.dto;
 
 import com.example.gatosspringboot.dto.validator.FieldTipoVoluntariado;
+import com.example.gatosspringboot.dto.validator.PostValidationGroup;
 import com.example.gatosspringboot.dto.validator.PutValidationGroup;
 import com.example.gatosspringboot.model.Socio;
 import com.example.gatosspringboot.model.TipoVoluntariado;
@@ -18,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AspiranteDTO extends PersonaDTO{
     @FieldTipoVoluntariado
-    @NotNull
+    @NotNull(groups = PostValidationGroup.class)
     //VOLUNTARIO, TRANSITO, PADRINO
     private List<TipoVoluntariado> tiposVoluntariado;
 
