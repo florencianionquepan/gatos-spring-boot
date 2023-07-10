@@ -4,6 +4,7 @@ import com.example.gatosspringboot.dto.mapper.IAspiranteVoluntarioMapper;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.AspiranteRepository;
+import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.service.interfaces.IAspiranteService;
 import com.example.gatosspringboot.service.interfaces.IEstadoService;
 import com.example.gatosspringboot.service.interfaces.ISocioService;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class AspiranteService implements IAspiranteService {
@@ -26,25 +28,44 @@ public class AspiranteService implements IAspiranteService {
     private final ISocioService socioSer;
     private final IAspiranteVoluntarioMapper aspiVoluMap;
     private final IVoluntarioService voluService;
+    private final PersonaRepository persoRepo;
     private Logger logger= LoggerFactory.getLogger(AspiranteService.class);
+    private ConcurrentHashMap<String, Boolean> tokenCache = new ConcurrentHashMap<>();
 
     public AspiranteService(AspiranteRepository repo,
                             IEstadoService estadoService,
                             ISocioService socioSer,
                             IAspiranteVoluntarioMapper aspiVoluMap,
-                            IVoluntarioService voluService) {
+                            IVoluntarioService voluService,
+                            PersonaRepository persoRepo) {
         this.repo = repo;
         this.estadoService = estadoService;
         this.socioSer = socioSer;
         this.aspiVoluMap = aspiVoluMap;
         this.voluService = voluService;
+        this.persoRepo = persoRepo;
     }
 
     @Override
+    //este metodo solo sirve para personas que no existen en la bd
     public Aspirante altaAspirante(Aspirante aspirante) {
         Estado pendiente=this.estadoService.crearPendiente();
         aspirante.setEstados(new ArrayList<>(Arrays.asList(pendiente)));
+        this.verificarExistencia(aspirante);
         return this.repo.save(aspirante);
+    }
+
+    private void verificarExistencia(Aspirante aspirante){
+        Optional<Persona> oPersoDni=this.persoRepo.findByDni(aspirante.getDni());
+        Optional<Persona> oPersoEmail=this.persoRepo.findByEmail(aspirante.getEmail());
+        if(oPersoDni.isPresent()){
+            throw new NonExistingException(
+                    String.format("El aspirante con dni %s ya existe",aspirante.getDni()));
+        }
+        if(oPersoEmail.isPresent()){
+            throw new NonExistingException(
+                    String.format("El aspirante con email %s ya existe",aspirante.getEmail()));
+        }
     }
 
     @Override
