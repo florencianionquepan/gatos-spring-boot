@@ -2,6 +2,7 @@ package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.AspiranteDTO;
 import com.example.gatosspringboot.model.Aspirante;
+import com.example.gatosspringboot.model.TipoVoluntariado;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,9 +24,15 @@ public class AspiranteMapper implements IAspiranteMapper{
         ent.setDire(dto.getDire());
         ent.setLocalidad(dto.getLocalidad());
         ent.setSolicitudes(dto.getSolicitudes());
-        ent.setTiposVoluntariado(dto.getTiposVoluntariado());
+        ent.setTiposVoluntariado(this.mapToEnums(dto.getTiposVoluntariado()));
         ent.setSocio(dto.getSocio());
         return ent;
+    }
+
+    private List<TipoVoluntariado> mapToEnums(List<String> tiposVoluntariados){
+        return tiposVoluntariados.stream()
+                .map(TipoVoluntariado::valueOf)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -41,9 +48,15 @@ public class AspiranteMapper implements IAspiranteMapper{
         dto.setDire(entity.getDire());
         dto.setLocalidad(entity.getLocalidad());
         dto.setSolicitudes(entity.getSolicitudes());
-        dto.setTiposVoluntariado(entity.getTiposVoluntariado());
+        dto.setTiposVoluntariado(this.mapToStrings(entity.getTiposVoluntariado()));
         dto.setSocio(entity.getSocio());
         return dto;
+    }
+
+    private List<String> mapToStrings(List<TipoVoluntariado> enums){
+        return enums.stream()
+                .map(Enum::name)
+                .collect(Collectors.toList());
     }
 
     @Override
