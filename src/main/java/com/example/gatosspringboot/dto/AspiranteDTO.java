@@ -1,8 +1,8 @@
 package com.example.gatosspringboot.dto;
 
-import com.example.gatosspringboot.dto.validator.FieldTipoVoluntariado;
 import com.example.gatosspringboot.dto.validator.PostValidationGroup;
 import com.example.gatosspringboot.dto.validator.PutValidationGroup;
+import com.example.gatosspringboot.dto.validator.ValueOfEnum;
 import com.example.gatosspringboot.model.Socio;
 import com.example.gatosspringboot.model.TipoVoluntariado;
 import jakarta.validation.constraints.NotNull;
@@ -18,10 +18,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AspiranteDTO extends PersonaDTO{
-    @FieldTipoVoluntariado
-    @NotNull(groups = PostValidationGroup.class)
+
+    @ValueOfEnum(enumClass=TipoVoluntariado.class, groups = PostValidationGroup.class,
+            message = "Debe ser algun valor de los siguientes: 'VOLUNTARIO', 'TRANSITO' o 'PADRINO'")
     //VOLUNTARIO, TRANSITO, PADRINO
-    private List<TipoVoluntariado> tiposVoluntariado;
+    private List<String> tiposVoluntariado;
 
     @NotNull(groups = PutValidationGroup.class)
     private Socio socio;
