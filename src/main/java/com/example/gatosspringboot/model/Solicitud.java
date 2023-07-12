@@ -29,7 +29,7 @@ public class Solicitud implements Serializable {
     @ManyToOne(cascade=CascadeType.MERGE)
     @JoinColumn(name="solicitante_dni")
     @NotNull
-    @JsonIgnoreProperties(value="solicitudes")
+    @JsonIgnoreProperties(value="solicitudesAdopcion")
     private Persona solicitante;
 
     @ManyToOne(cascade=CascadeType.MERGE)
@@ -40,7 +40,7 @@ public class Solicitud implements Serializable {
 
     @ManyToMany(cascade=CascadeType.MERGE)
     @JoinTable(
-            name="solicitud_estado",
+            name="solicitud_adopcion_estado",
             joinColumns = @JoinColumn(name="solicitud_id"),
             inverseJoinColumns = @JoinColumn(name="estado_id")
     )

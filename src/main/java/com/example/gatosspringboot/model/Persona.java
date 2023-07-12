@@ -38,9 +38,13 @@ public class Persona implements Serializable {
     private String dire;
     @Column(nullable = false, length = 30)
     private String localidad;
-    @OneToMany(mappedBy = "solicitante", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "solicitante", cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value="solicitante")
-    private List<Solicitud> solicitudes;
+    private List<Solicitud> solicitudesAdopcion;
+
+    @OneToMany(mappedBy = "aspirante", cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties(value="aspirante")
+    private List<SolicitudVoluntariado> solicitudesVoluntariados;
 
     @Override
     public String toString() {

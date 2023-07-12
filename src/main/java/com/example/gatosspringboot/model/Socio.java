@@ -19,9 +19,9 @@ import java.util.List;
 @NoArgsConstructor
 public class Socio extends Persona implements Serializable {
 
-    @OneToMany
+    @OneToMany(mappedBy = "socio", cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value="socio")
-    private List<Aspirante> aspirantes;
+    private List<SolicitudVoluntariado> solicitudesVoluntariados;
 
     @OneToOne
     @JoinColumn(name="us_id")

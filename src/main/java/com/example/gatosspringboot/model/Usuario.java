@@ -18,7 +18,7 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
+    @Column(nullable = false, unique = true)
     private String mail;
     @NotNull
     private String contrasenia;
