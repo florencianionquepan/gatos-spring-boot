@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.controller;
 
 import com.example.gatosspringboot.dto.mapper.IPersonaMapper;
+import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,12 @@ public class PersonaController {
             return ResponseEntity.notFound().build();
         }
         return this.successResponse("Se envió a su email un token para validar su identidad");
+    }
+
+    @PostMapping("/token")
+    public ResponseEntity<?> validarToken(@RequestBody String token, String dni){
+        Persona datosPersona=this.service.datosPersona(String token, dni);
+        return this.successResponse(this.mapper.mapToDto(datosPersona));
     }
 
 }
