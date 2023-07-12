@@ -4,6 +4,7 @@ import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
+import com.example.gatosspringboot.service.interfaces.IEmailService;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PersonaService implements IPersonaService {
 
     private final PersonaRepository repo;
+    private final IEmailService emailService;
     private ConcurrentHashMap<String, Boolean> tokenCache = new ConcurrentHashMap<>();
 
-    public PersonaService(PersonaRepository repo) {
+    public PersonaService(PersonaRepository repo,
+                          IEmailService emailService) {
         this.repo = repo;
+        this.emailService = emailService;
     }
 
     @Override
@@ -56,4 +60,19 @@ public class PersonaService implements IPersonaService {
         }
     }
 
+    @Override
+    public boolean personaExistente(String dni) {
+        Optional<Persona> oPerso=this.repo.findByDni(dni);
+        if(oPerso.isPresent()){
+            //envio token a su email personal
+            String token=this.generarToken();
+            Persona persona=oPerso.get();
+            String text="Hola "+persona.getNombre()+"!. \\nTe enviamos el codigo que debes ingresar " +
+                    "para validar tu identidad y poder rellenar los campos en nuestro formulario."+
+                    "\\nSi no has intentado enviar una solicitud para formar parte de Gatshan, por favor ignora este mensaje" +
+                    "\\n Código: "+token;
+            this.emailService.sendMessage(persona.getEmail(), "Valida tu identidad",text);
+        }
+        return oPerso.isPresent();
+    }
 }
