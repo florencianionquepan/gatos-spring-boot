@@ -7,15 +7,14 @@ import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class PersonaService implements IPersonaService {
 
     private final PersonaRepository repo;
+    private ConcurrentHashMap<String, Boolean> tokenCache = new ConcurrentHashMap<>();
 
     public PersonaService(PersonaRepository repo) {
         this.repo = repo;
@@ -44,15 +43,15 @@ public class PersonaService implements IPersonaService {
 
     @Override
     public void addSolicitudPersona(Solicitud solicitud) {
-        Persona solicitante=solicitud.getSolicitante();
+        Persona solicitante= solicitud.getSolicitante();
         if(this.existeByDni(solicitante.getDni())){
             Persona perso=this.findByDni(solicitante.getDni());
-            List<Solicitud> solicitudes=perso.getSolicitudes();
+            List<Solicitud> solicitudes=perso.getSolicitudesAdopcion();
             solicitudes.add(solicitud);
-            perso.setSolicitudes(solicitudes);
+            perso.setSolicitudesAdopcion(solicitudes);
             solicitud.setSolicitante(perso);
         }else{
-            solicitante.setSolicitudes(new ArrayList<>(Arrays.asList(solicitud)));
+            solicitante.setSolicitudesAdopcion(new ArrayList<>(Arrays.asList(solicitud)));
             this.repo.save(solicitante);
         }
     }

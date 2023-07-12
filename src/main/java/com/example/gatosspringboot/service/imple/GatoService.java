@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GatoService implements IGatoService {
@@ -92,7 +91,7 @@ public class GatoService implements IGatoService {
     @Override
     public void addSolicitudGato(Solicitud solicitud) {
         Gato gatoSolicitado=this.buscarPorId(solicitud.getGato().getId());
-        List<Solicitud> solicituds=gatoSolicitado.getListaSol();
+        List<Solicitud> solicituds =gatoSolicitado.getListaSol();
         solicituds.add(solicitud);
         gatoSolicitado.setListaSol(solicituds);
         //No es necesario guardar de nuevo la entidad gato ya que se guarda solicitud luego

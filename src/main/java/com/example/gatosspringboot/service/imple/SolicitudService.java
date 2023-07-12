@@ -48,7 +48,7 @@ public class SolicitudService implements ISolicitudService {
                 nombre==EstadoNombre.RECHAZADA) {
             return this.repo.findByEstado(nombre);
         } else {
-            throw new IllegalArgumentException("El estado proporcionado no es válido.");
+            throw new NonExistingException("El estado proporcionado no es válido.");
         }
     }
 
@@ -93,12 +93,12 @@ public class SolicitudService implements ISolicitudService {
     }
 
     private void solicitaMismoGato(Solicitud solicitud){
-        String dniSolicita=solicitud.getSolicitante().getDni();
+        String dniSolicita= solicitud.getSolicitante().getDni();
         boolean existeSolicitante=this.persoService.existeByDni(dniSolicita);
         if(existeSolicitante){
             Persona solicitante=this.persoService.findByDni(dniSolicita);
-            Long idGatoSolicitado=solicitud.getGato().getId();
-            List<Solicitud> solicitudesAnteriores=solicitante.getSolicitudes();
+            Long idGatoSolicitado= solicitud.getGato().getId();
+            List<Solicitud> solicitudesAnteriores=solicitante.getSolicitudesAdopcion();
             if(solicitudesAnteriores.stream()
                     .anyMatch(soli -> soli.getGato().getId().equals(idGatoSolicitado))){
                 throw new ExistingException(
@@ -111,7 +111,7 @@ public class SolicitudService implements ISolicitudService {
     @Override
     public Solicitud aceptarAdopcion(Solicitud solicitud, Long id) {
         this.existeSolicitud(id);
-        Gato gatoAdoptar=solicitud.getGato();
+        Gato gatoAdoptar= solicitud.getGato();
         //chequear que el gato no este adoptado. gatoService lo chequea
         Gato gatoAdoptado=gatoService.adoptarGato(gatoAdoptar.getId());
         Solicitud actualizada=this.addEstadoSolicitud(id);
