@@ -8,4 +8,5 @@ public interface IPersonaService {
     boolean existeByDni(String dni);
     void addSolicitudPersona(Solicitud solicitud);
     boolean personaExistente(String dni);
+    Persona datosPersona(String token, String dni);
 }

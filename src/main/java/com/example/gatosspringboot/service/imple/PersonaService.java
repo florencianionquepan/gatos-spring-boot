@@ -75,4 +75,25 @@ public class PersonaService implements IPersonaService {
         }
         return oPerso.isPresent();
     }
+
+    @Override
+    public Persona datosPersona(String token, String dni) {
+        if(!this.validarToken(token)){
+            throw new NonExistingException(
+                    "El código no coincide, Por favor ingresa tu dni nuevamente."
+            );
+        }else{
+            return this.findByDni(dni);
+        }
+    }
+
+    private String generarToken() {
+        String token = UUID.randomUUID().toString();
+        tokenCache.put(token, true);
+        return token;
+    }
+
+    private boolean validarToken(String token) {
+        return tokenCache.containsKey(token);
+    }
 }
