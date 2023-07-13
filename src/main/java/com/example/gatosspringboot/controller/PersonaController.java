@@ -3,6 +3,12 @@ package com.example.gatosspringboot.controller;
 import com.example.gatosspringboot.dto.mapper.IPersonaMapper;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +20,14 @@ import java.util.Map;
 public class PersonaController {
     private final IPersonaService service;
     private final IPersonaMapper mapper;
+    private final ObjectMapper objectMapper;
     public Map<String,Object> mensajeBody= new HashMap<>();
 
-    public PersonaController(IPersonaService service, IPersonaMapper mapper) {
+    public PersonaController(IPersonaService service, IPersonaMapper mapper,
+                             ObjectMapper objectMapper) {
         this.service = service;
         this.mapper = mapper;
+        this.objectMapper = new ObjectMapper();
     }
 
     private ResponseEntity<?> successResponse(Object data){
@@ -49,10 +58,19 @@ public class PersonaController {
         return this.successResponse("Se envió a su email un token para validar su identidad");
     }
 
-    @PostMapping("/token")
-    public ResponseEntity<?> validarToken(@RequestBody String token, String dni){
-        Persona datosPersona=this.service.datosPersona(String token, dni);
-        return this.successResponse(this.mapper.mapToDto(datosPersona));
+    @PostMapping("/dni/{dni}/token")
+    public ResponseEntity<?> validarToken(@PathVariable String dni, @RequestBody @NotEmpty String json) {
+        try{
+            JsonNode token=this.objectMapper.readTree(json);
+            if(!token.has("token")){
+                return this.notSuccessResponse("No existe un campo token",null);
+            }
+            String tokenValue=token.get("token").textValue();
+            Persona datosPersona=this.service.datosPersona(tokenValue, dni);
+            return this.successResponse(this.mapper.mapToDto(datosPersona));
+        }catch (JsonProcessingException e) {
+            return this.notSuccessResponse(e.getMessage(), null);
+        }
     }
 
 }
