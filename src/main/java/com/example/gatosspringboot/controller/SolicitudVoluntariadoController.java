@@ -1,5 +1,8 @@
 package com.example.gatosspringboot.controller;
 
+import com.example.gatosspringboot.dto.SolicitudVoluntariadoDTO;
+import com.example.gatosspringboot.dto.mapper.ISolicitudVoluntariadoMapper;
+import com.example.gatosspringboot.dto.validator.PostValidationGroup;
 import com.example.gatosspringboot.model.SolicitudVoluntariado;
 import com.example.gatosspringboot.service.interfaces.ISolicitudVoluntariadoService;
 import org.springframework.http.HttpStatus;
@@ -16,9 +19,12 @@ import java.util.Map;
 public class SolicitudVoluntariadoController {
 
     private final ISolicitudVoluntariadoService service;
+    private final ISolicitudVoluntariadoMapper mapper;
 
-    public SolicitudVoluntariadoController(ISolicitudVoluntariadoService service) {
+    public SolicitudVoluntariadoController(ISolicitudVoluntariadoService service,
+                                           ISolicitudVoluntariadoMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     public Map<String,Object> mensajeBody= new HashMap<>();
@@ -38,9 +44,10 @@ public class SolicitudVoluntariadoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> nueva(@RequestBody SolicitudVoluntariado solicitud){
-        SolicitudVoluntariado creada=this.service.nueva(solicitud);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+    public ResponseEntity<?> nueva(@RequestBody @Validated(PostValidationGroup.class)
+                                   SolicitudVoluntariadoDTO dto){
+        SolicitudVoluntariado creada=this.service.nueva(this.mapper.mapToEntity(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.mapper.mapToDto(creada));
     }
 
     @PutMapping("/{id}/estados/aceptada")
