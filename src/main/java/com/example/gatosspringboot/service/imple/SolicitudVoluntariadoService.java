@@ -31,7 +31,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         //aca puede actualizar su tel, dire, localidad
         if(oPerso.isPresent()){
             Persona perso=oPerso.get();
-            //tiene solicitudes de voluntariados?
+            //tiene solicitudes de voluntariados del mismo tipo?
             List<SolicitudVoluntariado> voluntariados=perso.getSolicitudesVoluntariados();
             Optional<SolicitudVoluntariado> solicitudExistente = voluntariados.stream()
                     .filter(v -> v.getTipoVoluntariado() == solicitud.getTipoVoluntariado())
@@ -45,10 +45,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         }
         //controlar que el email no sea existente
         this.mailExistente(solicitud.getAspirante());
-        Estado pendiente=this.estadoService.crearPendiente();
-        this.persoRepo.save(solicitud.getAspirante());
-        solicitud.setEstados(new ArrayList<>(Arrays.asList(pendiente));
-        return this.repo.save(solicitud);
+        return crearEstadoYSave(solicitud,solicitud.getAspirante());
     }
 
     private void mismaSolicitudExistente(SolicitudVoluntariado solicitudExistente){
@@ -88,13 +85,18 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
 
     private SolicitudVoluntariado nuevaSolicitudPersona(SolicitudVoluntariado solicitud, Persona perso){
         //crear estado pendiente, nueva solicitud,actualizar tel, dire, localidad.
-        Estado pendiente=this.estadoService.crearPendiente();
         perso.setTel(solicitud.getAspirante().getTel());
         perso.setDire(solicitud.getAspirante().getDire());
         perso.setLocalidad(solicitud.getAspirante().getLocalidad());
-        this.persoRepo.save(perso);
-        solicitud.setAspirante(perso);
-        solicitud.setEstados(new ArrayList<>(Arrays.asList(pendiente));
+        return crearEstadoYSave(solicitud,perso);
+    }
+
+    private SolicitudVoluntariado crearEstadoYSave(SolicitudVoluntariado solicitud,
+                                                     Persona perso){
+        Estado pendiente=this.estadoService.crearPendiente();
+        Persona per=this.persoRepo.save(perso);
+        solicitud.setAspirante(per);
+        solicitud.setEstados(new ArrayList<>(Arrays.asList(pendiente)));
         return this.repo.save(solicitud);
     }
 
