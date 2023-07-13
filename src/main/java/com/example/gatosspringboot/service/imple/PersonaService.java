@@ -6,6 +6,8 @@ import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,6 +19,7 @@ public class PersonaService implements IPersonaService {
     private final PersonaRepository repo;
     private final IEmailService emailService;
     private ConcurrentHashMap<String, Boolean> tokenCache = new ConcurrentHashMap<>();
+    private Logger logger= LoggerFactory.getLogger(PersonaService.class);
 
     public PersonaService(PersonaRepository repo,
                           IEmailService emailService) {
@@ -67,10 +70,10 @@ public class PersonaService implements IPersonaService {
             //envio token a su email personal
             String token=this.generarToken();
             Persona persona=oPerso.get();
-            String text="Hola "+persona.getNombre()+"!. \\nTe enviamos el codigo que debes ingresar " +
+            String text="Hola "+persona.getNombre()+"!. \nTe enviamos el codigo que debes ingresar " +
                     "para validar tu identidad y poder rellenar los campos en nuestro formulario."+
-                    "\\nSi no has intentado enviar una solicitud para formar parte de Gatshan, por favor ignora este mensaje" +
-                    "\\n Código: "+token;
+                    "\nSi no has intentado enviar una solicitud para formar parte de Gatshan, por favor ignora este mensaje" +
+                    "\n Código: "+token;
             this.emailService.sendMessage(persona.getEmail(), "Valida tu identidad",text);
         }
         return oPerso.isPresent();
@@ -90,6 +93,7 @@ public class PersonaService implements IPersonaService {
     private String generarToken() {
         String token = UUID.randomUUID().toString();
         tokenCache.put(token, true);
+        //logger.info("token cache= "+tokenCache);
         return token;
     }
 
