@@ -3,8 +3,12 @@ package com.example.gatosspringboot.controller;
 import com.example.gatosspringboot.dto.SolicitudVoluntariadoDTO;
 import com.example.gatosspringboot.dto.mapper.ISolicitudVoluntariadoMapper;
 import com.example.gatosspringboot.dto.validator.PostValidationGroup;
+import com.example.gatosspringboot.dto.validator.PutValidationGroup;
 import com.example.gatosspringboot.model.SolicitudVoluntariado;
+import com.example.gatosspringboot.service.imple.SolicitudVoluntariadoService;
 import com.example.gatosspringboot.service.interfaces.ISolicitudVoluntariadoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +24,7 @@ public class SolicitudVoluntariadoController {
 
     private final ISolicitudVoluntariadoService service;
     private final ISolicitudVoluntariadoMapper mapper;
+    private Logger logger= LoggerFactory.getLogger(SolicitudVoluntariadoController.class);
 
     public SolicitudVoluntariadoController(ISolicitudVoluntariadoService service,
                                            ISolicitudVoluntariadoMapper mapper) {
@@ -29,9 +34,9 @@ public class SolicitudVoluntariadoController {
 
     public Map<String,Object> mensajeBody= new HashMap<>();
 
-    private ResponseEntity<?> successResponse(List<?> lista){
+    private ResponseEntity<?> successResponse(Object data){
         mensajeBody.put("Success",Boolean.TRUE);
-        mensajeBody.put("data",lista);
+        mensajeBody.put("data",data);
         return ResponseEntity.ok(mensajeBody);
     }
 
@@ -56,8 +61,11 @@ public class SolicitudVoluntariadoController {
     }
 
     @PutMapping("/{id}/estados/rechazada")
-    public ResponseEntity<?> rechazarSolicitud(){
-        return null;
+    public ResponseEntity<?> rechazarSolicitud(@RequestBody @Validated(PutValidationGroup.class)
+                                               SolicitudVoluntariadoDTO dto, @PathVariable Long id){
+        String motivo= dto.getMotivo();
+        SolicitudVoluntariado rechazada=this.service.rechazar(this.mapper.mapToEntityForPut(dto),id,motivo);
+        return this.successResponse(this.mapper.mapToDto(rechazada));
     }
 
 }
