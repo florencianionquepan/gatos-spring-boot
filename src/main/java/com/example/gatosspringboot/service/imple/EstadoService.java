@@ -38,11 +38,12 @@ public class EstadoService implements IEstadoService {
     }
 
     @Override
-    public Estado crearRechazado() {
+    public Estado crearRechazado(String motivo) {
         Estado rechazado=new Estado();
         LocalDate fecha=LocalDate.now();
         rechazado.setFecha(fecha);
         rechazado.setEstado(EstadoNombre.RECHAZADA);
+        rechazado.setMotivo(motivo);
         return this.repo.save(rechazado);
     }
 
