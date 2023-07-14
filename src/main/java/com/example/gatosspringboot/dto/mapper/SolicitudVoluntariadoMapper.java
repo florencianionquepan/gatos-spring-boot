@@ -1,8 +1,6 @@
 package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.SolicitudVoluntariadoDTO;
-import com.example.gatosspringboot.model.Estado;
-import com.example.gatosspringboot.model.EstadoNombre;
 import com.example.gatosspringboot.model.SolicitudVoluntariado;
 import com.example.gatosspringboot.model.TipoVoluntariado;
 import org.springframework.stereotype.Component;
@@ -14,9 +12,12 @@ import java.util.stream.Collectors;
 public class SolicitudVoluntariadoMapper implements ISolicitudVoluntariadoMapper{
 
     private final IPersonaMapper persoMapper;
+    private final ISocioMapper socioMapper;
 
-    public SolicitudVoluntariadoMapper(IPersonaMapper persoMapper) {
+    public SolicitudVoluntariadoMapper(IPersonaMapper persoMapper,
+                                       ISocioMapper socioMapper) {
         this.persoMapper = persoMapper;
+        this.socioMapper = socioMapper;
     }
 
     @Override
@@ -26,7 +27,17 @@ public class SolicitudVoluntariadoMapper implements ISolicitudVoluntariadoMapper
         entidad.setAspirante(this.persoMapper.mapToPersona(dto.getAspirante()));
         entidad.setTipoVoluntariado(TipoVoluntariado.valueOf(dto.getVoluntariado()));
         //dto a entidad no tiene estado
-        entidad.setSocio(dto.getSocio());
+        entidad.setSocio(this.socioMapper.mapToEntity(dto.getSocio()));
+        return entidad;
+    }
+
+    @Override
+    public SolicitudVoluntariado mapToEntityForPut(SolicitudVoluntariadoDTO dto) {
+        SolicitudVoluntariado entidad=new SolicitudVoluntariado();
+        entidad.setId(dto.getId());
+        entidad.setAspirante(this.persoMapper.mapToPersona(dto.getAspirante()));
+        //dto a entidad no tiene estado
+        entidad.setSocio(this.socioMapper.mapToEntity(dto.getSocio()));
         return entidad;
     }
 
@@ -39,7 +50,7 @@ public class SolicitudVoluntariadoMapper implements ISolicitudVoluntariadoMapper
         dto.setEstados(entity.getEstados().stream()
                 .map(e->e.getEstado().name())
                 .collect(Collectors.toList()));
-        dto.setSocio(entity.getSocio());
+        dto.setSocio(this.socioMapper.mapToDto(entity.getSocio()));
         return dto;
     }
 
