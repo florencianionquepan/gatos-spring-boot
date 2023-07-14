@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -15,10 +16,18 @@ import java.util.List;
 @PrimaryKeyJoinColumn(referencedColumnName = "id")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Transito extends Persona implements Serializable {
     @OneToMany(mappedBy = "transito", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value="transito")
     private List<Gato> listaGatos;
+
+    public Transito(Long id, String dni, String nombre, String apellido, String tel,
+                    String email, LocalDate fechaNac, String dire,
+                    String localidad, List<Solicitud> solicitudesAdopcion,
+                    List<SolicitudVoluntariado> solicitudesVoluntariados,
+                    List<Gato> listaGatos) {
+        super(id, dni, nombre, apellido, tel, email, fechaNac, dire, localidad, solicitudesAdopcion, solicitudesVoluntariados);
+        this.listaGatos = listaGatos;
+    }
 }
