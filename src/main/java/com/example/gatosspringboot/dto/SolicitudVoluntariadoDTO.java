@@ -23,6 +23,7 @@ public class SolicitudVoluntariadoDTO {
     private Long id;
 
     @Valid
+    @NotNull(groups = PostValidationGroup.class)
     private PersonaDTO aspirante;
 
     @NotNull
@@ -33,5 +34,20 @@ public class SolicitudVoluntariadoDTO {
     private List<String> estados;
 
     @NotNull(groups = PutValidationGroup.class)
-    private Socio socio;
+    private SocioDTO socio;
+
+    @NotNull(groups = PutValidationGroup.class)
+    private String motivo;
+
+    @Override
+    public String toString() {
+        return "SolicitudVoluntariadoDTO{" +
+                "id=" + id +
+                ", aspirante=" + aspirante +
+                ", voluntariado='" + voluntariado + '\'' +
+                ", estados=" + estados +
+                ", socio=" + socio +
+                ", motivo='" + motivo + '\'' +
+                '}';
+    }
 }
