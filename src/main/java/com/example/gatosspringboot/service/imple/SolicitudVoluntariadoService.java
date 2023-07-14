@@ -1,34 +1,44 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.ExistingException;
+import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.SolicitudVoluntariadoRepository;
 import com.example.gatosspringboot.service.interfaces.IEstadoService;
+import com.example.gatosspringboot.service.interfaces.ISocioService;
 import com.example.gatosspringboot.service.interfaces.ISolicitudVoluntariadoService;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+@Service
 public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoService {
 
     private final SolicitudVoluntariadoRepository repo;
     private final PersonaRepository persoRepo;
     private final IEstadoService estadoService;
+    private final ISocioService socioService;
+    private Logger logger= LoggerFactory.getLogger(SolicitudVoluntariadoService.class);
 
     public SolicitudVoluntariadoService(SolicitudVoluntariadoRepository repo,
                                         PersonaRepository persoRepo,
-                                        IEstadoService estadoService) {
+                                        IEstadoService estadoService,
+                                        ISocioService socioService) {
         this.repo = repo;
         this.persoRepo = persoRepo;
         this.estadoService = estadoService;
+        this.socioService = socioService;
     }
 
     @Override
     public SolicitudVoluntariado nueva(SolicitudVoluntariado solicitud) {
         Optional<Persona> oPerso=this.persoRepo.findByDni(solicitud.getAspirante().getDni());
-        //aca puede actualizar su tel, dire, localidad
         if(oPerso.isPresent()){
             Persona perso=oPerso.get();
             //tiene solicitudes de voluntariados del mismo tipo?
@@ -48,6 +58,30 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         return crearEstadoYSave(solicitud,solicitud.getAspirante());
     }
 
+    @Override
+    @Transactional
+    public SolicitudVoluntariado rechazar(SolicitudVoluntariado solicitud, Long id, String motivo) {
+        Optional<SolicitudVoluntariado> oSoli=this.repo.findById(id);
+        if(oSoli.isEmpty()){
+            throw new NonExistingException(
+                    String.format("La solicitud %d no existe",id)
+            );
+        }
+        SolicitudVoluntariado soli=oSoli.get();
+        String email=solicitud.getSocio().getEmail();
+        Socio socio=this.socioService.buscarByEmail(email);
+        List<Estado> estados=soli.getEstados();
+        estados.add(this.estadoService.crearRechazado(motivo));
+        soli.setEstados(estados);
+        soli.setSocio(socio);
+        return this.repo.save(soli);
+    }
+
+    @Override
+    public SolicitudVoluntariado aceptar(SolicitudVoluntariado solicitud, Long id) {
+        return null;
+    }
+
     private void mismaSolicitudExistente(SolicitudVoluntariado solicitudExistente){
         List<Estado> estados=solicitudExistente.getEstados();
         boolean contienePendiente = estados.stream().anyMatch(e -> e.getEstado() == EstadoNombre.PENDIENTE);
@@ -55,13 +89,13 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         boolean contieneAceptado = estados.stream().anyMatch(e -> e.getEstado() == EstadoNombre.APROBADA);
         if(contienePendiente && !contieneRechazado && !contieneAceptado){
             throw new ExistingException(
-                    String.format("Usted tiene una solicitud para este voluntariado %s" +
+                    String.format("Usted tiene una solicitud para %s " +
                                     "en estado PENDIENTE",
                             solicitudExistente.getTipoVoluntariado().name())
             );
         }else if(contieneAceptado){
             throw new ExistingException(
-                    String.format("Usted tiene la solicitud para este voluntariado %s" +
+                    String.format("Usted tiene la solicitud para %s " +
                                     "en estado ACEPTADO",
                             solicitudExistente.getTipoVoluntariado().name())
             );
@@ -75,7 +109,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
             long mesesTranscurridos = ChronoUnit.MONTHS.between(ultimoRechazo, fechaHoy);
             if(mesesTranscurridos<3){
                 throw new ExistingException(
-                        String.format("La ultima solicitud para este voluntariado %s fue RECHAZADA." +
+                        String.format("La ultima solicitud como %s fue RECHAZADA." +
                                         "Debe esperar 3 meses para volver a enviar una solicitud.",
                                 solicitudExistente.getTipoVoluntariado().name())
                 );
@@ -91,6 +125,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         return crearEstadoYSave(solicitud,perso);
     }
 
+    @Transactional
     private SolicitudVoluntariado crearEstadoYSave(SolicitudVoluntariado solicitud,
                                                      Persona perso){
         Estado pendiente=this.estadoService.crearPendiente();

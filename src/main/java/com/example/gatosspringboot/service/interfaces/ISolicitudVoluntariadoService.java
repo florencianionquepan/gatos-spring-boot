@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface ISolicitudVoluntariadoService {
     SolicitudVoluntariado nueva(SolicitudVoluntariado solicitud);
+    SolicitudVoluntariado rechazar(SolicitudVoluntariado solicitud, Long id, String motivo);
+    SolicitudVoluntariado aceptar(SolicitudVoluntariado solicitud, Long id);
     List<SolicitudVoluntariado> listarByEstado();
     List<SolicitudVoluntariado> listarByPersona(String dni);
     List<SolicitudVoluntariado> listarTodas();
