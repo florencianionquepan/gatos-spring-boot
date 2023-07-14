@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ISolicitudVoluntariadoMapper {
     SolicitudVoluntariado mapToEntity(SolicitudVoluntariadoDTO dto);
+    SolicitudVoluntariado mapToEntityForPut(SolicitudVoluntariadoDTO dto);
     SolicitudVoluntariadoDTO mapToDto(SolicitudVoluntariado entity);
     List<SolicitudVoluntariadoDTO> mapToListDto(List<SolicitudVoluntariado> entities);
 }
