@@ -15,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -56,8 +55,10 @@ public class SolicitudVoluntariadoController {
     }
 
     @PutMapping("/{id}/estados/aceptada")
-    public ResponseEntity<?> aceptarSolicitud(){
-        return null;
+    public ResponseEntity<?> aceptarSolicitud(@RequestBody @Validated(PutValidationGroup.class)
+                                                  SolicitudVoluntariadoDTO dto, @PathVariable Long id){
+        SolicitudVoluntariado aceptada=this.service.aceptar(this.mapper.mapToEntityForPut(dto),id);
+        return this.successResponse(this.mapper.mapToDto(aceptada));
     }
 
     @PutMapping("/{id}/estados/rechazada")
