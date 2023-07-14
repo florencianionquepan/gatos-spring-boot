@@ -44,4 +44,15 @@ public class SolicitudVoluntariado {
     @JsonIgnoreProperties(value="solicitudesVoluntariados")
     private Socio socio;
 
+
+    @Override
+    public String toString() {
+        return "SolicitudVoluntariado{" +
+                "id=" + id +
+                ", aspirante=" + aspirante +
+                ", tipoVoluntariado=" + tipoVoluntariado +
+                ", estados=" + estados +
+                ", socio=" + socio +
+                '}';
+    }
 }
