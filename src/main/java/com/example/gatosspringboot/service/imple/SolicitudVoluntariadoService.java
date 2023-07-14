@@ -8,6 +8,7 @@ import com.example.gatosspringboot.repository.database.SolicitudVoluntariadoRepo
 import com.example.gatosspringboot.service.interfaces.IEstadoService;
 import com.example.gatosspringboot.service.interfaces.ISocioService;
 import com.example.gatosspringboot.service.interfaces.ISolicitudVoluntariadoService;
+import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +25,19 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     private final PersonaRepository persoRepo;
     private final IEstadoService estadoService;
     private final ISocioService socioService;
+    private final IVoluntarioService voluService;
     private Logger logger= LoggerFactory.getLogger(SolicitudVoluntariadoService.class);
 
     public SolicitudVoluntariadoService(SolicitudVoluntariadoRepository repo,
                                         PersonaRepository persoRepo,
                                         IEstadoService estadoService,
-                                        ISocioService socioService) {
+                                        ISocioService socioService,
+                                        IVoluntarioService voluService) {
         this.repo = repo;
         this.persoRepo = persoRepo;
         this.estadoService = estadoService;
         this.socioService = socioService;
+        this.voluService = voluService;
     }
 
     @Override
@@ -61,13 +65,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     @Override
     @Transactional
     public SolicitudVoluntariado rechazar(SolicitudVoluntariado solicitud, Long id, String motivo) {
-        Optional<SolicitudVoluntariado> oSoli=this.repo.findById(id);
-        if(oSoli.isEmpty()){
-            throw new NonExistingException(
-                    String.format("La solicitud %d no existe",id)
-            );
-        }
-        SolicitudVoluntariado soli=oSoli.get();
+        SolicitudVoluntariado soli=this.findById(id);
         String email=solicitud.getSocio().getEmail();
         Socio socio=this.socioService.buscarByEmail(email);
         List<Estado> estados=soli.getEstados();
@@ -78,8 +76,44 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     }
 
     @Override
+    @Transactional
     public SolicitudVoluntariado aceptar(SolicitudVoluntariado solicitud, Long id) {
-        return null;
+        SolicitudVoluntariado solidb=this.findById(id);
+        List<Estado> estados = solidb.getEstados();
+        Estado aceptado = estadoService.crearAprobado();
+        estados.add(aceptado);
+        solidb.setEstados(estados);
+        String emailSocio=solicitud.getSocio().getEmail();
+        Socio socio=this.socioService.buscarByEmail(emailSocio);
+        solidb.setSocio(socio);
+        this.crearTipoVoluntariado(solicitud);
+        return this.repo.save(solidb);
+    }
+
+    private void crearTipoVoluntariado(SolicitudVoluntariado solicitud){
+        TipoVoluntariado voluntariado=solicitud.getTipoVoluntariado();
+        Persona perso=solicitud.getAspirante();
+        if(voluntariado == TipoVoluntariado.VOLUNTARIO){
+            Voluntario vol=new Voluntario(perso.getId(),perso.getDni(),perso.getNombre(),perso.getApellido(),
+                    perso.getTel(),perso.getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
+                    perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),null,null);
+            this.voluService.altaVolunt(vol);
+        } else if (voluntariado == TipoVoluntariado.TRANSITO) {
+            Transito transito=new Transito(perso.getId(),perso.getDni(),perso.getNombre(),perso.getApellido(),
+                    perso.getTel(),perso.getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
+                    perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),null);
+            //this.transitoService.altaTransito(transito);
+        }
+    }
+
+    private SolicitudVoluntariado findById(Long id){
+        Optional<SolicitudVoluntariado> oSoli=this.repo.findById(id);
+        if(oSoli.isEmpty()){
+            throw new NonExistingException(
+                    String.format("La solicitud %d no existe",id)
+            );
+        }
+        return oSoli.get();
     }
 
     private void mismaSolicitudExistente(SolicitudVoluntariado solicitudExistente){
