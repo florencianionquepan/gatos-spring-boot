@@ -86,7 +86,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         String emailSocio=solicitud.getSocio().getEmail();
         Socio socio=this.socioService.buscarByEmail(emailSocio);
         solidb.setSocio(socio);
-        this.crearTipoVoluntariado(solicitud);
+        this.crearTipoVoluntariado(solidb);
         return this.repo.save(solidb);
     }
 
@@ -103,6 +103,9 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
                     perso.getTel(),perso.getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
                     perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),null);
             //this.transitoService.altaTransito(transito);
+        }else{
+            throw new NonExistingException
+                    (String.format("No tenemos esta clase de voluntariado",voluntariado));
         }
     }
 
