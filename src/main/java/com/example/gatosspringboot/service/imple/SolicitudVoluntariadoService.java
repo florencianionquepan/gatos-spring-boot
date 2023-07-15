@@ -180,17 +180,30 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     }
 
     @Override
-    public List<SolicitudVoluntariado> listarByEstado() {
-        return null;
+    public List<SolicitudVoluntariado> listarByEstado(String estado) {
+        EstadoNombre nombre=EstadoNombre.valueOf(estado.toUpperCase());
+        if (nombre==EstadoNombre.PENDIENTE ||
+                nombre==EstadoNombre.APROBADA ||
+                nombre==EstadoNombre.RECHAZADA) {
+            return this.repo.findByEstado(nombre);
+        } else {
+            throw new NonExistingException("El estado proporcionado no es válido.");
+        }
     }
 
     @Override
     public List<SolicitudVoluntariado> listarByPersona(String dni) {
-        return null;
+        Optional<Persona> oPerso=this.persoRepo.findByDni(dni);
+        if(oPerso.isEmpty()){
+            throw new NonExistingException(
+                    String.format("La persona con dni %s no existe",dni)
+            );
+        }
+        return this.repo.findByAspirante(dni);
     }
 
     @Override
     public List<SolicitudVoluntariado> listarTodas() {
-        return null;
+        return (List<SolicitudVoluntariado>) this.repo.findAll();
     }
 }

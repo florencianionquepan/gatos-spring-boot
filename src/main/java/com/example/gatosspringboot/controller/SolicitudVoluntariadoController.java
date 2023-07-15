@@ -85,7 +85,7 @@ public class SolicitudVoluntariadoController {
     @GetMapping
     public ResponseEntity<?> verTodas(){
         List<SolicitudVoluntariado> solicitudes=this.service.listarTodas();
-        return this.successResponse(this.mapper.mapToListDto(solicitudes))
+        return this.successResponse(this.mapper.mapToListDto(solicitudes));
     }
 
 }
