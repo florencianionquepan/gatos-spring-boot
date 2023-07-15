@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -67,6 +68,24 @@ public class SolicitudVoluntariadoController {
         String motivo= dto.getMotivo();
         SolicitudVoluntariado rechazada=this.service.rechazar(this.mapper.mapToEntityForPut(dto),id,motivo);
         return this.successResponse(this.mapper.mapToDto(rechazada));
+    }
+
+    @GetMapping("/estados/{estado}")
+    public ResponseEntity<?> verByEstado(@PathVariable String estado){
+        List<SolicitudVoluntariado> solicitudes=this.service.listarByEstado(estado);
+        return this.successResponse(this.mapper.mapToListDto(solicitudes));
+    }
+
+    @GetMapping("/aspirante/{dni}")
+    public ResponseEntity<?> verByAspirante(@PathVariable String dni){
+        List<SolicitudVoluntariado> solicitudes=this.service.listarByPersona(dni);
+        return this.successResponse(this.mapper.mapToListDto(solicitudes));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> verTodas(){
+        List<SolicitudVoluntariado> solicitudes=this.service.listarTodas();
+        return this.successResponse(this.mapper.mapToListDto(solicitudes))
     }
 
 }
