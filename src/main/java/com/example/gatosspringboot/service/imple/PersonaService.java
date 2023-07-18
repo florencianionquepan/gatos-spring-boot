@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
+import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
@@ -31,8 +32,19 @@ public class PersonaService implements IPersonaService {
     public Persona findByDni(String dni) {
         Optional<Persona> oPerso=this.repo.findByDni(dni);
         if(oPerso.isEmpty()){
-            throw new NonExistingException(
-                    String.format("La persona no existe")
+            throw new PersonNotFound(
+                    String.format("La persona con dni %s no existe",dni)
+            );
+        }
+        return oPerso.get();
+    }
+
+    @Override
+    public Persona findByEmail(String email) {
+        Optional<Persona> oPerso=this.repo.findByEmail(email);
+        if(oPerso.isEmpty()){
+            throw new PersonNotFound(
+                    String.format("La persona con email %s no existe",email)
             );
         }
         return oPerso.get();
