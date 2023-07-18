@@ -5,6 +5,8 @@ import com.example.gatosspringboot.dto.response.SimpleExceptionDTO;
 import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,20 +18,31 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @ControllerAdvice(annotations = RestController.class)
 public class ApiControllerAdvice {
 
     private Logger logger= LoggerFactory.getLogger(ApiControllerAdvice.class);
 
-    @ExceptionHandler
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionDTO exceptionHandler(MethodArgumentNotValidException ex){
         List<FieldError> errorLIst= ex.getBindingResult().getFieldErrors();
         Map<String,String> detalle= new HashMap<>();
         errorLIst.forEach(e->detalle.put(e.getField(),e.getDefaultMessage()));
-        return new ExceptionDTO(HttpStatus.BAD_REQUEST.value(),"Validaciones",detalle);
+        return new ExceptionDTO(HttpStatus.BAD_REQUEST.value(),"Solicitud Inválida",detalle);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDTO exceptionHandlerRequestParam(ConstraintViolationException ex){
+        Set<ConstraintViolation<?>> constraintViolations=((ConstraintViolationException) ex).getConstraintViolations();
+        Map<String,String> detalle= new HashMap<>();
+        constraintViolations.forEach(c->detalle.put(c.getPropertyPath().toString(),c.getMessage()));
+        return new ExceptionDTO(HttpStatus.BAD_REQUEST.value(),"Solicitud inválida",detalle);
     }
 
     @ExceptionHandler(NonExistingException.class)
