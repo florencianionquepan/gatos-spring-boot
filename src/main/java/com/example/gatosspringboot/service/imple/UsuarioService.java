@@ -85,8 +85,8 @@ public class UsuarioService implements IUsuarioService {
                     (String.format("No es posible verificar tu identidad para modificar la contraseña")
                     );
         }
-        user.setContrasenia(passwordEncoder.encode(user.getContrasenia()));
-        Usuario modi=this.usRepo.save(user);
+        guardado.setContrasenia(passwordEncoder.encode(user.getContrasenia()));
+        Usuario modi=this.usRepo.save(guardado);
         return modi.getMail();
     }
 
