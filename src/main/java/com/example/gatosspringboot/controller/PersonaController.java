@@ -84,8 +84,8 @@ public class PersonaController {
     @GetMapping("/search/dni")
     //puede ser utilizado por socios solamente
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> obtenerDatosByDni(@RequestParam @Pattern(regexp = "\\d{9}",
-            message = "El dni debe contener exactamente 9 números sin puntos") String dni){
+    public ResponseEntity<?> obtenerDatosByDni(@RequestParam @Pattern(regexp = "\\d{8}",
+            message = "El dni debe contener exactamente 8 números sin puntos") String dni){
         PersonaDTO dto=this.mapper.mapToDto(this.service.findByDni(dni));
         return this.successResponse(dto);
     }
