@@ -56,10 +56,8 @@ public class PersonaController {
     @GetMapping("/dni")
     ///personas/dni?dni={valor_dni}
     //Se debe llamar primero a este endpoint antes de crear nueva solicitud
-    public ResponseEntity<?> buscarByDni(@RequestParam("dni") String dni){
-        if(dni.length()!=9 || !dni.matches("\\d+")){
-            return this.notSuccessResponse("El dni debe contener solo numeros sin puntos",null);
-        }
+    public ResponseEntity<?> buscarByDni(@RequestParam @Pattern(regexp = "\\d{8}",
+            message = "El dni debe contener exactamente 8 números sin puntos") String dni){
         if(!this.service.personaExistente(dni)){
             return ResponseEntity.notFound().build();
         }
