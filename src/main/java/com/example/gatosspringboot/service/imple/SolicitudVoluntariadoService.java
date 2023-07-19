@@ -23,6 +23,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
 
     private final SolicitudVoluntariadoRepository repo;
     private final PersonaRepository persoRepo;
+    private final PersonaService persoService;
     private final IEstadoService estadoService;
     private final ISocioService socioService;
     private final IVoluntarioService voluService;
@@ -30,11 +31,13 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
 
     public SolicitudVoluntariadoService(SolicitudVoluntariadoRepository repo,
                                         PersonaRepository persoRepo,
+                                        PersonaService persoService,
                                         IEstadoService estadoService,
                                         ISocioService socioService,
                                         IVoluntarioService voluService) {
         this.repo = repo;
         this.persoRepo = persoRepo;
+        this.persoService = persoService;
         this.estadoService = estadoService;
         this.socioService = socioService;
         this.voluService = voluService;
@@ -57,8 +60,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
             }
             return nuevaSolicitudPersona(solicitud,perso);
         }
-        //controlar que el email no sea existente
-        this.mailExistente(solicitud.getAspirante());
+        this.persoService.validarEmailUnico(solicitud.getAspirante().getEmail());
         return crearEstadoYSave(solicitud,solicitud.getAspirante());
     }
 
@@ -72,6 +74,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         estados.add(this.estadoService.crearRechazado(motivo));
         soli.setEstados(estados);
         soli.setSocio(socio);
+        //enviar email a solicitante con motivo
         return this.repo.save(soli);
     }
 
@@ -118,6 +121,8 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         }
         return oSoli.get();
     }
+
+    //---------Funciones privadas de nueva solicitud-----------
 
     private void mismaSolicitudExistente(SolicitudVoluntariado solicitudExistente){
         List<Estado> estados=solicitudExistente.getEstados();
@@ -172,15 +177,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         return this.repo.save(solicitud);
     }
 
-    private void mailExistente(Persona perso){
-        Optional<Persona> oPersoEmail=this.persoRepo.findByEmail(perso.getEmail());
-        if(oPersoEmail.isPresent()){
-            throw new ExistingException(
-                    String.format("El email %s ya existe y corresponde a otra persona",
-                            oPersoEmail.get().getEmail())
-            );
-        }
-    }
+    //----------------Listar------------------
 
     @Override
     public List<SolicitudVoluntariado> listarByEstado(String estado) {
