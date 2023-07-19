@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.service.imple;
 
+import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
@@ -37,8 +38,8 @@ public class TransitoService implements ITransitoService {
     }
 
     @Override
-    //aca debe traer su id si o si si existe como persona
     public Transito nuevo(Transito transito) {
+        this.TransitoExistente(transito);
         Optional<Persona> oPerso=this.persoRepo.findByDni(transito.getDni());
         if(oPerso.isPresent()){
             this.persoService.validarEmailUnico(transito.getEmail());
@@ -47,5 +48,19 @@ public class TransitoService implements ITransitoService {
             return transito;
         }
         return this.repo.save(transito);
+    }
+
+    //si ya existe con otro dni o email no prosigue-
+    private void TransitoExistente(Transito transito){
+        Optional<Transito> oTransitoDni=this.repo.findByDni(transito.getDni());
+        if(oTransitoDni.isPresent()){
+            throw new ExistingException(
+                    String.format("El transito con dni %s ya existe",transito.getDni()));
+        }
+        Optional<Transito> oTransitoEmail=this.repo.findByEmail(transito.getEmail());
+        if(oTransitoEmail.isPresent()){
+            throw new ExistingException(
+                    String.format("El transito con email %s ya existe",transito.getEmail()));
+        }
     }
 }
