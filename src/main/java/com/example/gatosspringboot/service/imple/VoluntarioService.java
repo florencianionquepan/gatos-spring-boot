@@ -1,7 +1,9 @@
 package com.example.gatosspringboot.service.imple;
 
+import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Persona;
+import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.model.Voluntario;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
@@ -44,6 +46,7 @@ public class VoluntarioService implements IVoluntarioService {
     @Override
     @Transactional
     public Voluntario altaVolunt(Voluntario vol) {
+        this.voluntarioExistente(vol);
         Optional<Persona> oPerso=this.persoRepo.findByDni(vol.getDni());
         //antes de crear el usuario chequear si existe alguna persona con el mismo email
         if(oPerso.isPresent()){
@@ -57,6 +60,20 @@ public class VoluntarioService implements IVoluntarioService {
         }
         this.voluRepo.saveVoluntario(vol.getId(),creado.getId());
         return vol;
+    }
+
+    //si ya existe con otro dni o email no prosigue-
+    private void voluntarioExistente(Voluntario volu){
+        Optional<Voluntario> oVoluDni=this.voluRepo.findByDni(volu.getDni());
+        if(oVoluDni.isPresent()){
+            throw new ExistingException(
+                    String.format("El voluntario con dni %s ya existe",volu.getDni()));
+        }
+        Optional<Voluntario> oVoluEmail=this.voluRepo.findByEmail(volu.getEmail());
+        if(oVoluEmail.isPresent()){
+            throw new ExistingException(
+                    String.format("El voluntario con email %s ya existe",volu.getEmail()));
+        }
     }
 
     @Override
