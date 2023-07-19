@@ -3,7 +3,6 @@ package com.example.gatosspringboot.service.imple;
 import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Persona;
-import com.example.gatosspringboot.model.Rol;
 import com.example.gatosspringboot.model.Socio;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
@@ -21,15 +20,18 @@ public class SocioService implements ISocioService {
 
     private final SocioRepository repo;
     private final PersonaRepository persoRepo;
+    private final PersonaService persoService;
     private final UsuarioRepository usRepo;
     private final UsuarioService usService;
 
     public SocioService(SocioRepository repo,
                         PersonaRepository persoRepo,
+                        PersonaService persoService,
                         UsuarioRepository usRepo,
                         UsuarioService usService) {
         this.repo = repo;
         this.persoRepo = persoRepo;
+        this.persoService = persoService;
         this.usRepo = usRepo;
         this.usService = usService;
     }
@@ -52,6 +54,7 @@ public class SocioService implements ISocioService {
         Optional<Persona> oPersoDni=this.persoRepo.findByDni(socio.getDni());
         Optional<Usuario> oUser=this.usRepo.findByEmail(socio.getEmail());
         if(oPersoDni.isEmpty()){
+            this.persoService.validarEmailUnico(socio.getEmail());
             Usuario admin=this.usService.altaUsuarioSocio(socio.getEmail());
             socio.setUsuario(admin);
             return this.repo.save(socio);

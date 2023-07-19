@@ -42,11 +42,11 @@ public class TransitoService implements ITransitoService {
         this.TransitoExistente(transito);
         Optional<Persona> oPerso=this.persoRepo.findByDni(transito.getDni());
         if(oPerso.isPresent()){
-            this.persoService.validarEmailUnico(transito.getEmail());
             transito.setId(oPerso.get().getId());
             this.repo.saveTransito(transito.getId());
             return transito;
         }
+        this.persoService.validarEmailUnico(transito.getEmail());
         return this.repo.save(transito);
     }
 

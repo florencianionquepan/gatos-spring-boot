@@ -51,11 +51,11 @@ public class VoluntarioService implements IVoluntarioService {
         //antes de crear el usuario chequear si existe alguna persona con el mismo email
         if(oPerso.isPresent()){
             vol.setId(vol.getId());
-            this.persoService.validarEmailUnico(vol.getEmail());
         }
         Usuario creado=this.serUser.altaUsuarioVoluntario(vol.getEmail());
         vol.setUsuario(creado);
         if(oPerso.isEmpty()){
+            this.persoService.validarEmailUnico(vol.getEmail());
             return this.voluRepo.save(vol);
         }
         this.voluRepo.saveVoluntario(vol.getId(),creado.getId());
