@@ -1,5 +1,7 @@
 package com.example.gatosspringboot.controller;
 
+import com.example.gatosspringboot.dto.TransitoDTO;
+import com.example.gatosspringboot.dto.mapper.ITransitoMapper;
 import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.service.interfaces.ITransitoService;
 import org.springframework.http.HttpStatus;
@@ -15,11 +17,13 @@ import java.util.Map;
 public class TransitoController {
 
     public final ITransitoService service;
-
+    public final ITransitoMapper mapper;
     public Map<String,Object> mensajeBody= new HashMap<>();
 
-    public TransitoController(ITransitoService service) {
+    public TransitoController(ITransitoService service,
+                              ITransitoMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     private ResponseEntity<?> successResponse(List<?> lista){
@@ -39,19 +43,19 @@ public class TransitoController {
     @GetMapping
     public ResponseEntity<?> listarTodos(){
         List<Transito> transitos=this.service.listarTodos();
-        return this.successResponse(transitos);
+        return this.successResponse(this.mapper.mapToListDto(transitos));
     }
 
     @GetMapping("/localidad/{localidad}")
     public ResponseEntity<?> listarTodos(@PathVariable String localidad){
         List<Transito> transitos=this.service.listarByLocalidad(localidad);
-        return this.successResponse(transitos);
+        return this.successResponse(this.mapper.mapToListDto(transitos));
     }
 
     @PostMapping
-    public ResponseEntity<?> nuevo(@RequestBody Transito transito){
-        Transito nuevo=this.service.nuevo(transito);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+    public ResponseEntity<?> nuevo(@RequestBody TransitoDTO dto){
+        Transito nuevo=this.service.nuevo(this.mapper.mapToEntity(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.mapper.mapToDto(nuevo));
     }
 
 
