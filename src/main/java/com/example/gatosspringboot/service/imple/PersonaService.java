@@ -61,6 +61,16 @@ public class PersonaService implements IPersonaService {
     }
 
     @Override
+    public void validarEmailUnico(String email) {
+        Optional<Persona> oPerso=this.repo.findByEmail(email);
+        if(oPerso.isPresent()){
+            throw new NonExistingException(
+                    String.format("Este email %s ya se encuentra registrado",email)
+            );
+        }
+    }
+
+    @Override
     public void addSolicitudPersona(Solicitud solicitud) {
         Persona solicitante= solicitud.getSolicitante();
         if(this.existeByDni(solicitante.getDni())){
