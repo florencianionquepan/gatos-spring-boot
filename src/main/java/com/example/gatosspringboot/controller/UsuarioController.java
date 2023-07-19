@@ -10,6 +10,7 @@ import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -47,18 +48,13 @@ public class UsuarioController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UsuarioEmailDTO> obtenerTodos(){
         return this.usMap.mapListToDto(this.usService.verTodos());
     }
 
-    @PostMapping
-    public ResponseEntity<?> nuevoUsuario(@RequestBody @Valid UsuarioReqDTO dto){
-        Usuario user=this.usMap.mapToEntity(dto);
-        String newUser=this.usService.altaUsuarioCompleto(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-    }
-
     @PutMapping
+    //puede modificar su password con la password actual cualquiera sea su rol
     public ResponseEntity<?> modificarPassword(@RequestBody @Valid UsuarioPasswordDTO dto){
         Usuario user=this.usPasswordMapper.mapToEntity(dto);
         String modiUser=this.usService.modiPassword(user, dto.getPasswordActual());
