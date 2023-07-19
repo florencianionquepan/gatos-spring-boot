@@ -3,6 +3,7 @@ package com.example.gatosspringboot.service.imple;
 import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Persona;
+import com.example.gatosspringboot.model.Rol;
 import com.example.gatosspringboot.model.Socio;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
@@ -51,15 +52,14 @@ public class SocioService implements ISocioService {
         Optional<Persona> oPersoDni=this.persoRepo.findByDni(socio.getDni());
         Optional<Usuario> oUser=this.usRepo.findByEmail(socio.getEmail());
         if(oPersoDni.isEmpty()){
+            Usuario admin=this.usService.altaUsuarioSocio(socio.getEmail());
+            socio.setUsuario(admin);
             return this.repo.save(socio);
         }
         //si ya existe como persona
-        Usuario user;
-        if(oUser.isEmpty()){
-            user=this.usService.altaUsuarioVoluntario(socio.getEmail());
-        }else{
-            user=oUser.get();
-        }
+        //si ya tiene el rol admin no se vuelve a agregar
+        Usuario user=oUser.isEmpty()?this.usService.altaUsuarioSocio(socio.getEmail())
+                :this.usService.agregarRolAdmin(oUser.get());
         Persona perso=oPersoDni.get();
         socio.setId(perso.getId());
         socio.setUsuario(user);
