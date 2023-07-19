@@ -41,19 +41,6 @@ public class UsuarioService implements IUsuarioService {
         return (List<Usuario>) this.usRepo.findAll();
     }
 
-    @Override
-    //metodo para crear usuario con email + contraseña rol USER
-    public String altaUsuarioCompleto(Usuario us) {
-        this.existeEmail(us.getMail());
-        //traigo role_user
-        List<Rol> roles=new ArrayList<Rol>(
-                List.of(this.rolRepo.findById(1).get())
-        );
-        us.setRoles(roles);
-        us.setContrasenia(passwordEncoder.encode(us.getContrasenia()));
-        Usuario creado=this.usRepo.save(us);
-        return creado.getMail();
-    }
 
     @Override
     public Usuario altaUsuarioVoluntario(String email) {
@@ -61,19 +48,25 @@ public class UsuarioService implements IUsuarioService {
         nuevoUsuario.setMail(email);
         String password=this.generarPasswordAleatoria();
         nuevoUsuario.setContrasenia(password);
-        String emailUsuarioCreado=this.altaUsuarioCompleto(nuevoUsuario);
-        if(!emailUsuarioCreado.isEmpty()){
+        Usuario user=this.altaUsuarioUser(nuevoUsuario);
+        if(!user.getMail().isEmpty()){
             String subject="Su cuenta como voluntario ha sido generada!";
             String content="Puede iniciar sesión con su email y su contraseña: "+password;
             this.emailService.sendMessage(email,subject,content);
         }
-        Optional<Usuario> oUsuario=this.usRepo.findByEmail(emailUsuarioCreado);
-        if(oUsuario.isEmpty()) {
-            throw new ExistingException
-                    (String.format("Fallo al crear el usuario")
-                    );
-        }
-        return oUsuario.get();
+        return user;
+    }
+
+    //metodo para crear usuario con email + contraseña rol USER
+    private Usuario altaUsuarioUser(Usuario us) {
+        this.existeEmail(us.getMail());
+        //traigo role_user
+        List<Rol> roles=new ArrayList<Rol>(
+                List.of(this.rolRepo.findById(1).get())
+        );
+        us.setRoles(roles);
+        us.setContrasenia(passwordEncoder.encode(us.getContrasenia()));
+        return this.usRepo.save(us);
     }
 
     @Override
@@ -88,6 +81,32 @@ public class UsuarioService implements IUsuarioService {
         guardado.setContrasenia(passwordEncoder.encode(user.getContrasenia()));
         Usuario modi=this.usRepo.save(guardado);
         return modi.getMail();
+    }
+
+    @Override
+    public Usuario altaUsuarioSocio(String email) {
+        Usuario nuevoUsuario=new Usuario();
+        nuevoUsuario.setMail(email);
+        String password=this.generarPasswordAleatoria();
+        nuevoUsuario.setContrasenia(password);
+        Usuario admin=this.altaUsuarioAdmin(nuevoUsuario);
+        if(!admin.getMail().isEmpty()){
+            String subject="Su cuenta como socio ha sido generada!";
+            String content="Puede iniciar sesión con su email y su contraseña: "+password;
+            this.emailService.sendMessage(email,subject,content);
+        }
+        return admin;
+    }
+    
+    private Usuario altaUsuarioAdmin(Usuario admin){
+        this.existeEmail(admin.getMail());
+        //traigo role_admin
+        List<Rol> roles=new ArrayList<Rol>(
+                List.of(this.rolRepo.findById(2).get())
+        );
+        admin.setRoles(roles);
+        admin.setContrasenia(passwordEncoder.encode(admin.getContrasenia()));
+        return this.usRepo.save(admin);
     }
 
     private Usuario buscarByEmail(String email){
