@@ -22,14 +22,17 @@ public class VoluntarioService implements IVoluntarioService {
 
     private final VoluntarioRepository voluRepo;
     private final IUsuarioService serUser;
+    private final PersonaRepository persoRepo;
     private final PersonaService persoService;
     private Logger logger= LoggerFactory.getLogger(VoluntarioService.class);
 
     public VoluntarioService(VoluntarioRepository voluRepo,
                              IUsuarioService serUser,
+                             PersonaRepository persoRepo,
                              PersonaService persoService) {
         this.voluRepo = voluRepo;
         this.serUser = serUser;
+        this.persoRepo = persoRepo;
         this.persoService = persoService;
     }
 
@@ -41,14 +44,15 @@ public class VoluntarioService implements IVoluntarioService {
     @Override
     @Transactional
     public Voluntario altaVolunt(Voluntario vol) {
-        boolean existePerso=this.persoService.existeByDni(vol.getDni());
+        Optional<Persona> oPerso=this.persoRepo.findByDni(vol.getDni());
         //antes de crear el usuario chequear si existe alguna persona con el mismo email
-        if(existePerso){
+        if(oPerso.isPresent()){
+            vol.setId(vol.getId());
             this.persoService.validarEmailUnico(vol.getEmail());
         }
         Usuario creado=this.serUser.altaUsuarioVoluntario(vol.getEmail());
         vol.setUsuario(creado);
-        if(!existePerso){
+        if(oPerso.isEmpty()){
             return this.voluRepo.save(vol);
         }
         this.voluRepo.saveVoluntario(vol.getId(),creado.getId());
