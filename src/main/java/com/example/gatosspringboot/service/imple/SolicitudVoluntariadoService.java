@@ -5,10 +5,7 @@ import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.SolicitudVoluntariadoRepository;
-import com.example.gatosspringboot.service.interfaces.IEstadoService;
-import com.example.gatosspringboot.service.interfaces.ISocioService;
-import com.example.gatosspringboot.service.interfaces.ISolicitudVoluntariadoService;
-import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
+import com.example.gatosspringboot.service.interfaces.*;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +20,11 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
 
     private final SolicitudVoluntariadoRepository repo;
     private final PersonaRepository persoRepo;
-    private final PersonaService persoService;
+    private final IPersonaService persoService;
     private final IEstadoService estadoService;
     private final ISocioService socioService;
     private final IVoluntarioService voluService;
+    private final ITransitoService transitoService;
     private Logger logger= LoggerFactory.getLogger(SolicitudVoluntariadoService.class);
 
     public SolicitudVoluntariadoService(SolicitudVoluntariadoRepository repo,
@@ -34,13 +32,15 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
                                         PersonaService persoService,
                                         IEstadoService estadoService,
                                         ISocioService socioService,
-                                        IVoluntarioService voluService) {
+                                        IVoluntarioService voluService,
+                                        ITransitoService transitoService) {
         this.repo = repo;
         this.persoRepo = persoRepo;
         this.persoService = persoService;
         this.estadoService = estadoService;
         this.socioService = socioService;
         this.voluService = voluService;
+        this.transitoService = transitoService;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
             Transito transito=new Transito(perso.getId(),perso.getDni(),perso.getNombre(),perso.getApellido(),
                     perso.getTel(),perso.getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
                     perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),null);
-            //this.transitoService.altaTransito(transito);
+            this.transitoService.nuevo(transito);
         }else{
             throw new NonExistingException
                     (String.format("No tenemos esta clase de voluntariado",voluntariado));
