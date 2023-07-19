@@ -9,4 +9,5 @@ public interface IUsuarioService {
     Usuario altaUsuarioVoluntario(String email);
     String modiPassword(Usuario user, String oldPassword);
     Usuario altaUsuarioSocio(String email);
+    Usuario agregarRolAdmin(Usuario user);
 }

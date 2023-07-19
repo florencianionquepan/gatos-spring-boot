@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.ExistingException;
+import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Rol;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.RolRepository;
@@ -98,6 +99,22 @@ public class UsuarioService implements IUsuarioService {
         return admin;
     }
     
+    @Override
+    //por ahora siempre traera sus roles de bd:
+    public Usuario agregarRolAdmin(Usuario user) {
+        List<Rol> roles=user.getRoles();
+        Optional<Rol> oAdminRol=this.rolRepo.findById(2);
+        if(oAdminRol.isEmpty()){
+            throw new NonExistingException("El rol admin no existe en la bd");
+        }
+        if(roles.stream().noneMatch(rol->rol.getId()==2)){
+            roles.add(oAdminRol.get());
+            user.setRoles(roles);
+            return this.usRepo.save(user);
+        }
+        return user;
+    }
+
     private Usuario altaUsuarioAdmin(Usuario admin){
         this.existeEmail(admin.getMail());
         //traigo role_admin
