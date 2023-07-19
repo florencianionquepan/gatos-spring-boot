@@ -8,8 +8,6 @@ import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.VoluntarioRepository;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +23,17 @@ public class VoluntarioService implements IVoluntarioService {
     private final VoluntarioRepository voluRepo;
     private final IUsuarioService serUser;
     private final PersonaRepository persoRepo;
+    private final PersonaService persoService;
     private Logger logger= LoggerFactory.getLogger(VoluntarioService.class);
 
     public VoluntarioService(VoluntarioRepository voluRepo,
                              IUsuarioService serUser,
-                             PersonaRepository persoRepo) {
+                             PersonaRepository persoRepo,
+                             PersonaService persoService) {
         this.voluRepo = voluRepo;
         this.serUser = serUser;
         this.persoRepo = persoRepo;
+        this.persoService = persoService;
     }
 
     @Override
@@ -43,11 +44,13 @@ public class VoluntarioService implements IVoluntarioService {
     @Override
     @Transactional
     public Voluntario altaVolunt(Voluntario vol) {
+        Optional<Persona> oPersona=this.persoRepo.findByDni(vol.getDni());
+        //antes de crear el usuario chequear si existe alguna persona con el mismo email
+        if(oPersona.isEmpty()){
+            this.persoService.validarEmailUnico(vol.getEmail());
+        }
         Usuario creado=this.serUser.altaUsuarioVoluntario(vol.getEmail());
-        //logger.info("Usuario creado: "+creado);
-        //logger.info("Voluntario: "+vol);
         vol.setUsuario(creado);
-        Optional<Persona> oPersona=this.persoRepo.findById(vol.getId());
         if(oPersona.isEmpty()){
             return this.voluRepo.save(vol);
         }
