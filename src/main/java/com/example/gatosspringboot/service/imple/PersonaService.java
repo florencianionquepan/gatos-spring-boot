@@ -4,9 +4,11 @@ import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Solicitud;
+import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
+import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,13 +21,16 @@ public class PersonaService implements IPersonaService {
 
     private final PersonaRepository repo;
     private final IEmailService emailService;
+    private final IUsuarioService userService;
     private ConcurrentHashMap<String, Boolean> tokenCache = new ConcurrentHashMap<>();
     private Logger logger= LoggerFactory.getLogger(PersonaService.class);
 
     public PersonaService(PersonaRepository repo,
-                          IEmailService emailService) {
+                          IEmailService emailService,
+                          IUsuarioService userService) {
         this.repo = repo;
         this.emailService = emailService;
+        this.userService = userService;
     }
 
     @Override
@@ -87,7 +92,7 @@ public class PersonaService implements IPersonaService {
 
     @Override
     public boolean personaExistente(String dni) {
-        Optional<Persona> oPerso=this.repo.findByDni(dni);
+        /*Optional<Persona> oPerso=this.repo.findByDni(dni);
         if(oPerso.isPresent()){
             //envio token a su email personal
             String token=this.generarToken();
@@ -98,17 +103,53 @@ public class PersonaService implements IPersonaService {
                     "\n Código: "+token;
             this.emailService.sendMessage(persona.getEmail(), "Valida tu identidad",text);
         }
-        return oPerso.isPresent();
+        return oPerso.isPresent();*/
+        return true;
     }
 
     @Override
     public Persona datosPersona(String token, String dni) {
-        if(!this.validarToken(token)){
+        /*if(!this.validarToken(token)){
             throw new NonExistingException(
                     "El código no coincide, Por favor ingresa tu dni nuevamente."
             );
         }else{
             return this.findByDni(dni);
+        }*/
+        return null;
+    }
+
+    @Override
+    public boolean validarEmailIngresado(String email) {
+        this.validarEmailUnico(email);
+        String token=this.generarToken();
+        String text="Hola!" + "\nTe enviamos el siguiente codigo para " +
+                "validar tu identidad y poder crear una cuenta"+
+                "\nSi no has intentado enviar una solicitud " +
+                "para formar parte de Gatshan, por favor ignora este mensaje" +
+                "\n Código: "+token;
+        return this.emailService.sendMessage(email, "Valida tu identidad",text);
+    }
+
+    @Override
+    public Persona altaRegistro(Persona persona, String token) {
+        if(!this.validarToken(token)){
+            throw new NonExistingException(
+                    "El código no coincide, Por favor ingresalo nuevamente."
+            );
+        }
+        this.validarDniUnico(persona.getDni());
+        Usuario creado=this.userService.altaUsuario(persona.getUsuario());
+        persona.setUsuario(creado);
+        return this.repo.save(persona);
+    }
+
+    private void validarDniUnico(String dni) {
+        Optional<Persona> oPerso=this.repo.findByDni(dni);
+        if(oPerso.isPresent()){
+            throw new NonExistingException(
+                    String.format("Este dni %s ya se encuentra registrado",dni)
+            );
         }
     }
 

@@ -11,4 +11,6 @@ public interface IPersonaService {
     void addSolicitudPersona(Solicitud solicitud);
     boolean personaExistente(String dni);
     Persona datosPersona(String token, String dni);
+    boolean validarEmailIngresado(String email);
+    Persona altaRegistro(Persona persona, String token);
 }
