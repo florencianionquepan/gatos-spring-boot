@@ -98,14 +98,15 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         Persona perso=solicitud.getAspirante();
         if(voluntariado == TipoVoluntariado.VOLUNTARIO){
             Voluntario vol=new Voluntario(perso.getId(),perso.getDni(),perso.getNombre(),perso.getApellido(),
-                    perso.getTel(),perso.getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
-                    perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),null,null);
+                    perso.getTel(),perso.getUsuario().getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
+                    perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),perso.getUsuario(),null);
             this.voluService.altaVolunt(vol);
         } else if (voluntariado == TipoVoluntariado.TRANSITO) {
             Transito transito=new Transito(perso.getId(),perso.getDni(),perso.getNombre(),perso.getApellido(),
-                    perso.getTel(),perso.getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
-                    perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),null);
+                    perso.getTel(),perso.getUsuario().getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
+                    perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),perso.getUsuario(),null);
             this.transitoService.nuevo(transito);
+            //enviar email notificando aceptacion
         }else{
             throw new NonExistingException
                     (String.format("No tenemos esta clase de voluntariado",voluntariado));

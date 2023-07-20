@@ -18,7 +18,9 @@ public class InitialDataConfig {
     public void init(){
         Rol user=new Rol(1,"ROLE_USER",null);
         this.rolRepository.save(user);
-        Rol admin=new Rol(2,"ROLE_ADMIN",null);
-        this.rolRepository.save(admin);
+        Rol voluntario=new Rol(2,"ROLE_VOLUNTARIO",null);
+        this.rolRepository.save(voluntario);
+        Rol socio=new Rol(2,"ROLE_SOCIO",null);
+        this.rolRepository.save(socio);
     }
 }

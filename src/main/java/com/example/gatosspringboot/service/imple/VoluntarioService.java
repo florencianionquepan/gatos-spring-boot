@@ -3,7 +3,6 @@ package com.example.gatosspringboot.service.imple;
 import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Persona;
-import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.model.Voluntario;
 import com.example.gatosspringboot.repository.database.PersonaRepository;

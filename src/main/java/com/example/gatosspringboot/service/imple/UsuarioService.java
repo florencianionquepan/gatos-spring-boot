@@ -46,11 +46,11 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public Usuario altaUsuarioVoluntario(String email) {
         Usuario nuevoUsuario=new Usuario();
-        nuevoUsuario.setMail(email);
+        nuevoUsuario.setEmail(email);
         String password=this.generarPasswordAleatoria();
         nuevoUsuario.setContrasenia(password);
         Usuario user=this.altaUsuarioUser(nuevoUsuario);
-        if(!user.getMail().isEmpty()){
+        if(!user.getEmail().isEmpty()){
             String subject="Su cuenta como voluntario ha sido generada!";
             String content="Puede iniciar sesión con su email y su contraseña: "+password;
             this.emailService.sendMessage(email,subject,content);
@@ -60,7 +60,7 @@ public class UsuarioService implements IUsuarioService {
 
     //metodo para crear usuario con email + contraseña rol USER
     private Usuario altaUsuarioUser(Usuario us) {
-        this.existeEmail(us.getMail());
+        this.existeEmail(us.getEmail());
         //traigo role_user
         List<Rol> roles=new ArrayList<Rol>(
                 List.of(this.rolRepo.findById(1).get())
@@ -72,7 +72,7 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public String modiPassword(Usuario user, String oldPassword) {
-        Usuario guardado=this.buscarByEmail(user.getMail());
+        Usuario guardado=this.buscarByEmail(user.getEmail());
         String oldPassEncriptada=guardado.getContrasenia();
         if(!passwordEncoder.matches(oldPassword, oldPassEncriptada)){
             throw new ExistingException
@@ -81,24 +81,24 @@ public class UsuarioService implements IUsuarioService {
         }
         guardado.setContrasenia(passwordEncoder.encode(user.getContrasenia()));
         Usuario modi=this.usRepo.save(guardado);
-        return modi.getMail();
+        return modi.getEmail();
     }
 
     @Override
     public Usuario altaUsuarioSocio(String email) {
         Usuario nuevoUsuario=new Usuario();
-        nuevoUsuario.setMail(email);
+        nuevoUsuario.setEmail(email);
         String password=this.generarPasswordAleatoria();
         nuevoUsuario.setContrasenia(password);
         Usuario admin=this.altaUsuarioAdmin(nuevoUsuario);
-        if(!admin.getMail().isEmpty()){
+        if(!admin.getEmail().isEmpty()){
             String subject="Su cuenta como socio ha sido generada!";
             String content="Puede iniciar sesión con su email y su contraseña: "+password;
             this.emailService.sendMessage(email,subject,content);
         }
         return admin;
     }
-    
+
     @Override
     //por ahora siempre traera sus roles de bd:
     public Usuario agregarRolAdmin(Usuario user) {
@@ -116,7 +116,7 @@ public class UsuarioService implements IUsuarioService {
     }
 
     private Usuario altaUsuarioAdmin(Usuario admin){
-        this.existeEmail(admin.getMail());
+        this.existeEmail(admin.getEmail());
         //traigo role_admin
         List<Rol> roles=new ArrayList<Rol>(
                 List.of(this.rolRepo.findById(2).get())

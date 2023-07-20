@@ -7,6 +7,7 @@ import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.TransitoRepository;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import com.example.gatosspringboot.service.interfaces.ITransitoService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class TransitoService implements ITransitoService {
     }
 
     @Override
+    @Transactional
     public Transito nuevo(Transito transito) {
         this.TransitoExistente(transito);
         Optional<Persona> oPerso=this.persoRepo.findByDni(transito.getDni());
