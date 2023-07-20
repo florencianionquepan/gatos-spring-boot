@@ -31,9 +31,9 @@ public class AuthController {
     @PostMapping
     public String authenticateAndGetToken(@RequestBody @Valid AuthRequestDTO authRequest){
         try{
-            Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getMail(), authRequest.getPassword()));
+            Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
             //logger.info("a ver: "+authentication);
-            return jwtService.generateToken(authRequest.getMail());
+            return jwtService.generateToken(authRequest.getEmail());
         }catch (Exception e){
             throw new NonExistingException("Credenciales invalidas");
         }

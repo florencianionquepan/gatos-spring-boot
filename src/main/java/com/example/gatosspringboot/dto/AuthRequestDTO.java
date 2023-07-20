@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class AuthRequestDTO {
     @NotNull
     @Email
-    String mail;
+    String email;
     @NotNull
     String password;
 }

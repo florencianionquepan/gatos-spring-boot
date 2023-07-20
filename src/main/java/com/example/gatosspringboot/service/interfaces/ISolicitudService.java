@@ -1,7 +1,5 @@
 package com.example.gatosspringboot.service.interfaces;
 
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Solicitud;
 
 import java.time.LocalDate;

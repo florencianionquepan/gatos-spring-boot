@@ -4,7 +4,6 @@ import com.example.gatosspringboot.dto.SolicitudDTO;
 import com.example.gatosspringboot.dto.mapper.ISolicitudMapper;
 import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.service.interfaces.ISolicitudService;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
