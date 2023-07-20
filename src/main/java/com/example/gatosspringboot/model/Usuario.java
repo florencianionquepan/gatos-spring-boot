@@ -19,7 +19,7 @@ public class Usuario implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, unique = true)
-    private String mail;
+    private String email;
     @NotNull
     private String contrasenia;
 
@@ -36,7 +36,7 @@ public class Usuario implements Serializable {
     public String toString() {
         return "Usuario{" +
                 "id=" + id +
-                ", mail='" + mail + '\'' +
+                ", mail='" + email + '\'' +
                 ", roles=" + roles +
                 '}';
     }

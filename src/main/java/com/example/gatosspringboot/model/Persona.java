@@ -46,6 +46,10 @@ public class Persona implements Serializable {
     @JsonIgnoreProperties(value="aspirante")
     private List<SolicitudVoluntariado> solicitudesVoluntariados;
 
+    @OneToOne
+    @JoinColumn(name="us_id")
+    private Usuario usuario;
+
     @Override
     public String toString() {
         return "Persona{" +
@@ -54,7 +58,6 @@ public class Persona implements Serializable {
                 ", nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
                 ", tel='" + tel + '\'' +
-                ", email='" + email + '\'' +
                 ", fechaNac=" + fechaNac +
                 ", dire='" + dire + '\'' +
                 ", localidad='" + localidad + '\'' +

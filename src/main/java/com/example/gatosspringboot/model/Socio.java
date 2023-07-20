@@ -23,8 +23,4 @@ public class Socio extends Persona implements Serializable {
     @JsonIgnoreProperties(value="socio")
     private List<SolicitudVoluntariado> solicitudesVoluntariados;
 
-    @OneToOne
-    @JoinColumn(name="us_id")
-    private Usuario usuario;
-
 }
