@@ -13,5 +13,5 @@ import jakarta.validation.constraints.NotNull;
 public class UsuarioEmailDTO {
     @NotNull
     @Email
-    private String mail;
+    private String email;
 }

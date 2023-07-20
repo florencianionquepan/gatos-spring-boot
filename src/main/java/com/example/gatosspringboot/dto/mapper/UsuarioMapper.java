@@ -16,7 +16,7 @@ public class UsuarioMapper implements IUsuarioMapper{
     @Override
     public Usuario mapToEntity(UsuarioReqDTO dto) {
         Usuario user=new Usuario();
-        user.setMail(dto.getMail());
+        user.setEmail(dto.getEmail());
         user.setContrasenia(dto.getPassword());
         return user;
     }
@@ -24,7 +24,7 @@ public class UsuarioMapper implements IUsuarioMapper{
     @Override
     public UsuarioEmailDTO mapToDto(Usuario entity) {
         UsuarioEmailDTO dto=new UsuarioEmailDTO();
-        dto.setMail(entity.getMail());
+        dto.setEmail(entity.getEmail());
         return dto;
     }
 

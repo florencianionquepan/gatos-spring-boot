@@ -13,7 +13,7 @@ import lombok.*;
 public class UsuarioReqDTO {
     @NotNull
     @Email
-    private String mail;
+    private String email;
     @NotNull
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$).{8,}$", message = "La contraseña debe tener al menos 8 caracteres, una letra y un número.")
     private String password;

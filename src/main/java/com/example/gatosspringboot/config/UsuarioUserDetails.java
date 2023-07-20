@@ -18,7 +18,7 @@ public class UsuarioUserDetails implements UserDetails {
     private List<GrantedAuthority> authorities;
 
     public UsuarioUserDetails(Usuario user) {
-        email=user.getMail();
+        email=user.getEmail();
         contrasenia=user.getContrasenia();
         authorities= user.getRoles().stream()
                 .map(role->new SimpleGrantedAuthority(role.getNombre()))

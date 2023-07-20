@@ -1,18 +1,21 @@
 package com.example.gatosspringboot.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.validation.Valid;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-//Se utiliza para dar de alta
+@AllArgsConstructor
+//Se utiliza para dar de alta y listar (se agregan gatos ahi)
 //necesita datos de persona + email
 public class VoluntarioDTO extends PersonaDTO {
-    //@Valid
-    //private UsuarioEmailDTO usuario;
+
+    @JsonIgnoreProperties(value = "voluntario")
+    private List<GatoDTO> gatos;
 }

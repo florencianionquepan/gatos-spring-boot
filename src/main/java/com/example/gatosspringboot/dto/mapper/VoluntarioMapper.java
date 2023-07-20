@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 //lo uso para crear un nuevo voluntario
 public class VoluntarioMapper implements IVoluntarioMapper{
 
-    private final IUsuarioEmailMapper userMapper;
+    private final GatoMapper gatoMapper;
 
-    public VoluntarioMapper(IUsuarioEmailMapper userMapper) {
-        this.userMapper = userMapper;
+    public VoluntarioMapper(GatoMapper gatoMapper) {
+        this.gatoMapper = gatoMapper;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class VoluntarioMapper implements IVoluntarioMapper{
         ent.setFechaNac(volu.getFechaNac());
         ent.setDire(volu.getDire());
         ent.setLocalidad(volu.getLocalidad());
-        //ent.setUsuario(this.userMapper.mapToEntity(volu.getUsuario()));
+        //no se ingresan gatos al hacer post, para agregar ver
         return ent;
     }
 
@@ -45,7 +45,7 @@ public class VoluntarioMapper implements IVoluntarioMapper{
         dto.setFechaNac(entity.getFechaNac());
         dto.setDire(entity.getDire());
         dto.setLocalidad(entity.getLocalidad());
-        //dto.setUsuario(this.userMapper.mapToDto(entity.getUsuario()));
+        dto.setGatos(this.gatoMapper.mapListToDto(entity.getListaGatos()));
         return dto;
     }
 

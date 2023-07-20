@@ -17,7 +17,7 @@ import lombok.Setter;
 public class UsuarioPasswordDTO {
     @NotNull
     @Email
-    private String mail;
+    private String email;
     @NotNull
     private String passwordActual;
     @NotNull

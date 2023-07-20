@@ -9,14 +9,14 @@ public class UsuarioEmailMapper implements IUsuarioEmailMapper {
     @Override
     public UsuarioEmailDTO mapToDto(Usuario entity) {
         UsuarioEmailDTO dto=new UsuarioEmailDTO();
-        dto.setMail(entity.getMail());
+        dto.setEmail(entity.getEmail());
         return dto;
     }
 
     @Override
     public Usuario mapToEntity(UsuarioEmailDTO dto) {
         Usuario entity=new Usuario();
-        entity.setMail(dto.getMail());
+        entity.setEmail(dto.getEmail());
         return entity;
     }
 }
