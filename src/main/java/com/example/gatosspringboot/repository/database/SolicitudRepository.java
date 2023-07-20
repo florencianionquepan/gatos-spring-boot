@@ -21,6 +21,6 @@ public interface SolicitudRepository extends CrudRepository<Solicitud,Long> {
     @Query("SELECT s FROM Solicitud s WHERE s.gato.id = ?1")
     List<Solicitud> findByGato(Long id);
 
-    @Query("select s from Solicitud s where s.fechaSolicitud>=?1 and s.fechaSolicitud<=?2")
-    List<Solicitud> findBetweenDates(LocalDate desde, LocalDate hasta);
+/*    @Query("select s from Solicitud s where s.fechaSolicitud>=?1 and s.fechaSolicitud<=?2")
+    List<Solicitud> findBetweenDates(LocalDate desde, LocalDate hasta);*/
 }

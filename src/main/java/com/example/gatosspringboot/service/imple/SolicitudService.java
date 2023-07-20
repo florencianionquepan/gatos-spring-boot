@@ -64,7 +64,7 @@ public class SolicitudService implements ISolicitudService {
 
     @Override
     public List<Solicitud> verRangoFechas(LocalDate desde, LocalDate hasta) {
-        return this.repo.findBetweenDates(desde,hasta);
+        return (List<Solicitud>) this.repo.findAll();
     }
 
     @Override
@@ -83,8 +83,6 @@ public class SolicitudService implements ISolicitudService {
         List<Estado> estados = new ArrayList<>();
         estados.add(pendiente);
         solicitud.setEstados(estados);
-        LocalDate fechaHoy=LocalDate.now();
-        solicitud.setFechaSolicitud(fechaHoy);
         //logger.info("solicitud= "+solicitud);
         //si la persona no existe tambien la crea
         this.persoService.addSolicitudPersona(solicitud);

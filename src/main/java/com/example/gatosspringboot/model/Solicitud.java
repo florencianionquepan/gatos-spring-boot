@@ -24,8 +24,6 @@ public class Solicitud implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate fechaSolicitud;
-
     @ManyToOne(cascade=CascadeType.MERGE)
     @JoinColumn(name="solicitante_dni")
     @NotNull
@@ -51,7 +49,6 @@ public class Solicitud implements Serializable {
     public String toString() {
         return "Solicitud{" +
                 "id=" + id +
-                ", fechaSolicitud=" + fechaSolicitud +
                 ", solicitante=" + solicitante +
                 ", gato=" + gato +
                 ", estados=" + estados +

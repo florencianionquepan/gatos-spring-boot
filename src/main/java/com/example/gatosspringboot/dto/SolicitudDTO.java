@@ -20,7 +20,6 @@ import java.util.List;
 public class SolicitudDTO {
 
     Long id;
-    LocalDate fechaSolicitud;
     List<Estado> estados;
 
     @Valid
