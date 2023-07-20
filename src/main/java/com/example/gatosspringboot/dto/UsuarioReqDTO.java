@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.dto;
 
+import com.example.gatosspringboot.dto.validator.FieldMatch;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -10,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@FieldMatch(first = "passwordNew", second = "passwordNewConfirm", message = "Las contraseñas no coinciden")
 public class UsuarioReqDTO {
     @NotNull
     @Email
@@ -17,4 +19,7 @@ public class UsuarioReqDTO {
     @NotNull
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$).{8,}$", message = "La contraseña debe tener al menos 8 caracteres, una letra y un número.")
     private String password;
+    @NotNull
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$).{8,}$", message = "La contraseña debe tener al menos 8 caracteres, una letra y un número.")
+    private String passwordConfirm;
 }

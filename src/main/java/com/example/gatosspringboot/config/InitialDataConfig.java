@@ -20,7 +20,7 @@ public class InitialDataConfig {
         this.rolRepository.save(user);
         Rol voluntario=new Rol(2,"ROLE_VOLUNTARIO",null);
         this.rolRepository.save(voluntario);
-        Rol socio=new Rol(2,"ROLE_SOCIO",null);
+        Rol socio=new Rol(3,"ROLE_SOCIO",null);
         this.rolRepository.save(socio);
     }
 }
