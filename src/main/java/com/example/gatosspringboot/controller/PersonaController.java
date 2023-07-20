@@ -1,7 +1,11 @@
 package com.example.gatosspringboot.controller;
 
 import com.example.gatosspringboot.dto.PersonaDTO;
+import com.example.gatosspringboot.dto.RegistroDTO;
+import com.example.gatosspringboot.dto.UsuarioEmailDTO;
 import com.example.gatosspringboot.dto.mapper.IPersonaMapper;
+import com.example.gatosspringboot.dto.mapper.IRegistroMapper;
+import com.example.gatosspringboot.dto.mapper.IUsuarioEmailMapper;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,6 +17,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -27,15 +32,22 @@ import java.util.Map;
 public class PersonaController {
     private final IPersonaService service;
     private final IPersonaMapper mapper;
+    private final IUsuarioEmailMapper userMapper;
+    private final IRegistroMapper registroMapper;
     private final ObjectMapper objectMapper;
     public Map<String,Object> mensajeBody= new HashMap<>();
     private Logger logger= LoggerFactory.getLogger(PersonaController.class);
 
-    public PersonaController(IPersonaService service, IPersonaMapper mapper,
+    public PersonaController(IPersonaService service,
+                             IPersonaMapper mapper,
+                             IUsuarioEmailMapper userMapper,
+                             IRegistroMapper registroMapper,
                              ObjectMapper objectMapper) {
         this.service = service;
         this.mapper = mapper;
-        this.objectMapper = new ObjectMapper();
+        this.userMapper = userMapper;
+        this.registroMapper = registroMapper;
+        this.objectMapper = objectMapper;
     }
 
     private ResponseEntity<?> successResponse(Object data){
@@ -52,8 +64,26 @@ public class PersonaController {
                 .body(mensajeBody);
     }
 
+    @GetMapping("/validacion")
+    public ResponseEntity<?> validarEmail(@RequestBody UsuarioEmailDTO dto){
+        String email=this.userMapper.mapToEntity(dto).getEmail();
+        if(this.service.validarEmailIngresado(email)){
+            return this.successResponse("El codigo fue enviado a su email");
+        }else{
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                     .body("No se pudo enviar el código al email ingresado."+
+                     "Asegurase que es un email valido o intente nuevamente");
+        }
+    }
 
-    @GetMapping("/dni")
+    @PostMapping
+    public ResponseEntity<?> nueva(@RequestBody @Valid RegistroDTO dto){
+        String tokenValue=dto.getToken();
+        Persona nueva=this.service.altaRegistro(this.registroMapper.mapToEntity(dto),tokenValue);
+        return this.successResponse(this.mapper.mapToDto(nueva));
+    }
+
+/*    @GetMapping("/dni")
     ///personas/dni?dni={valor_dni}
     //Se debe llamar primero a este endpoint antes de crear nueva solicitud
     public ResponseEntity<?> buscarByDni(@RequestParam @Pattern(regexp = "\\d{8}",
@@ -62,9 +92,9 @@ public class PersonaController {
             return ResponseEntity.notFound().build();
         }
         return this.successResponse("Se envió a su email un token para validar su identidad");
-    }
+    }*/
 
-    @PostMapping("/dni/{dni}/token")
+/*    @PostMapping("/dni/{dni}/token")
     public ResponseEntity<?> validarToken(@PathVariable String dni, @RequestBody @NotEmpty String json) {
         try{
             JsonNode token=this.objectMapper.readTree(json);
@@ -77,7 +107,7 @@ public class PersonaController {
         }catch (JsonProcessingException e) {
             return this.notSuccessResponse(e.getMessage(), null);
         }
-    }
+    }*/
 
     @GetMapping("/search/dni")
     //puede ser utilizado por socios solamente
