@@ -51,13 +51,13 @@ public class PersonaController {
     }
 
     private ResponseEntity<?> successResponse(Object data){
-        mensajeBody.put("Success",Boolean.TRUE);
+        mensajeBody.put("success",Boolean.TRUE);
         mensajeBody.put("data",data);
         return ResponseEntity.ok(mensajeBody);
     }
 
     private ResponseEntity<?> notSuccessResponse(String mensaje,Integer id){
-        mensajeBody.put("Success",Boolean.FALSE);
+        mensajeBody.put("success",Boolean.FALSE);
         mensajeBody.put("data", String.format(mensaje,id));
         return ResponseEntity
                 .badRequest()
@@ -70,9 +70,11 @@ public class PersonaController {
         if(this.service.validarEmailIngresado(email)){
             return this.successResponse("El codigo fue enviado a su email");
         }else{
+            mensajeBody.put("error",HttpStatus.INTERNAL_SERVER_ERROR.value());
+            mensajeBody.put("data","No se pudo enviar el código al email ingresado."+
+                    "Asegurase que es un email valido o intente nuevamente");
              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                     .body("No se pudo enviar el código al email ingresado."+
-                     "Asegurase que es un email valido o intente nuevamente");
+                     .body(mensajeBody);
         }
     }
 
@@ -82,32 +84,6 @@ public class PersonaController {
         Persona nueva=this.service.altaRegistro(this.registroMapper.mapToEntity(dto),tokenValue);
         return this.successResponse(this.mapper.mapToDto(nueva));
     }
-
-/*    @GetMapping("/dni")
-    ///personas/dni?dni={valor_dni}
-    //Se debe llamar primero a este endpoint antes de crear nueva solicitud
-    public ResponseEntity<?> buscarByDni(@RequestParam @Pattern(regexp = "\\d{8}",
-            message = "El dni debe contener exactamente 8 números sin puntos") String dni){
-        if(!this.service.personaExistente(dni)){
-            return ResponseEntity.notFound().build();
-        }
-        return this.successResponse("Se envió a su email un token para validar su identidad");
-    }*/
-
-/*    @PostMapping("/dni/{dni}/token")
-    public ResponseEntity<?> validarToken(@PathVariable String dni, @RequestBody @NotEmpty String json) {
-        try{
-            JsonNode token=this.objectMapper.readTree(json);
-            if(!token.has("token")){
-                return this.notSuccessResponse("No existe un campo token",null);
-            }
-            String tokenValue=token.get("token").textValue();
-            Persona datosPersona=this.service.datosPersona(tokenValue, dni);
-            return this.successResponse(this.mapper.mapToDto(datosPersona));
-        }catch (JsonProcessingException e) {
-            return this.notSuccessResponse(e.getMessage(), null);
-        }
-    }*/
 
     @GetMapping("/search/dni")
     //puede ser utilizado por socios solamente
