@@ -42,6 +42,20 @@ public class UsuarioService implements IUsuarioService {
         return (List<Usuario>) this.usRepo.findAll();
     }
 
+    @Override
+    public Usuario altaUsuario(Usuario usuario) {
+        List<Rol> rolesUser=new ArrayList<Rol>(
+                List.of(this.rolRepo.findById(1).get())
+        );
+        usuario.setContrasenia(this.passwordEncoder.encode(usuario.getContrasenia()));
+        usuario.setRoles(rolesUser);
+        Usuario nuevo=this.usRepo.save(usuario);
+        String subject="Su cuenta ha sido generada!";
+        String content="\nYa puede iniciar sesión con su email y su contraseña para enviar solicitudes!";
+        this.emailService.sendMessage(usuario.getEmail(),subject,content);
+        return nuevo;
+    }
+
 
     @Override
     public Usuario altaUsuarioVoluntario(String email) {
@@ -52,7 +66,7 @@ public class UsuarioService implements IUsuarioService {
         Usuario user=this.altaUsuarioVolu(nuevoUsuario);
         if(!user.getEmail().isEmpty()){
             String subject="Su cuenta como voluntario ha sido generada!";
-            String content="Puede iniciar sesión con su email y su contraseña: "+password;
+            String content="\nPuede iniciar sesión con su email y su contraseña: "+password;
             this.emailService.sendMessage(email,subject,content);
         }
         return user;
@@ -92,7 +106,7 @@ public class UsuarioService implements IUsuarioService {
         Usuario admin=this.altaUsuarioSocio(nuevoUsuario);
         if(!admin.getEmail().isEmpty()){
             String subject="Su cuenta como socio ha sido generada!";
-            String content="Puede iniciar sesión con su email y su contraseña: "+password;
+            String content="\nPuede iniciar sesión con su email y su contraseña: "+password;
             this.emailService.sendMessage(email,subject,content);
         }
         return admin;
