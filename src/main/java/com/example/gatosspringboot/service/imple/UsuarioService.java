@@ -44,6 +44,7 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public Usuario altaUsuario(Usuario usuario) {
+        this.existeEmail(usuario.getEmail());
         List<Rol> rolesUser=new ArrayList<Rol>(
                 List.of(this.rolRepo.findById(1).get())
         );
@@ -154,7 +155,7 @@ public class UsuarioService implements IUsuarioService {
         Optional<Usuario> oUsuario=this.usRepo.findByEmail(email);
         if(oUsuario.isPresent()){
             throw new ExistingException
-                    (String.format("El email %d ya se encuentra registrado",email)
+                    (String.format("El email %s ya se encuentra registrado",email)
                     );
         }
     }
