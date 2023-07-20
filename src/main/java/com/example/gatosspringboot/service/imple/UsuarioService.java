@@ -49,7 +49,7 @@ public class UsuarioService implements IUsuarioService {
         nuevoUsuario.setEmail(email);
         String password=this.generarPasswordAleatoria();
         nuevoUsuario.setContrasenia(password);
-        Usuario user=this.altaUsuarioUser(nuevoUsuario);
+        Usuario user=this.altaUsuarioVolu(nuevoUsuario);
         if(!user.getEmail().isEmpty()){
             String subject="Su cuenta como voluntario ha sido generada!";
             String content="Puede iniciar sesión con su email y su contraseña: "+password;
@@ -58,12 +58,11 @@ public class UsuarioService implements IUsuarioService {
         return user;
     }
 
-    //metodo para crear usuario con email + contraseña rol USER
-    private Usuario altaUsuarioUser(Usuario us) {
+    private Usuario altaUsuarioVolu(Usuario us) {
         this.existeEmail(us.getEmail());
-        //traigo role_user
+        //traigo role_volu
         List<Rol> roles=new ArrayList<Rol>(
-                List.of(this.rolRepo.findById(1).get())
+                List.of(this.rolRepo.findById(2).get())
         );
         us.setRoles(roles);
         us.setContrasenia(passwordEncoder.encode(us.getContrasenia()));
@@ -90,7 +89,7 @@ public class UsuarioService implements IUsuarioService {
         nuevoUsuario.setEmail(email);
         String password=this.generarPasswordAleatoria();
         nuevoUsuario.setContrasenia(password);
-        Usuario admin=this.altaUsuarioAdmin(nuevoUsuario);
+        Usuario admin=this.altaUsuarioSocio(nuevoUsuario);
         if(!admin.getEmail().isEmpty()){
             String subject="Su cuenta como socio ha sido generada!";
             String content="Puede iniciar sesión con su email y su contraseña: "+password;
@@ -101,21 +100,21 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     //por ahora siempre traera sus roles de bd:
-    public Usuario agregarRolAdmin(Usuario user) {
+    public Usuario agregarRolSocio(Usuario user) {
         List<Rol> roles=user.getRoles();
-        Optional<Rol> oAdminRol=this.rolRepo.findById(2);
-        if(oAdminRol.isEmpty()){
-            throw new NonExistingException("El rol admin no existe en la bd");
+        Optional<Rol> oSocioRol=this.rolRepo.findById(3);
+        if(oSocioRol.isEmpty()){
+            throw new NonExistingException("El rol socio no existe en la bd");
         }
-        if(roles.stream().noneMatch(rol->rol.getId()==2)){
-            roles.add(oAdminRol.get());
+        if(roles.stream().noneMatch(rol->rol.getId()==3)){
+            roles.add(oSocioRol.get());
             user.setRoles(roles);
             return this.usRepo.save(user);
         }
         return user;
     }
 
-    private Usuario altaUsuarioAdmin(Usuario admin){
+    private Usuario altaUsuarioSocio(Usuario admin){
         this.existeEmail(admin.getEmail());
         //traigo role_admin
         List<Rol> roles=new ArrayList<Rol>(

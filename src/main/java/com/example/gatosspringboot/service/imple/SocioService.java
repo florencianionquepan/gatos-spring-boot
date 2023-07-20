@@ -62,7 +62,7 @@ public class SocioService implements ISocioService {
         //si ya existe como persona
         //si ya tiene el rol admin no se vuelve a agregar
         Usuario user=oUser.isEmpty()?this.usService.altaUsuarioSocio(socio.getEmail())
-                :this.usService.agregarRolAdmin(oUser.get());
+                :this.usService.agregarRolSocio(oUser.get());
         Persona perso=oPersoDni.get();
         socio.setId(perso.getId());
         socio.setUsuario(user);
