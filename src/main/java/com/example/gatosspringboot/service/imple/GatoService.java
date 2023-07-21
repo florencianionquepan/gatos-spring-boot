@@ -2,8 +2,10 @@ package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
+import com.example.gatosspringboot.model.Ficha;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Voluntario;
+import com.example.gatosspringboot.repository.database.FichaRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
@@ -20,10 +22,14 @@ public class GatoService implements IGatoService {
 
     private final GatoRepository gatoRepo;
     private final IVoluntarioService voluService;
+    private final FichaRepository fichaRepo;
 
-    public GatoService(GatoRepository gatoRepo, IVoluntarioService voluService) {
+    public GatoService(GatoRepository gatoRepo,
+                       IVoluntarioService voluService,
+                       FichaRepository fichaRepo) {
         this.gatoRepo = gatoRepo;
         this.voluService = voluService;
+        this.fichaRepo = fichaRepo;
     }
 
     @Override
@@ -67,24 +73,13 @@ public class GatoService implements IGatoService {
         }
     }
 
-    private Gato buscarPorId(Long id){
-        return this.gatoRepo.findById(id).get();
-    }
-
     public boolean existeGato(Long id){
         return this.gatoRepo.existsById(id);
     }
 
     @Override
     public Gato adoptarGato(Long id) {
-        Gato gati=this.buscarPorId(id);
-        if(!existeGato(id)){
-            throw new NonExistingException(
-                    String.format("El gato no existe",id));
-        }
-        if(gati.getAdoptadoFecha()!=null){
-            throw new RuntimeException("El gato ya fue adoptado");
-        }
+        Gato gati=this.buscarDisponibleById(id);
         gati.setAdoptadoFecha(LocalDate.now());
         //notificarPadrino
         //notificarTransito
@@ -105,6 +100,24 @@ public class GatoService implements IGatoService {
             String fechaFormateada = fechaAdopcion.format(formatoFecha);
             throw new PersonNotFound(
                     String.format("El gato fue adoptado el día %s",fechaFormateada)
+            );
+        }
+        return oGato.get();
+    }
+
+    @Override
+    public Gato agregarFicha(Ficha ficha, Long id) {
+        Gato gati=this.findGatoById(id);
+        Ficha creada=this.fichaRepo.save(ficha);
+        gati.setFichaVet(creada);
+        return this.gatoRepo.save(gati);
+    }
+
+    private Gato findGatoById(Long id){
+        Optional<Gato> oGato=this.gatoRepo.findById(id);
+        if(oGato.isEmpty()){
+            throw new PersonNotFound(
+                    String.format("El gato con id %d no existe",id)
             );
         }
         return oGato.get();
