@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.controller;
 
-import com.example.gatosspringboot.dto.SolicitudDTO;
+import com.example.gatosspringboot.dto.SolicitudReqDTO;
+import com.example.gatosspringboot.dto.SolicitudRespDTO;
 import com.example.gatosspringboot.dto.mapper.ISolicitudMapper;
 import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.service.interfaces.ISolicitudService;
@@ -43,38 +44,38 @@ public class SolicitudController {
     }
 
     @PostMapping
-    private ResponseEntity<?> nuevaSolicitud(@RequestBody @Valid SolicitudDTO dto){
+    private ResponseEntity<?> nuevaSolicitud(@RequestBody @Valid SolicitudReqDTO dto){
         Solicitud nueva=this.mapper.mapToEntity(dto);
         Solicitud creada=this.service.altaSolicitud(nueva);
-        SolicitudDTO dtoCreado=this.mapper.mapToDto(creada);
+        SolicitudRespDTO dtoCreado=this.mapper.mapToDto(creada);
         return ResponseEntity.status(HttpStatus.CREATED).body(dtoCreado);
     }
 
     @GetMapping
     private ResponseEntity<?> listar(){
         List<Solicitud> solicitudes=this.service.verSolicitudes();
-        List<SolicitudDTO> dtos=this.mapper.mapListToDto(solicitudes);
+        List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }
 
     @GetMapping("/estado/{estado}")
     private ResponseEntity<?> listarByEstado(@PathVariable String estado){
         List<Solicitud> solicitudes=this.service.verByEstado(estado);
-        List<SolicitudDTO> dtos=this.mapper.mapListToDto(solicitudes);
+        List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }
 
     @GetMapping("/gato/{id}")
     private ResponseEntity<?> listarByGato(@PathVariable Long id){
         List<Solicitud> solicitudes=this.service.verByGato(id);
-        List<SolicitudDTO> dtos=this.mapper.mapListToDto(solicitudes);
+        List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }
 
     @GetMapping("/solicitante/{dni}")
     private ResponseEntity<?> listarBySoli(@PathVariable String dni){
         List<Solicitud> solicitudes=this.service.verBySolicitante(dni);
-        List<SolicitudDTO> dtos=this.mapper.mapListToDto(solicitudes);
+        List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }
 
