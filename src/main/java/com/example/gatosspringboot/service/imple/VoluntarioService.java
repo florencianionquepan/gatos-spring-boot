@@ -103,7 +103,7 @@ public class VoluntarioService implements IVoluntarioService {
         Optional<Voluntario> oVolu=this.voluRepo.findByEmail(email);
         if(oVolu.isEmpty()){
             throw new NonExistingException(
-                    String.format("El voluntario con email %d no existe",
+                    String.format("El voluntario con email %s no existe",
                             email)
             );
         }

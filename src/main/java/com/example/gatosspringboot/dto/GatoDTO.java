@@ -51,7 +51,6 @@ public class GatoDTO {
     private List<Solicitud> solicitudes;
 
     @Valid
-    @JsonIgnoreProperties(value={"usuario","solicitudes"})
     private VoluntarioEmailDTO voluntario;
 
     private Padrino padrino;
