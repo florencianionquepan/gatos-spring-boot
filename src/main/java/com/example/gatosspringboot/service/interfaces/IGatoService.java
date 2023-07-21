@@ -13,4 +13,5 @@ public interface IGatoService {
     boolean existeGato(Long id);
     Gato adoptarGato(Long id);
     void addSolicitudGato(Solicitud solicitud);
+    Gato buscarDisponibleById(Long id);
 }

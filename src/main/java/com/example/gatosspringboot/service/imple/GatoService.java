@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
+import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.model.Voluntario;
@@ -10,7 +11,10 @@ import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class GatoService implements IGatoService {
@@ -96,5 +100,24 @@ public class GatoService implements IGatoService {
         gatoSolicitado.setListaSol(solicituds);
         //No es necesario guardar de nuevo la entidad gato ya que se guarda solicitud luego
         //this.gatoRepo.save(gatoSolicitado);
+    }
+
+    @Override
+    public Gato buscarDisponibleById(Long id) {
+        Optional<Gato> oGato=this.gatoRepo.findById(id);
+        if(oGato.isEmpty()){
+            throw new PersonNotFound(
+                    String.format("El gato con id %d no existe",id)
+            );
+        }
+        LocalDate fechaAdopcion=oGato.get().getAdoptadoFecha();
+        if(fechaAdopcion!=null){
+            DateTimeFormatter formatoFecha=DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.getDefault());
+            String fechaFormateada = fechaAdopcion.format(formatoFecha);
+            throw new PersonNotFound(
+                    String.format("El gato fue adoptado el día %s",fechaFormateada)
+            );
+        }
+        return oGato.get();
     }
 }
