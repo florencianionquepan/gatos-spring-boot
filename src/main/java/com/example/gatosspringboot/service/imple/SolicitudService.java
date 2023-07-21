@@ -76,34 +76,59 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
+    //puede tener hasta 3 pendientes
     public Solicitud altaSolicitud(Solicitud solicitud) {
-        //chequear primero que no haya hecho ya una solicitud por el mismo gato
-        this.solicitaMismoGato(solicitud);
+        //buscar solicitante y gato:
+        Persona solicitantebd=this.persoService.findByEmail(solicitud.getSolicitante().getEmail());
+        Gato gatobd=this.gatoService.buscarDisponibleById(solicitud.getGato().getId());
+        //chequear que no haya hecho ya una solicitud por el mismo gato
+        this.solicitaMismoGato(solicitantebd, gatobd);
+        this.poseeOtrosPendientes(solicitantebd);
         Estado pendiente=estadoService.crearPendiente();
         List<Estado> estados = new ArrayList<>();
         estados.add(pendiente);
         solicitud.setEstados(estados);
         //logger.info("solicitud= "+solicitud);
-        //si la persona no existe tambien la crea
-        this.persoService.addSolicitudPersona(solicitud);
-        this.gatoService.addSolicitudGato(solicitud);
+        solicitud.setSolicitante(solicitantebd);
+        solicitud.setGato(gatobd);
+        //this.persoService.addSolicitudPersona(solicitud);
+        //this.gatoService.addSolicitudGato(solicitud);
         return this.repo.save(solicitud);
     }
 
-    private void solicitaMismoGato(Solicitud solicitud){
-        String dniSolicita= solicitud.getSolicitante().getDni();
-        boolean existeSolicitante=this.persoService.existeByDni(dniSolicita);
-        if(existeSolicitante){
-            Persona solicitante=this.persoService.findByDni(dniSolicita);
-            Long idGatoSolicitado= solicitud.getGato().getId();
-            List<Solicitud> solicitudesAnteriores=solicitante.getSolicitudesAdopcion();
-            if(solicitudesAnteriores.stream()
-                    .anyMatch(soli -> soli.getGato().getId().equals(idGatoSolicitado))){
+    //solo se puede enviar si se cerro porque el gato se adopto
+    // y volvio a estar en adopcion
+    private void solicitaMismoGato(Persona solicitante, Gato gato){
+        List<Solicitud> solicitudesAnteriores=solicitante.getSolicitudesAdopcion();
+        Optional<Solicitud> solicitudEncontrada = solicitudesAnteriores.stream()
+                .filter(soli -> soli.getGato().getId().equals(gato.getId()))
+                .findFirst();
+        if(solicitudEncontrada.isPresent()){
+            List<Estado> estados=solicitudEncontrada.get().getEstados();
+            boolean existeEstadoCerrado = estados.stream()
+                    .anyMatch(estado -> estado.getEstado() == EstadoNombre.CERRADA);
+            //ya sea que esta pendiente o se reviso y se rechazo o acepto
+            if(!existeEstadoCerrado){
                 throw new ExistingException(
                         String.format("Ya enviaste una solicitud por la adopcion de este gatito!")
                 );
-            };
-        }
+            }
+        };
+    }
+
+    private void poseeOtrosPendientes(Persona soli){
+        List<Solicitud> solicitudes=soli.getSolicitudesAdopcion();
+        LocalDate fechaActual = LocalDate.now();
+        LocalDate hace30Dias = fechaActual.minusDays(30);
+        List<Solicitud> solicitudesFiltradas = solicitudes.stream()
+                .filter(solicitud -> solicitud.getEstados().size() == 1 &&
+                        solicitud.getEstados().get(0).getEstado() == EstadoNombre.PENDIENTE &&
+                        solicitud.getEstados().get(0).getFecha().isAfter(hace30Dias))
+                .collect(Collectors.toList());
+        if(solicitudesFiltradas.size()>2){
+            throw new ExistingException("Ya solicitaste la adopcion de dos gatitos en los ultimos 30 dias," +
+                    "por favor espera a que revisemos las solicitudes enviadas!");
+        };
     }
 
     @Override
