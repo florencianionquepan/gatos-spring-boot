@@ -8,9 +8,6 @@ public interface IPersonaService {
     Persona findByEmail(String email);
     boolean existeByDni(String dni);
     void validarEmailUnico(String email);
-    void addSolicitudPersona(Solicitud solicitud);
-    boolean personaExistente(String dni);
-    Persona datosPersona(String token, String dni);
     boolean validarEmailIngresado(String email);
     Persona altaRegistro(Persona persona, String token);
 }

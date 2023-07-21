@@ -93,16 +93,6 @@ public class GatoService implements IGatoService {
     }
 
     @Override
-    public void addSolicitudGato(Solicitud solicitud) {
-        Gato gatoSolicitado=this.buscarPorId(solicitud.getGato().getId());
-        List<Solicitud> solicituds =gatoSolicitado.getListaSol();
-        solicituds.add(solicitud);
-        gatoSolicitado.setListaSol(solicituds);
-        //No es necesario guardar de nuevo la entidad gato ya que se guarda solicitud luego
-        //this.gatoRepo.save(gatoSolicitado);
-    }
-
-    @Override
     public Gato buscarDisponibleById(Long id) {
         Optional<Gato> oGato=this.gatoRepo.findById(id);
         if(oGato.isEmpty()){

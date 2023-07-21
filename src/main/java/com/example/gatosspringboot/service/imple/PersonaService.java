@@ -76,50 +76,6 @@ public class PersonaService implements IPersonaService {
     }
 
     @Override
-    public void addSolicitudPersona(Solicitud solicitud) {
-        Persona solicitante= solicitud.getSolicitante();
-        if(this.existeByDni(solicitante.getDni())){
-            Persona perso=this.findByDni(solicitante.getDni());
-            List<Solicitud> solicitudes=perso.getSolicitudesAdopcion();
-            solicitudes.add(solicitud);
-            perso.setSolicitudesAdopcion(solicitudes);
-            solicitud.setSolicitante(perso);
-        }else{
-            solicitante.setSolicitudesAdopcion(new ArrayList<>(Arrays.asList(solicitud)));
-            this.repo.save(solicitante);
-        }
-    }
-
-    @Override
-    public boolean personaExistente(String dni) {
-        /*Optional<Persona> oPerso=this.repo.findByDni(dni);
-        if(oPerso.isPresent()){
-            //envio token a su email personal
-            String token=this.generarToken();
-            Persona persona=oPerso.get();
-            String text="Hola "+persona.getNombre()+"!. \nTe enviamos el codigo que debes ingresar " +
-                    "para validar tu identidad y poder rellenar los campos en nuestro formulario."+
-                    "\nSi no has intentado enviar una solicitud para formar parte de Gatshan, por favor ignora este mensaje" +
-                    "\n Código: "+token;
-            this.emailService.sendMessage(persona.getEmail(), "Valida tu identidad",text);
-        }
-        return oPerso.isPresent();*/
-        return true;
-    }
-
-    @Override
-    public Persona datosPersona(String token, String dni) {
-        /*if(!this.validarToken(token)){
-            throw new NonExistingException(
-                    "El código no coincide, Por favor ingresa tu dni nuevamente."
-            );
-        }else{
-            return this.findByDni(dni);
-        }*/
-        return null;
-    }
-
-    @Override
     public boolean validarEmailIngresado(String email) {
         this.validarEmailUnico(email);
         String token=this.generarToken();
