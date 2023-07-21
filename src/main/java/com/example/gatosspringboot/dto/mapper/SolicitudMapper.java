@@ -1,6 +1,10 @@
 package com.example.gatosspringboot.dto.mapper;
 
-import com.example.gatosspringboot.dto.SolicitudDTO;
+import com.example.gatosspringboot.dto.PersonaDTO;
+import com.example.gatosspringboot.dto.SolicitudReqDTO;
+import com.example.gatosspringboot.dto.SolicitudRespDTO;
+import com.example.gatosspringboot.model.Gato;
+import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Solicitud;
 import org.springframework.stereotype.Component;
 
@@ -11,34 +15,42 @@ import java.util.stream.Collectors;
 public class SolicitudMapper implements ISolicitudMapper{
 
     private final IPersonaMapper persoMap;
-    private final IGatoIdMapper gatoMap;
+    private final IGatoMapper gatoMap;
+    private final IEstadoMapper estadoMapper;
 
     public SolicitudMapper(IPersonaMapper persoMap,
-                           IGatoIdMapper gatoMap) {
+                           IGatoMapper gatoMap,
+                           IEstadoMapper estadoMapper) {
         this.persoMap = persoMap;
         this.gatoMap = gatoMap;
+        this.estadoMapper = estadoMapper;
     }
 
     @Override
-    public Solicitud mapToEntity(SolicitudDTO dto) {
+    public Solicitud mapToEntity(SolicitudReqDTO dto) {
         Solicitud entity=new Solicitud();
-        entity.setSolicitante(this.persoMap.mapToPersona(dto.getSolicitante()));
-        entity.setGato(this.gatoMap.mapToEntity(dto.getGato()));
+        Persona solicitante=new Persona();
+        solicitante.setEmail(dto.getSolicitante().getEmail());
+        entity.setSolicitante(solicitante);
+        Gato gato=new Gato();
+        gato.setId(dto.getGato().getId());
+        entity.setGato(gato);
         return entity;
     }
 
     @Override
-    public SolicitudDTO mapToDto(Solicitud entity) {
-        SolicitudDTO dto=new SolicitudDTO();
+    public SolicitudRespDTO mapToDto(Solicitud entity) {
+        SolicitudRespDTO dto=new SolicitudRespDTO();
         dto.setId(entity.getId());
-        dto.setEstados(entity.getEstados());
-        dto.setSolicitante(this.persoMap.mapToDto(entity.getSolicitante()));
+        dto.setEstados(this.estadoMapper.mapToListDto(entity.getEstados()));
+        PersonaDTO personaDTO=this.persoMap.mapToDto(entity.getSolicitante());
+        dto.setSolicitante(personaDTO);
         dto.setGato(this.gatoMap.mapToDto(entity.getGato()));
         return dto;
     }
 
     @Override
-    public List<SolicitudDTO> mapListToDto(List<Solicitud> entities) {
+    public List<SolicitudRespDTO> mapListToDto(List<Solicitud> entities) {
         return entities.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
