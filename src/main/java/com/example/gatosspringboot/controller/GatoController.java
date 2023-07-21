@@ -1,6 +1,8 @@
 package com.example.gatosspringboot.controller;
 
+import com.example.gatosspringboot.dto.FichaDTO;
 import com.example.gatosspringboot.dto.GatoDTO;
+import com.example.gatosspringboot.dto.mapper.IFichaMapper;
 import com.example.gatosspringboot.dto.mapper.IGatoMapper;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
@@ -19,18 +21,21 @@ public class GatoController {
 
     private final IGatoService gatoSer;
     private final IGatoMapper mapper;
+    private final IFichaMapper fichaMap;
 
     public Map<String,Object> mensajeBody= new HashMap<>();
 
     public GatoController(IGatoService gatoSer,
-                          IGatoMapper mapper) {
+                          IGatoMapper mapper,
+                          IFichaMapper fichaMap) {
         this.gatoSer = gatoSer;
         this.mapper = mapper;
+        this.fichaMap = fichaMap;
     }
 
-    private ResponseEntity<?> successResponse(List<?> lista){
+    private ResponseEntity<?> successResponse(Object data){
         mensajeBody.put("Success",Boolean.TRUE);
-        mensajeBody.put("data",lista);
+        mensajeBody.put("data",data);
         return ResponseEntity.ok(mensajeBody);
     }
 
@@ -49,6 +54,7 @@ public class GatoController {
     }
 
     @PostMapping
+    //@PreAuthorize("hasAuthority('ROLE_VOLUNTARIO')")
     public ResponseEntity<?> altaGato(@RequestBody @Valid GatoDTO dto){
         Gato nuevo=this.gatoSer.altaGato(this.mapper.mapToEntity(dto));
         mensajeBody.put("Success",Boolean.TRUE);
@@ -56,7 +62,16 @@ public class GatoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mensajeBody);
     }
 
+    @PutMapping("/id/ficha")
+    //@PreAuthorize("hasAuthority('ROLE_VOLUNTARIO')")
+    public ResponseEntity<?> agregarFicha(@RequestBody FichaDTO ficha,
+                                          @PathVariable Long id){
+        Gato modi=this.gatoSer.agregarFicha(this.fichaMap.mapToEntity(ficha), id);
+        return this.successResponse(this.mapper.mapToDto(modi));
+    }
+
     @PutMapping("/id")
+    //@PreAuthorize("hasAuthority('ROLE_VOLUNTARIO')")
     public ResponseEntity<?> modiGato(@RequestBody GatoDTO dto,
                                       @PathVariable Long id){
         Gato modi=this.gatoSer.modiGato(this.mapper.mapToEntity(dto),id);
