@@ -48,7 +48,7 @@ public class GatoDTO {
     private FichaDTO fichaDTO;
 
     @JsonIgnoreProperties(value="gato")
-    private List<Solicitud> solicitudes;
+    private List<SolicitudReqDTO> solicitudes;
 
     @Valid
     private VoluntarioEmailDTO voluntario;

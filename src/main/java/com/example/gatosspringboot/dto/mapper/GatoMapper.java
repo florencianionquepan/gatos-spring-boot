@@ -1,7 +1,10 @@
 package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.GatoDTO;
+import com.example.gatosspringboot.dto.PersonaEmailDTO;
+import com.example.gatosspringboot.dto.SolicitudReqDTO;
 import com.example.gatosspringboot.model.Gato;
+import com.example.gatosspringboot.model.Solicitud;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,11 +15,14 @@ public class GatoMapper implements IGatoMapper{
 
     private final IVoluntarioEmailMapper volMap;
     private final IFichaMapper fichaMap;
+    private final IEstadoMapper estadoMapper;
 
     public GatoMapper(IVoluntarioEmailMapper volMap,
-                      IFichaMapper fichaMap) {
+                      IFichaMapper fichaMap,
+                      IEstadoMapper estadoMapper) {
         this.volMap = volMap;
         this.fichaMap = fichaMap;
+        this.estadoMapper = estadoMapper;
     }
 
 
@@ -32,7 +38,6 @@ public class GatoMapper implements IGatoMapper{
         gato.setColor(dto.getColor());
         gato.setTipoPelo(dto.getTipoPelo());
         gato.setFichaVet(this.fichaMap.mapToEntity(dto.getFichaDTO()));
-        gato.setListaSol(dto.getSolicitudes());
         gato.setVoluntario(this.volMap.mapToEntity(dto.getVoluntario()));
         gato.setPadrino(dto.getPadrino());
         gato.setAdoptadoFecha(dto.getAdoptado());
@@ -51,7 +56,7 @@ public class GatoMapper implements IGatoMapper{
         dto.setColor(entity.getColor());
         dto.setTipoPelo(entity.getTipoPelo());
         dto.setFichaDTO(this.fichaMap.mapToDto(entity.getFichaVet()));
-        dto.setSolicitudes(entity.getListaSol());
+        dto.setSolicitudes(this.mapSoliToDto(entity.getListaSol()));
         dto.setVoluntario(this.volMap.mapToDto(entity.getVoluntario()));
         dto.setPadrino(entity.getPadrino());
         dto.setAdoptado(entity.getAdoptadoFecha());
@@ -62,6 +67,21 @@ public class GatoMapper implements IGatoMapper{
     public List<GatoDTO> mapListToDto(List<Gato> entities) {
         return entities.stream()
                 .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    private SolicitudReqDTO mapToSoliDTO(Solicitud soli){
+        SolicitudReqDTO dto=new SolicitudReqDTO();
+        dto.setId(soli.getId());
+        dto.setEstados(this.estadoMapper.mapToListDto(soli.getEstados()));
+        PersonaEmailDTO persoEmail=new PersonaEmailDTO();
+        persoEmail.setEmail(soli.getSolicitante().getEmail());
+        return dto;
+    }
+
+    private List<SolicitudReqDTO> mapSoliToDto(List<Solicitud> solicitudes){
+        return solicitudes.stream()
+                .map(this::mapToSoliDTO)
                 .collect(Collectors.toList());
     }
 }
