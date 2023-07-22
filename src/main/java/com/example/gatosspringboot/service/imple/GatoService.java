@@ -1,13 +1,14 @@
 package com.example.gatosspringboot.service.imple;
 
-import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.Ficha;
 import com.example.gatosspringboot.model.Gato;
+import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.model.Voluntario;
 import com.example.gatosspringboot.repository.database.FichaRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
+import com.example.gatosspringboot.service.interfaces.ITransitoService;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +24,16 @@ public class GatoService implements IGatoService {
     private final GatoRepository gatoRepo;
     private final IVoluntarioService voluService;
     private final FichaRepository fichaRepo;
+    private final ITransitoService tranSer;
 
     public GatoService(GatoRepository gatoRepo,
                        IVoluntarioService voluService,
-                       FichaRepository fichaRepo) {
+                       FichaRepository fichaRepo,
+                       ITransitoService tranSer) {
         this.gatoRepo = gatoRepo;
         this.voluService = voluService;
         this.fichaRepo = fichaRepo;
+        this.tranSer = tranSer;
     }
 
     @Override
@@ -64,7 +68,7 @@ public class GatoService implements IGatoService {
 
     //Para cuando actualizas el voluntario del gato
     private void removeGatoVolViejo(Long id){
-        Gato gatoAnte=this.buscarPorId(id);
+        Gato gatoAnte=this.findGatoById(id);
         if(gatoAnte.getVoluntario()!=null){
             Voluntario voluntAnte=gatoAnte.getVoluntario();
             List<Gato> gatosVolAnte=voluntAnte.getListaGatos();
@@ -110,6 +114,15 @@ public class GatoService implements IGatoService {
         Gato gati=this.findGatoById(id);
         Ficha creada=this.fichaRepo.save(ficha);
         gati.setFichaVet(creada);
+        return this.gatoRepo.save(gati);
+    }
+
+    @Override
+    //si tenia un transito anterior se va a pisar
+    public Gato agregarTransito(Transito transito, Long id) {
+        Gato gati=this.findGatoById(id);
+        Transito transitodb=this.tranSer.findByIdOrException(transito.getId());
+        gati.setTransito(transitodb);
         return this.gatoRepo.save(gati);
     }
 
