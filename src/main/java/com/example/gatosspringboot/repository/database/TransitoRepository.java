@@ -1,7 +1,6 @@
 package com.example.gatosspringboot.repository.database;
 
 import com.example.gatosspringboot.model.Transito;
-import com.example.gatosspringboot.model.Voluntario;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

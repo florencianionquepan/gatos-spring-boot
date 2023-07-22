@@ -17,6 +17,6 @@ public interface VoluntarioRepository extends CrudRepository<Voluntario, Long> {
 
     @Modifying
     @Query(nativeQuery = true,
-            value="INSERT INTO voluntarios (id, us_id) VALUES (:id, :us_id)")
-    void saveVoluntario(@Param("id") Long id, @Param("us_id") Long us_id);
+            value="INSERT INTO voluntarios (id) VALUES (:id)")
+    void saveVoluntario(@Param("id") Long id);
 }

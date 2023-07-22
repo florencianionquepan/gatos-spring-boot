@@ -15,7 +15,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//pedir dos veces email
 public class PersonaDTO {
     private Long id;
     @NotNull

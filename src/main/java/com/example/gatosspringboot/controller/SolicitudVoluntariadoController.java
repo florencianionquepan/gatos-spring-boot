@@ -49,6 +49,7 @@ public class SolicitudVoluntariadoController {
     }
 
     @PostMapping
+    //@PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<?> nueva(@RequestBody @Validated(PostValidationGroup.class)
                                    SolicitudVoluntariadoDTO dto){
         SolicitudVoluntariado creada=this.service.nueva(this.mapper.mapToEntity(dto));
@@ -56,13 +57,16 @@ public class SolicitudVoluntariadoController {
     }
 
     @PutMapping("/{id}/estados/aceptada")
+    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
     public ResponseEntity<?> aceptarSolicitud(@RequestBody @Validated(PutValidationGroup.class)
                                                   SolicitudVoluntariadoDTO dto, @PathVariable Long id){
-        SolicitudVoluntariado aceptada=this.service.aceptar(this.mapper.mapToEntityForPut(dto),id);
+        String motivo= dto.getMotivo();
+        SolicitudVoluntariado aceptada=this.service.aceptar(this.mapper.mapToEntityForPut(dto),id, motivo);
         return this.successResponse(this.mapper.mapToDto(aceptada));
     }
 
     @PutMapping("/{id}/estados/rechazada")
+    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
     public ResponseEntity<?> rechazarSolicitud(@RequestBody @Validated(PutValidationGroup.class)
                                                SolicitudVoluntariadoDTO dto, @PathVariable Long id){
         String motivo= dto.getMotivo();
@@ -71,18 +75,21 @@ public class SolicitudVoluntariadoController {
     }
 
     @GetMapping("/estados/{estado}")
+    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
     public ResponseEntity<?> verByEstado(@PathVariable String estado){
         List<SolicitudVoluntariado> solicitudes=this.service.listarByEstado(estado);
         return this.successResponse(this.mapper.mapToListDto(solicitudes));
     }
 
     @GetMapping("/aspirante/{dni}")
+    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
     public ResponseEntity<?> verByAspirante(@PathVariable String dni){
         List<SolicitudVoluntariado> solicitudes=this.service.listarByPersona(dni);
         return this.successResponse(this.mapper.mapToListDto(solicitudes));
     }
 
     @GetMapping
+    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
     public ResponseEntity<?> verTodas(){
         List<SolicitudVoluntariado> solicitudes=this.service.listarTodas();
         return this.successResponse(this.mapper.mapToListDto(solicitudes));
