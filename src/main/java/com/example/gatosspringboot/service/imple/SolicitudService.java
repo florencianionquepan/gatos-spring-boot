@@ -79,7 +79,7 @@ public class SolicitudService implements ISolicitudService {
     //puede tener hasta 3 pendientes
     public Solicitud altaSolicitud(Solicitud solicitud) {
         //buscar solicitante y gato:
-        Persona solicitantebd=this.persoService.findByEmail(solicitud.getSolicitante().getEmail());
+        Persona solicitantebd=this.persoService.findByEmailOrException(solicitud.getSolicitante().getEmail());
         Gato gatobd=this.gatoService.buscarDisponibleById(solicitud.getGato().getId());
         //chequear que no haya hecho ya una solicitud por el mismo gato
         this.solicitaMismoGato(solicitantebd, gatobd);

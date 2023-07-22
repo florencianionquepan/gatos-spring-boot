@@ -45,7 +45,7 @@ public class PersonaService implements IPersonaService {
     }
 
     @Override
-    public Persona findByEmail(String email) {
+    public Persona findByEmailOrException(String email) {
         Optional<Persona> oPerso=this.repo.findByEmail(email);
         if(oPerso.isEmpty()){
             throw new PersonNotFound(

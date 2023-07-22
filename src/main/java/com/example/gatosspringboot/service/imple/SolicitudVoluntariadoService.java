@@ -45,23 +45,20 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
 
     @Override
     public SolicitudVoluntariado nueva(SolicitudVoluntariado solicitud) {
-        Optional<Persona> oPerso=this.persoRepo.findByDni(solicitud.getAspirante().getDni());
-        if(oPerso.isPresent()){
-            Persona perso=oPerso.get();
-            //tiene solicitudes de voluntariados del mismo tipo?
-            List<SolicitudVoluntariado> voluntariados=perso.getSolicitudesVoluntariados();
-            Optional<SolicitudVoluntariado> solicitudExistente = voluntariados.stream()
-                    .filter(v -> v.getTipoVoluntariado() == solicitud.getTipoVoluntariado())
-                    .findFirst();
-            if(solicitudExistente.isPresent()){
-                this.mismaSolicitudExistente(solicitudExistente.get());
-                //si pasaron 3 meses de su solicitud rechazada:
-                return nuevaSolicitudPersona(solicitud,perso);
-            }
-            return nuevaSolicitudPersona(solicitud,perso);
+        Persona aspirantebd=this.persoService.findByEmailOrException(solicitud.getAspirante().getEmail());
+        //tiene solicitudes de voluntariados del mismo tipo?
+        List<SolicitudVoluntariado> voluntariados=aspirantebd.getSolicitudesVoluntariados();
+        Optional<SolicitudVoluntariado> solicitudExistente = voluntariados.stream()
+                .filter(v -> v.getTipoVoluntariado() == solicitud.getTipoVoluntariado())
+                .findFirst();
+        if(solicitudExistente.isPresent()){
+            this.mismaSolicitudExistente(solicitudExistente.get());
+            //si paso 1 mes de su solicitud rechazada sigue:
         }
-        this.persoService.validarEmailUnico(solicitud.getAspirante().getEmail());
-        return crearEstadoYSave(solicitud,solicitud.getAspirante());
+        Estado pendiente=this.estadoService.crearPendiente();
+        solicitud.setAspirante(aspirantebd);
+        solicitud.setEstados(new ArrayList<>(Arrays.asList(pendiente)));
+        return this.repo.save(solicitud);
     }
 
     @Override
@@ -150,10 +147,10 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
             LocalDate ultimoRechazo=ultimoRechazado.get().getFecha();
             LocalDate fechaHoy=LocalDate.now();
             long mesesTranscurridos = ChronoUnit.MONTHS.between(ultimoRechazo, fechaHoy);
-            if(mesesTranscurridos<3){
+            if(mesesTranscurridos<1){
                 throw new ExistingException(
                         String.format("La ultima solicitud como %s fue RECHAZADA." +
-                                        "Debe esperar 3 meses para volver a enviar una solicitud.",
+                                        "Debe esperar 1 mes para volver a enviar una solicitud.",
                                 solicitudExistente.getTipoVoluntariado().name())
                 );
             }
@@ -161,19 +158,8 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     }
 
     private SolicitudVoluntariado nuevaSolicitudPersona(SolicitudVoluntariado solicitud, Persona perso){
-        //crear estado pendiente, nueva solicitud,actualizar tel, dire, localidad.
-        perso.setTel(solicitud.getAspirante().getTel());
-        perso.setDire(solicitud.getAspirante().getDire());
-        perso.setLocalidad(solicitud.getAspirante().getLocalidad());
-        return crearEstadoYSave(solicitud,perso);
-    }
-
-    @Transactional
-    private SolicitudVoluntariado crearEstadoYSave(SolicitudVoluntariado solicitud,
-                                                     Persona perso){
         Estado pendiente=this.estadoService.crearPendiente();
-        Persona per=this.persoRepo.save(perso);
-        solicitud.setAspirante(per);
+        solicitud.setAspirante(perso);
         solicitud.setEstados(new ArrayList<>(Arrays.asList(pendiente)));
         return this.repo.save(solicitud);
     }

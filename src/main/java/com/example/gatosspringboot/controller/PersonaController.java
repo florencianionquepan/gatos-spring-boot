@@ -99,7 +99,7 @@ public class PersonaController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> obtenerDatosByEmail(@RequestParam
                                                      @Email(message="El email no es válido") String email){
-        PersonaDTO dto=this.mapper.mapToDto(this.service.findByEmail(email));
+        PersonaDTO dto=this.mapper.mapToDto(this.service.findByEmailOrException(email));
         return this.successResponse(dto);
     }
 
