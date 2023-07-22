@@ -59,34 +59,34 @@ public class UsuarioService implements IUsuarioService {
 
 
     @Override
-    public Usuario altaUsuarioVoluntario(String email) {
-        Usuario nuevoUsuario=new Usuario();
-        nuevoUsuario.setEmail(email);
-        String password=this.generarPasswordAleatoria();
-        nuevoUsuario.setContrasenia(password);
-        Usuario user=this.altaUsuarioVolu(nuevoUsuario);
-        if(!user.getEmail().isEmpty()){
-            String subject="Su cuenta como voluntario ha sido generada!";
-            String content="\nPuede iniciar sesión con su email y su contraseña: "+password;
-            this.emailService.sendMessage(email,subject,content);
+    public Usuario agregarRolVoluntario(String email) {
+        Usuario usuario=this.buscarByEmailOrException(email);
+        List<Rol> roles=usuario.getRoles();
+        this.validarNoExistaRolVoluntario(roles);
+        Optional<Rol> oVoluRol=this.rolRepo.findById(2);
+        if(oVoluRol.isEmpty()){
+            throw new NonExistingException("El rol voluntario no existe en la bd");
         }
-        return user;
+        roles.add(oVoluRol.get());
+        usuario.setRoles(roles);
+        String subject="Su solicitud como voluntario ha sido aceptada!";
+        String content="Ya puede gestionar todos los gatitos para dar en adopcion!" +
+                "\nEsperamos que disfrute formar parte de Gatshan :) ";
+        this.emailService.sendMessage(email,subject,content);
+        return this.usRepo.save(usuario);
     }
 
-    private Usuario altaUsuarioVolu(Usuario us) {
-        this.existeEmail(us.getEmail());
-        //traigo role_volu
-        List<Rol> roles=new ArrayList<Rol>(
-                List.of(this.rolRepo.findById(2).get())
-        );
-        us.setRoles(roles);
-        us.setContrasenia(passwordEncoder.encode(us.getContrasenia()));
-        return this.usRepo.save(us);
+    private void validarNoExistaRolVoluntario(List<Rol> roles) {
+        boolean existeRolConId2 = roles.stream()
+                .anyMatch(rol -> rol.getId() == 2);
+        if (existeRolConId2) {
+            throw new RuntimeException("El usuario ya posee el rol de voluntario!");
+        }
     }
 
     @Override
     public String modiPassword(Usuario user, String oldPassword) {
-        Usuario guardado=this.buscarByEmail(user.getEmail());
+        Usuario guardado=this.buscarByEmailOrException(user.getEmail());
         String oldPassEncriptada=guardado.getContrasenia();
         if(!passwordEncoder.matches(oldPassword, oldPassEncriptada)){
             throw new ExistingException
@@ -140,7 +140,7 @@ public class UsuarioService implements IUsuarioService {
         return this.usRepo.save(admin);
     }
 
-    private Usuario buscarByEmail(String email){
+    private Usuario buscarByEmailOrException(String email){
         Optional<Usuario> oUsuario=this.usRepo.findByEmail(email);
         if(oUsuario.isEmpty()){
             throw new ExistingException

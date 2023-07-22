@@ -44,20 +44,12 @@ public class VoluntarioService implements IVoluntarioService {
 
     @Override
     @Transactional
+    //siempre va a ser por registro primero
     public Voluntario altaVolunt(Voluntario vol) {
         this.voluntarioExistente(vol);
-        Optional<Persona> oPerso=this.persoRepo.findByDni(vol.getDni());
-        //antes de crear el usuario chequear si existe alguna persona con el mismo email
-        if(oPerso.isPresent()){
-            vol.setId(vol.getId());
-        }
-        Usuario creado=this.serUser.altaUsuarioVoluntario(vol.getEmail());
-        vol.setUsuario(creado);
-        if(oPerso.isEmpty()){
-            this.persoService.validarEmailUnico(vol.getEmail());
-            return this.voluRepo.save(vol);
-        }
-        this.voluRepo.saveVoluntario(vol.getId(),creado.getId());
+        Usuario modi=this.serUser.agregarRolVoluntario(vol.getEmail());
+        vol.setUsuario(modi);
+        this.voluRepo.saveVoluntario(vol.getId());
         return vol;
     }
 
@@ -99,7 +91,7 @@ public class VoluntarioService implements IVoluntarioService {
     }
 
     @Override
-    public Voluntario buscarVolByEmail(String email) {
+    public Voluntario buscarVolByEmailOrException(String email) {
         Optional<Voluntario> oVolu=this.voluRepo.findByEmail(email);
         if(oVolu.isEmpty()){
             throw new NonExistingException(

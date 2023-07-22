@@ -11,6 +11,5 @@ public interface IVoluntarioService {
     Voluntario altaVolunt(Voluntario vol);
     Voluntario modiVolunt(Voluntario vol, Long id);
     boolean existeVol(Long id);
-    Voluntario buscarVolByEmail(String email);
-
+    Voluntario buscarVolByEmailOrException(String email);
 }

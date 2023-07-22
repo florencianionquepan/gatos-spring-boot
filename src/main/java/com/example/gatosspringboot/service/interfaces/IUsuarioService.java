@@ -7,7 +7,7 @@ import java.util.List;
 public interface IUsuarioService {
     List<Usuario> verTodos();
     Usuario altaUsuario(Usuario usuario);
-    Usuario altaUsuarioVoluntario(String email);
+    Usuario agregarRolVoluntario(String email);
     String modiPassword(Usuario user, String oldPassword);
     Usuario altaUsuarioSocio(String email);
     Usuario agregarRolSocio(Usuario user);
