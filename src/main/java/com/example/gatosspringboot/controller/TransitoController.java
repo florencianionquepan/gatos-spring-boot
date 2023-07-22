@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.controller;
 
-import com.example.gatosspringboot.dto.TransitoRespDTO;
+import com.example.gatosspringboot.dto.PersonaEmailDTO;
+import com.example.gatosspringboot.dto.mapper.IPersonaEmailMapper;
 import com.example.gatosspringboot.dto.mapper.ITransitoMapper;
 import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.service.interfaces.ITransitoService;
@@ -50,14 +51,6 @@ public class TransitoController {
     public ResponseEntity<?> listarByLocalidad(@PathVariable String localidad){
         List<Transito> transitos=this.service.listarByLocalidad(localidad);
         return this.successResponse(this.mapper.mapToListDto(transitos));
-    }
-
-    @PostMapping
-    //antes de esto debo llamar al endpoint search by dni o email de personas
-    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> nuevo(@RequestBody TransitoRespDTO dto){
-        Transito nuevo=this.service.nuevo(this.mapper.mapToEntity(dto));
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.mapper.mapToDto(nuevo));
     }
 
 }
