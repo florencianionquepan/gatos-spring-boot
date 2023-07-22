@@ -2,6 +2,7 @@ package com.example.gatosspringboot.dto;
 
 import com.example.gatosspringboot.dto.validator.ValueOfEnum;
 import com.example.gatosspringboot.model.EstadoNombre;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +19,9 @@ public class EstadoDTO {
 
     private LocalDate fecha;
 
-    @NotNull
+/*    @NotNull
     @ValueOfEnum(enumClass= EstadoNombre.class,
-            message = "Debe ser de tipo 'PENDIENTE','APROBADA' o 'RECHAZADA' o 'CERRADA'.")
+            message = "Debe ser de tipo 'PENDIENTE','APROBADA' o 'RECHAZADA' o 'CERRADA'.")*/
     private String estado;
 
     private String motivo;

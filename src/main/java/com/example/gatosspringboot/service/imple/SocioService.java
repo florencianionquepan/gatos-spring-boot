@@ -37,7 +37,7 @@ public class SocioService implements ISocioService {
     }
 
     @Override
-    public Socio buscarByEmail(String email) {
+    public Socio buscarByEmailOrException(String email) {
         Optional<Socio> oSocio=this.repo.findByEmail(email);
         if(oSocio.isEmpty()){
             throw new NonExistingException(

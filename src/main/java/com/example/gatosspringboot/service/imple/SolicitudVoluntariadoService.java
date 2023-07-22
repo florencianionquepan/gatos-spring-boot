@@ -66,7 +66,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     public SolicitudVoluntariado rechazar(SolicitudVoluntariado solicitud, Long id, String motivo) {
         SolicitudVoluntariado soli=this.findById(id);
         String email=solicitud.getSocio().getEmail();
-        Socio socio=this.socioService.buscarByEmail(email);
+        Socio socio=this.socioService.buscarByEmailOrException(email);
         List<Estado> estados=soli.getEstados();
         estados.add(this.estadoService.crearRechazado(motivo));
         soli.setEstados(estados);
@@ -77,14 +77,14 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
 
     @Override
     @Transactional
-    public SolicitudVoluntariado aceptar(SolicitudVoluntariado solicitud, Long id) {
+    public SolicitudVoluntariado aceptar(SolicitudVoluntariado solicitud, Long id, String motivo) {
         SolicitudVoluntariado solidb=this.findById(id);
         List<Estado> estados = solidb.getEstados();
-        Estado aceptado = estadoService.crearAprobado();
+        Estado aceptado = estadoService.crearAprobado(motivo);
         estados.add(aceptado);
         solidb.setEstados(estados);
         String emailSocio=solicitud.getSocio().getEmail();
-        Socio socio=this.socioService.buscarByEmail(emailSocio);
+        Socio socio=this.socioService.buscarByEmailOrException(emailSocio);
         solidb.setSocio(socio);
         this.crearTipoVoluntariado(solidb);
         return this.repo.save(solidb);
@@ -98,6 +98,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
                     perso.getTel(),perso.getUsuario().getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
                     perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),perso.getUsuario(),null);
             this.voluService.altaVolunt(vol);
+            //enviar email notificando aceptacion
         } else if (voluntariado == TipoVoluntariado.TRANSITO) {
             Transito transito=new Transito(perso.getId(),perso.getDni(),perso.getNombre(),perso.getApellido(),
                     perso.getTel(),perso.getUsuario().getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),

@@ -29,11 +29,12 @@ public class EstadoService implements IEstadoService {
     }
 
     @Override
-    public Estado crearAprobado() {
+    public Estado crearAprobado(String motivo) {
         Estado aprobado=new Estado();
         LocalDate fecha=LocalDate.now();
         aprobado.setFecha(fecha);
         aprobado.setEstado(EstadoNombre.APROBADA);
+        aprobado.setMotivo(motivo);
         return this.repo.save(aprobado);
     }
 

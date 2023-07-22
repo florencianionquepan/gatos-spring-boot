@@ -8,6 +8,7 @@ import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.TransitoRepository;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import com.example.gatosspringboot.service.interfaces.ITransitoService;
+import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +21,16 @@ public class TransitoService implements ITransitoService {
     public final TransitoRepository repo;
     public final PersonaRepository persoRepo;
     public final IPersonaService persoService;
+    public final IUsuarioService userService;
 
     public TransitoService(TransitoRepository repo,
                            PersonaRepository persoRepo,
-                           IPersonaService persoService) {
+                           IPersonaService persoService,
+                           IUsuarioService userService) {
         this.repo = repo;
         this.persoRepo = persoRepo;
         this.persoService = persoService;
+        this.userService = userService;
     }
 
     @Override
@@ -44,12 +48,13 @@ public class TransitoService implements ITransitoService {
     public Transito nuevo(Transito transito) {
         this.TransitoExistente(transito);
         Optional<Persona> oPerso=this.persoRepo.findByDni(transito.getDni());
+        //siempre va a existir porqie ahora debe registrarse primero pero igual lo dejo
+        //por si a futuro implemento el alta directa
         if(oPerso.isPresent()){
             transito.setId(oPerso.get().getId());
             this.repo.saveTransito(transito.getId());
             return transito;
         }
-        this.persoService.validarEmailUnico(transito.getEmail());
         return this.repo.save(transito);
     }
 
