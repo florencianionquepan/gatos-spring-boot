@@ -8,4 +8,5 @@ public interface ITransitoService {
     List<Transito> listarTodos();
     List<Transito> listarByLocalidad(String localidad);
     Transito nuevo(Transito transito);
+    Transito findByIdOrException(Long id);
 }

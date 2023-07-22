@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.ExistingException;
+import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
@@ -50,6 +51,17 @@ public class TransitoService implements ITransitoService {
         }
         this.persoService.validarEmailUnico(transito.getEmail());
         return this.repo.save(transito);
+    }
+
+    @Override
+    public Transito findByIdOrException(Long id) {
+        Optional<Transito> oTran=this.repo.findById(id);
+        if(oTran.isEmpty()){
+            throw new PersonNotFound(
+                    String.format("El transito con id %d no existe",id)
+            );
+        }
+        return oTran.get();
     }
 
     //si ya existe con otro dni o email no prosigue-
