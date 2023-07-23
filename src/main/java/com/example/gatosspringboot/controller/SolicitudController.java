@@ -3,11 +3,14 @@ package com.example.gatosspringboot.controller;
 import com.example.gatosspringboot.dto.SolicitudReqDTO;
 import com.example.gatosspringboot.dto.SolicitudRespDTO;
 import com.example.gatosspringboot.dto.mapper.ISolicitudMapper;
+import com.example.gatosspringboot.dto.validator.PostValidationGroup;
+import com.example.gatosspringboot.dto.validator.PutValidationGroup;
 import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.service.interfaces.ISolicitudService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -29,9 +32,9 @@ public class SolicitudController {
 
     public Map<String,Object> mensajeBody= new HashMap<>();
 
-    private ResponseEntity<?> successResponse(List<?> lista){
+    private ResponseEntity<?> successResponse(Object data){
         mensajeBody.put("Success",Boolean.TRUE);
-        mensajeBody.put("data",lista);
+        mensajeBody.put("data",data);
         return ResponseEntity.ok(mensajeBody);
     }
 
@@ -44,7 +47,8 @@ public class SolicitudController {
     }
 
     @PostMapping
-    private ResponseEntity<?> nuevaSolicitud(@RequestBody @Valid SolicitudReqDTO dto){
+    private ResponseEntity<?> nuevaSolicitud(@RequestBody @Validated(PostValidationGroup.class)
+                                                 SolicitudReqDTO dto){
         Solicitud nueva=this.mapper.mapToEntity(dto);
         Solicitud creada=this.service.altaSolicitud(nueva);
         SolicitudRespDTO dtoCreado=this.mapper.mapToDto(creada);
@@ -77,6 +81,14 @@ public class SolicitudController {
         List<Solicitud> solicitudes=this.service.verBySolicitante(dni);
         List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
+    }
+
+    @PutMapping("/{id}/estados/aceptada")
+    private ResponseEntity<?> aceptarAdopcion(@PathVariable Long id, @RequestBody @Validated(PutValidationGroup.class)
+                                              SolicitudReqDTO dto){
+        String motivo= dto.getMotivo();
+        Solicitud actualizada=this.service.aceptarAdopcion(id,motivo);
+        return this.successResponse(this.mapper.mapToDto(actualizada));
     }
 
 }
