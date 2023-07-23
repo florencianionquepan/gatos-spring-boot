@@ -48,6 +48,15 @@ public class EstadoService implements IEstadoService {
         return this.repo.save(rechazado);
     }
 
+    @Override
+    public Estado crearCerrado() {
+        Estado cerrado=new Estado();
+        LocalDate fecha=LocalDate.now();
+        cerrado.setFecha(fecha);
+        cerrado.setEstado(EstadoNombre.CERRADA);
+        return this.repo.save(cerrado);
+    }
+
     private Estado buscarById(Long id){
         Optional<Estado> oEstado=this.repo.findById(id);
         if(oEstado.isEmpty()){

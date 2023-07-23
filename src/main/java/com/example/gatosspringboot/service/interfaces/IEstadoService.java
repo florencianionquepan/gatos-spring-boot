@@ -6,4 +6,5 @@ public interface IEstadoService {
     Estado crearPendiente();
     Estado crearAprobado(String motivo);
     Estado crearRechazado(String motivo);
+    Estado crearCerrado();
 }
