@@ -13,6 +13,6 @@ public interface ISolicitudService {
     List<Solicitud> verRangoFechas(LocalDate desde, LocalDate hasta);
     List<Solicitud> verByGatoPendientes(Long idGato);
     Solicitud altaSolicitud(Solicitud solicitud);
-    Solicitud aceptarAdopcion(Solicitud solicitud, Long id);
+    Solicitud aceptarAdopcion(Long id, String motivo);
     Solicitud rechazarSolicitud(Solicitud solicitud, Long id);
 }

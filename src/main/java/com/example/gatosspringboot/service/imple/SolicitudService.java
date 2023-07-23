@@ -68,10 +68,16 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
+    //que filtre las que tengan como ultimo estado pendiente
     public List<Solicitud> verByGatoPendientes(Long idGato) {
         return this.repo.findByGato(idGato).stream()
-                .filter(s->s.getEstados().stream()
-                        .anyMatch(e->e.getEstado().equals("PENDIENTE")))
+                .filter(s-> {
+                    Estado ultimo=s.getEstados().stream()
+                            .sorted(Comparator.comparingLong(Estado::getId).reversed())
+                            .findFirst()
+                            .orElse(null);
+                    return ultimo!=null && ultimo.getEstado().equals(EstadoNombre.PENDIENTE);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -131,14 +137,32 @@ public class SolicitudService implements ISolicitudService {
         };
     }
 
+    //--------------Aceptar solicitud de adopcion :)-------------------
+
     @Override
-    public Solicitud aceptarAdopcion(Solicitud solicitud, Long id) {
-        this.existeSolicitud(id);
-        Gato gatoAdoptar= solicitud.getGato();
+    public Solicitud aceptarAdopcion(Long id, String motivo) {
+        Solicitud solidb=this.findByIdOrException(id);
+        Gato gatoAdoptar= solidb.getGato();
         //chequear que el gato no este adoptado. gatoService lo chequea
         Gato gatoAdoptado=gatoService.adoptarGato(gatoAdoptar.getId());
-        Solicitud actualizada=this.addEstadoSolicitud(id);
+        Solicitud actualizada=this.addEstadoAprobado(solidb, motivo);
+        //enviar email que adoptaste al gati
+        //cerrar todas las demas solicitudes del gato
+        this.cerrarPendientes(gatoAdoptar, solidb);
         return this.repo.save(actualizada);
+    }
+
+    private void cerrarPendientes(Gato gatoAdoptar, Solicitud solicitudActual) {
+        List<Solicitud> pendientes=this.verByGatoPendientes(gatoAdoptar.getId()).stream()
+                .filter(solicitud -> !solicitud.getId().equals(solicitudActual.getId()))
+                .collect(Collectors.toList());
+        for(Solicitud solicitud:pendientes){
+            Estado cerrado=this.estadoService.crearCerrado();
+            List<Estado> estados=solicitud.getEstados();
+            estados.add(cerrado);
+            solicitud.setEstados(estados);
+            this.repo.save(solicitud);
+        }
     }
 
     @Override
@@ -146,28 +170,27 @@ public class SolicitudService implements ISolicitudService {
         return null;
     }
 
-    private boolean existeSolicitud(Long id){
-        boolean existe=this.repo.existsById(id);
-        if(!existe){
+    private Solicitud findByIdOrException(Long id){
+        Optional<Solicitud> oSoli=this.repo.findById(id);
+        if(oSoli.isEmpty()){
             throw new NonExistingException(
                     String.format("La solicitud %d no existe",id));
         }
-        return existe;
+        return oSoli.get();
     }
 
-    private Solicitud addEstadoSolicitud(Long id){
+    private Solicitud addEstadoAprobado(Solicitud solidb, String motivo){
         //chequear que el estado no este aprobado ya
-        Optional<Solicitud> oSoli=this.repo.findById(id);
-        List<Estado> estados=oSoli.get().getEstados();
+        List<Estado> estados=solidb.getEstados();
         Optional<Estado> oAprobado=estados.stream()
                 .filter(e->e.getEstado().equals(EstadoNombre.APROBADA))
                 .findAny();
         if(oAprobado.isPresent()){
             throw new RuntimeException("La solicitud ya fue aprobada");
         }
-        Estado aprobado=estadoService.crearAprobado();
+        Estado aprobado=estadoService.crearAprobado(motivo);
         estados.add(aprobado);
-        oSoli.get().setEstados(estados);
-        return oSoli.get();
+        solidb.setEstados(estados);
+        return solidb;
     }
 }
