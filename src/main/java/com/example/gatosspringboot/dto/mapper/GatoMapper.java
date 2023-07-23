@@ -56,7 +56,9 @@ public class GatoMapper implements IGatoMapper{
         dto.setColor(entity.getColor());
         dto.setTipoPelo(entity.getTipoPelo());
         dto.setFichaDTO(this.fichaMap.mapToDto(entity.getFichaVet()));
-        dto.setSolicitudes(this.mapSoliToDto(entity.getListaSol()));
+        if(entity.getListaSol()!=null){
+            dto.setSolicitudes(this.mapSoliToDto(entity.getListaSol()));
+        }
         dto.setVoluntario(this.volMap.mapToDto(entity.getVoluntario()));
         dto.setPadrino(entity.getPadrino());
         dto.setAdoptado(entity.getAdoptadoFecha());
