@@ -8,12 +8,9 @@ import com.example.gatosspringboot.dto.mapper.IRegistroMapper;
 import com.example.gatosspringboot.dto.mapper.IUsuarioEmailMapper;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +84,7 @@ public class PersonaController {
 
     @GetMapping("/search/dni")
     //puede ser utilizado por socios solamente
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> obtenerDatosByDni(@RequestParam @Pattern(regexp = "\\d{8}",
             message = "El dni debe contener exactamente 8 números sin puntos") String dni){
         PersonaDTO dto=this.mapper.mapToDto(this.service.findByDni(dni));
@@ -96,7 +93,7 @@ public class PersonaController {
 
     @GetMapping("/search/email")
     //puede ser utilizado por socios solamente
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> obtenerDatosByEmail(@RequestParam
                                                      @Email(message="El email no es válido") String email){
         PersonaDTO dto=this.mapper.mapToDto(this.service.findByEmailOrException(email));

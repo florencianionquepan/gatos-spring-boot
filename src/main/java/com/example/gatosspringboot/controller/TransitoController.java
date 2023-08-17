@@ -1,11 +1,8 @@
 package com.example.gatosspringboot.controller;
 
-import com.example.gatosspringboot.dto.PersonaEmailDTO;
-import com.example.gatosspringboot.dto.mapper.IPersonaEmailMapper;
 import com.example.gatosspringboot.dto.mapper.ITransitoMapper;
 import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.service.interfaces.ITransitoService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +14,8 @@ import java.util.Map;
 @RequestMapping("/transitos")
 public class TransitoController {
 
-    public final ITransitoService service;
-    public final ITransitoMapper mapper;
+    private final ITransitoService service;
+    private final ITransitoMapper mapper;
     public Map<String,Object> mensajeBody= new HashMap<>();
 
     public TransitoController(ITransitoService service,

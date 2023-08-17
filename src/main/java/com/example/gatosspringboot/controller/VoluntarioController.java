@@ -43,13 +43,15 @@ public class VoluntarioController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> verTodos(){
         List<Voluntario> lista=this.volService.verTodos();
-        return this.successResponse(lista);
+        return this.successResponse(this.mapper.mapToListDto(lista));
     }
 
     @PostMapping
+    //antes de este endpoint se utiliza la busqueda por dni o email
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> altaVoluntario(@RequestBody VoluntarioDTO volunt){
         Voluntario volNuevo=this.volService.altaVolunt(this.mapper.mapToEntity(volunt));
         VoluntarioDTO dtoNuevo=this.mapper.mapToDto(volNuevo);
@@ -58,6 +60,7 @@ public class VoluntarioController {
 
     @PutMapping("/{id}")
     //Se usa para modificar algun dato personal o agregar/remover gatos de su lista
+    @PreAuthorize("hasRole('VOLUNTARIO')")
     public ResponseEntity<?> modiVoluntario(@RequestBody Voluntario volunt,
                                          @PathVariable Long id){
         Voluntario volModi=this.volService.modiVolunt(volunt, id);
@@ -65,6 +68,5 @@ public class VoluntarioController {
         mensajeBody.put("data",volModi);
         return ResponseEntity.ok(mensajeBody);
     }
-
 
 }

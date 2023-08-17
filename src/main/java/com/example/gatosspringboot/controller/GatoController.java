@@ -10,6 +10,7 @@ import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -59,7 +60,7 @@ public class GatoController {
     }
 
     @PostMapping
-    //@PreAuthorize("hasAuthority('ROLE_VOLUNTARIO')")
+    @PreAuthorize("hasRole('VOLUNTARIO')")
     public ResponseEntity<?> altaGato(@RequestBody @Valid GatoDTO dto){
         Gato nuevo=this.gatoSer.altaGato(this.mapper.mapToEntity(dto));
         mensajeBody.put("Success",Boolean.TRUE);
@@ -67,16 +68,16 @@ public class GatoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mensajeBody);
     }
 
-    @PutMapping("/id/ficha")
-    //@PreAuthorize("hasAuthority('ROLE_VOLUNTARIO')")
+    @PutMapping("/{id}/ficha")
+    @PreAuthorize("hasRole('VOLUNTARIO')")
     public ResponseEntity<?> agregarFicha(@RequestBody FichaDTO ficha,
                                           @PathVariable Long id){
         Gato modi=this.gatoSer.agregarFicha(this.fichaMap.mapToEntity(ficha), id);
         return this.successResponse(this.mapper.mapToDto(modi));
     }
 
-    @PutMapping("/id/transito")
-    //@PreAuthorize("hasAuthority('ROLE_VOLUNTARIO')")
+    @PutMapping("/{id}/transito")
+    @PreAuthorize("hasRole('VOLUNTARIO')")
     public ResponseEntity<?> agregarTransito(@RequestBody TransitoIdDTO dto,
                                              @PathVariable Long id){
         Gato modi=this.gatoSer.agregarTransito(this.transitoMap.mapToEntity(dto), id);
@@ -84,7 +85,7 @@ public class GatoController {
     }
 
     @PutMapping("/id")
-    //@PreAuthorize("hasAuthority('ROLE_VOLUNTARIO')")
+    @PreAuthorize("hasRole('VOLUNTARIO')")
     public ResponseEntity<?> modiGato(@RequestBody GatoDTO dto,
                                       @PathVariable Long id){
         Gato modi=this.gatoSer.modiGato(this.mapper.mapToEntity(dto),id);

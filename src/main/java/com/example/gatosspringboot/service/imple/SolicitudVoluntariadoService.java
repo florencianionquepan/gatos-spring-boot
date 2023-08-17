@@ -98,7 +98,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
                     perso.getTel(),perso.getUsuario().getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
                     perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),perso.getUsuario(),null);
             this.voluService.altaVolunt(vol);
-            //enviar email notificando aceptacion
+            //enviar email notificando aceptacion (en alta usuario esta hecho)
         } else if (voluntariado == TipoVoluntariado.TRANSITO) {
             Transito transito=new Transito(perso.getId(),perso.getDni(),perso.getNombre(),perso.getApellido(),
                     perso.getTel(),perso.getUsuario().getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),

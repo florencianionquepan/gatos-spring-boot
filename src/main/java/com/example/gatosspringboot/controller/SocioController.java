@@ -17,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/socios")
 public class SocioController {
 
-    public final ISocioService service;
+    private final ISocioService service;
     private final ISocioMapper mapper;
 
     public Map<String,Object> mensajeBody= new HashMap<>();
@@ -43,7 +43,7 @@ public class SocioController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> listarTodos(){
         List<Socio> socios=this.service.listarTodos();
         List<SocioDTO> dtos=this.mapper.mapToListDto(socios);
@@ -51,7 +51,7 @@ public class SocioController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> altaSocio(@RequestBody @Valid SocioDTO dto){
         Socio nuevo=this.service.altaSocio(this.mapper.mapToEntity(dto));
         return this.successResponse(this.mapper.mapToDto(nuevo));

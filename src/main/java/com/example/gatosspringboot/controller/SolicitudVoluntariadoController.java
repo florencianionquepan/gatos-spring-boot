@@ -5,12 +5,12 @@ import com.example.gatosspringboot.dto.mapper.ISolicitudVoluntariadoMapper;
 import com.example.gatosspringboot.dto.validator.PostValidationGroup;
 import com.example.gatosspringboot.dto.validator.PutValidationGroup;
 import com.example.gatosspringboot.model.SolicitudVoluntariado;
-import com.example.gatosspringboot.service.imple.SolicitudVoluntariadoService;
 import com.example.gatosspringboot.service.interfaces.ISolicitudVoluntariadoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +49,7 @@ public class SolicitudVoluntariadoController {
     }
 
     @PostMapping
-    //@PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> nueva(@RequestBody @Validated(PostValidationGroup.class)
                                    SolicitudVoluntariadoDTO dto){
         SolicitudVoluntariado creada=this.service.nueva(this.mapper.mapToEntity(dto));
@@ -57,7 +57,7 @@ public class SolicitudVoluntariadoController {
     }
 
     @PutMapping("/{id}/estados/aceptada")
-    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> aceptarSolicitud(@RequestBody @Validated(PutValidationGroup.class)
                                                   SolicitudVoluntariadoDTO dto, @PathVariable Long id){
         String motivo= dto.getMotivo();
@@ -66,7 +66,7 @@ public class SolicitudVoluntariadoController {
     }
 
     @PutMapping("/{id}/estados/rechazada")
-    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> rechazarSolicitud(@RequestBody @Validated(PutValidationGroup.class)
                                                SolicitudVoluntariadoDTO dto, @PathVariable Long id){
         String motivo= dto.getMotivo();
@@ -75,21 +75,21 @@ public class SolicitudVoluntariadoController {
     }
 
     @GetMapping("/estados/{estado}")
-    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> verByEstado(@PathVariable String estado){
         List<SolicitudVoluntariado> solicitudes=this.service.listarByEstado(estado);
         return this.successResponse(this.mapper.mapToListDto(solicitudes));
     }
 
     @GetMapping("/aspirante/{dni}")
-    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> verByAspirante(@PathVariable String dni){
         List<SolicitudVoluntariado> solicitudes=this.service.listarByPersona(dni);
         return this.successResponse(this.mapper.mapToListDto(solicitudes));
     }
 
     @GetMapping
-    //@PreAuthorize("hasAuthority('ROLE_SOCIO')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> verTodas(){
         List<SolicitudVoluntariado> solicitudes=this.service.listarTodas();
         return this.successResponse(this.mapper.mapToListDto(solicitudes));

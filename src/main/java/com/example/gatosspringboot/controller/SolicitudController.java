@@ -7,7 +7,6 @@ import com.example.gatosspringboot.dto.validator.PostValidationGroup;
 import com.example.gatosspringboot.dto.validator.PutValidationGroup;
 import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.service.interfaces.ISolicitudService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

@@ -48,7 +48,7 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('SOCIO')")
     public List<UsuarioEmailDTO> obtenerTodos(){
         return this.usMap.mapListToDto(this.usService.verTodos());
     }
