@@ -1,9 +1,9 @@
 package com.example.gatosspringboot.config;
 
 import com.example.gatosspringboot.filter.CsrfCookieFilter;
-import com.example.gatosspringboot.filter.JwtAuthFilter;
+import com.example.gatosspringboot.filter.JWTGenerationFilter;
+import com.example.gatosspringboot.filter.JWTValidationFilter;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -22,9 +22,6 @@ import java.util.Collections;
 
 @Configuration
 public class SecurityConfig {
-
-    @Autowired
-    private JwtAuthFilter jwtAuthFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -54,13 +51,15 @@ public class SecurityConfig {
                         return config;
                     }
                 }))
-
                 .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/contact","/register")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+                //.addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
+                //.addFilterBefore(new JWTValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
                         .requestMatchers("/transitos/**","/socios/**","/usuarios/**","/voluntariados/**","/voluntarios/**","/solicitudes/**").authenticated()
-                        .requestMatchers("/auth","/gatos","/personas/").permitAll())
+                        .requestMatchers("/auth","/gatos","/personas/").permitAll()
+                        .requestMatchers("/transitos/**").hasAnyRole("VOLUNTARIO","SOCIO"))
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
