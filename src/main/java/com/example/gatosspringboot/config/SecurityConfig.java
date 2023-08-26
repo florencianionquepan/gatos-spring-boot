@@ -4,6 +4,7 @@ import com.example.gatosspringboot.controller.LoginController;
 import com.example.gatosspringboot.filter.CsrfCookieFilter;
 import com.example.gatosspringboot.filter.JWTGenerationFilter;
 import com.example.gatosspringboot.filter.JWTValidationFilter;
+import com.example.gatosspringboot.filter.RequestValidationBeforeFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,9 @@ public class SecurityConfig {
         CsrfTokenRequestAttributeHandler requestHandler= new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        http.sessionManagement(httpSecuritySessionManagementConfigurer -> {
+                    httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                })
                 .cors((cors)->cors.configurationSource(new CorsConfigurationSource() {
                     //anonymous inner class
                     @Override
@@ -55,6 +58,7 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos","/personas")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new RequestValidationBeforeFilter(),BasicAuthenticationFilter.class)
                 .addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
