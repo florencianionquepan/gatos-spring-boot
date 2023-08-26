@@ -29,7 +29,7 @@ public class SocioController {
     }
 
     private ResponseEntity<?> successResponse(Object data){
-        mensajeBody.put("Success",Boolean.TRUE);
+        mensajeBody.put("success",Boolean.TRUE);
         mensajeBody.put("data",data);
         return ResponseEntity.ok(mensajeBody);
     }

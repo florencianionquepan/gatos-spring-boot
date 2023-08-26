@@ -35,13 +35,13 @@ public class SolicitudVoluntariadoController {
     public Map<String,Object> mensajeBody= new HashMap<>();
 
     private ResponseEntity<?> successResponse(Object data){
-        mensajeBody.put("Success",Boolean.TRUE);
+        mensajeBody.put("success",Boolean.TRUE);
         mensajeBody.put("data",data);
         return ResponseEntity.ok(mensajeBody);
     }
 
     private ResponseEntity<?> notSuccessResponse(String mensaje,int id){
-        mensajeBody.put("Success",Boolean.FALSE);
+        mensajeBody.put("success",Boolean.FALSE);
         mensajeBody.put("data", String.format(mensaje,id));
         return ResponseEntity
                 .badRequest()

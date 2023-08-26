@@ -24,7 +24,7 @@ public class UsuarioController {
     public Map<String,Object> mensajeBody= new HashMap<>();
 
     private ResponseEntity<?> notSuccessResponse(String mensaje,int id){
-        mensajeBody.put("Success",Boolean.FALSE);
+        mensajeBody.put("success",Boolean.FALSE);
         mensajeBody.put("data", String.format(mensaje,id));
         return ResponseEntity
                 .badRequest()
@@ -32,7 +32,7 @@ public class UsuarioController {
     }
 
     private ResponseEntity<?> successResponse(String email){
-        mensajeBody.put("Success",Boolean.TRUE);
+        mensajeBody.put("success",Boolean.TRUE);
         mensajeBody.put("data",email);
         return ResponseEntity.ok(mensajeBody);
     }
