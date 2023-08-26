@@ -47,10 +47,10 @@ public class JWTGenerationFilter extends OncePerRequestFilter {
         return String.join(",", authoritiesSet);
     }
 
-/*    @Override
+   @Override
     protected boolean shouldNotFilter(HttpServletRequest req){
-        return !req.getServletPath().equals("/login");
-    }*/
+        return !req.getServletPath().equals("/auth");
+    }
 
 
     }
