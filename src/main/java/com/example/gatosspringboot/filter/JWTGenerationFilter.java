@@ -42,6 +42,7 @@ public class JWTGenerationFilter extends OncePerRequestFilter {
                     .signWith(key).compact();
             response.setHeader(SecurityConstants.JWT_HEADER, jwt);
         }
+        filterChain.doFilter(request,response);
     }
 
     private Object populateAuthorities(Collection<? extends GrantedAuthority> authorities) {
