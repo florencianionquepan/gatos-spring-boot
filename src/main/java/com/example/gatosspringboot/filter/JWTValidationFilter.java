@@ -48,8 +48,8 @@ public class JWTValidationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-/*    @Override
+    @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().equals("/login");
-    }*/
+        return request.getServletPath().equals("/auth");
+    }
 }
