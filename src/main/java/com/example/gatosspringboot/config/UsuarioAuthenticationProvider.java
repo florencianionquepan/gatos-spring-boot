@@ -1,8 +1,11 @@
 package com.example.gatosspringboot.config;
 
+import com.example.gatosspringboot.controller.PersonaController;
 import com.example.gatosspringboot.model.Rol;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,9 +28,11 @@ public class UsuarioAuthenticationProvider implements AuthenticationProvider {
     private UsuarioRepository repo;
     @Autowired
     private PasswordEncoder encoder;
+    private Logger logger= LoggerFactory.getLogger(UsuarioAuthenticationProvider.class);
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        logger.info("auth en provider:"+authentication);
         String email= authentication.getName();
         String pwd=authentication.getCredentials().toString();
         Optional<Usuario> oUser= repo.findByEmail(email);
