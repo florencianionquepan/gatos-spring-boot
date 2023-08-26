@@ -11,4 +11,5 @@ public interface IUsuarioService {
     String modiPassword(Usuario user, String oldPassword);
     Usuario altaUsuarioSocio(String email);
     Usuario agregarRolSocio(Usuario user);
+    Usuario buscarByEmail(String email);
 }

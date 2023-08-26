@@ -129,6 +129,16 @@ public class UsuarioService implements IUsuarioService {
         return user;
     }
 
+    @Override
+    public Usuario buscarByEmail(String email) {
+        Optional<Usuario> oUser=this.usRepo.findByEmail(email);
+        if(oUser.isEmpty()){
+            throw new NonExistingException(
+                    String.format("El usuario con email %s no existe",email));
+        }
+        return oUser.get();
+    }
+
     private Usuario altaUsuarioSocio(Usuario admin){
         this.existeEmail(admin.getEmail());
         //traigo role_admin
