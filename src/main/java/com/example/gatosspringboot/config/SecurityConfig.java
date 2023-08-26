@@ -1,9 +1,12 @@
 package com.example.gatosspringboot.config;
 
+import com.example.gatosspringboot.controller.LoginController;
 import com.example.gatosspringboot.filter.CsrfCookieFilter;
 import com.example.gatosspringboot.filter.JWTGenerationFilter;
 import com.example.gatosspringboot.filter.JWTValidationFilter;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -18,6 +21,7 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -33,11 +37,7 @@ public class SecurityConfig {
         CsrfTokenRequestAttributeHandler requestHandler= new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
-        http.securityContext(httpSecuritySecurityContextConfigurer -> {
-            httpSecuritySecurityContextConfigurer.requireExplicitSave(false);
-        }).sessionManagement(httpSecuritySessionManagementConfigurer -> {
-            httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
-        })
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors((cors)->cors.configurationSource(new CorsConfigurationSource() {
                     //anonymous inner class
                     @Override
@@ -47,19 +47,19 @@ public class SecurityConfig {
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
+                        config.setExposedHeaders(Arrays.asList("Authorization"));
                         config.setMaxAge(3600L);
                         return config;
                     }
                 }))
-                .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/contact","/register")
+                .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos","/personas")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
-                //.addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
-                //.addFilterBefore(new JWTValidationFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
-                        .requestMatchers("/transitos/**","/socios/**","/usuarios/**","/voluntariados/**","/voluntarios/**","/solicitudes/**").authenticated()
-                        .requestMatchers("/auth","/gatos","/personas/").permitAll()
-                        .requestMatchers("/transitos/**").hasAnyRole("VOLUNTARIO","SOCIO"))
+                        .requestMatchers("/transitos/**","/socios/**","/usuarios/**","/voluntariados/**","/voluntarios/**","/solicitudes/**","/auth").authenticated()
+                        .requestMatchers("/gatos","/personas/").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
