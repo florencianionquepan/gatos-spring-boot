@@ -32,7 +32,7 @@ public class UsuarioAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        logger.info("auth en provider:"+authentication);
+        //logger.info("auth en provider:"+authentication);
         String email= authentication.getName();
         String pwd=authentication.getCredentials().toString();
         Optional<Usuario> oUser= repo.findByEmail(email);

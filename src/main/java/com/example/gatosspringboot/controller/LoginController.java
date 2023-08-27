@@ -5,6 +5,7 @@ import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/auth")
 public class LoginController {
 
     private final IUsuarioService userService;
@@ -31,9 +31,9 @@ public class LoginController {
         return ResponseEntity.ok(mensajeBody);
     }
 
-    public ResponseEntity<?> getUserDetailsAfterLogin(Authentication auth){
-        logger.info("ingresa al /auth");
-        Usuario user=userService.buscarByEmail(auth.getName());
+    @RequestMapping("/auth")
+    public ResponseEntity<?> getUserDetailsAfterLogin(Authentication authentication){
+        Usuario user=userService.buscarByEmail(authentication.getName());
         return this.successResponse(user);
     }
 
