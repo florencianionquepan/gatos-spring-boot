@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.dto;
 
 import com.example.gatosspringboot.model.Rol;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,5 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class UserResponseDTO {
     String email;
+    @JsonIgnoreProperties(value = "usuarios")
     List<Rol> roles;
 }
