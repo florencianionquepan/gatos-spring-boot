@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @FieldMatch(first = "password", second = "passwordConfirm", message = "Las contraseñas no coinciden")
+//para registrarse
 public class UsuarioReqDTO {
     @NotNull
     @Email

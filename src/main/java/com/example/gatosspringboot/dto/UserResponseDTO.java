@@ -1,18 +1,18 @@
 package com.example.gatosspringboot.dto;
 
+import com.example.gatosspringboot.model.Rol;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthRequestDTO {
-    @NotNull
-    @Email
+public class UserResponseDTO {
     String email;
-    @NotNull
-    String password;
+    List<Rol> roles;
 }
