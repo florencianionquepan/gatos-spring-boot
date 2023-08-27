@@ -1,10 +1,7 @@
 package com.example.gatosspringboot.config;
 
 import com.example.gatosspringboot.controller.LoginController;
-import com.example.gatosspringboot.filter.CsrfCookieFilter;
-import com.example.gatosspringboot.filter.JWTGenerationFilter;
-import com.example.gatosspringboot.filter.JWTValidationFilter;
-import com.example.gatosspringboot.filter.RequestValidationBeforeFilter;
+import com.example.gatosspringboot.filter.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
@@ -58,12 +56,11 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos","/personas")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
-                .addFilterBefore(new RequestValidationBeforeFilter(),BasicAuthenticationFilter.class)
                 .addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
-                        .requestMatchers("/transitos/**","/socios/**","/usuarios/**","/voluntariados/**","/voluntarios/**","/solicitudes/**","/auth").authenticated()
-                        .requestMatchers("/gatos","/personas/").permitAll())
+                        .requestMatchers("/transitos/**","/socios/**","/usuarios/**","/voluntariados/**","/voluntarios/**","/solicitudes/**","/auth/**").authenticated()
+                        .requestMatchers("/gatos","/personas").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
