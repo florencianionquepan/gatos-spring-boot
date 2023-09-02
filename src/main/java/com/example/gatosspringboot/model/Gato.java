@@ -59,6 +59,7 @@ public class Gato implements Serializable {
     private Padrino padrino;
 
     private LocalDate adoptadoFecha;
+    private double cuotaMensual;
 
     @Override
     public String toString() {
