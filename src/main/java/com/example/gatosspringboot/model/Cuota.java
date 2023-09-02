@@ -26,4 +26,9 @@ public class Cuota implements Serializable {
     @JoinColumn(name="padrino_dni")
     @JsonIgnoreProperties(value="listaCuotas")
     private Padrino padrino;
+
+    @ManyToOne
+    @JoinColumn(name = "gato_id")
+    @JsonIgnoreProperties(value={"padrino","listaSol"})
+    private Gato gato;
 }
