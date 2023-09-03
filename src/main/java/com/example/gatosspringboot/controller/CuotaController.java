@@ -4,15 +4,13 @@ import com.example.gatosspringboot.model.Cuota;
 import com.example.gatosspringboot.model.Padrino;
 import com.example.gatosspringboot.service.interfaces.ICuotaService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/cuotas")
 public class CuotaController {
 
     private final ICuotaService service;
