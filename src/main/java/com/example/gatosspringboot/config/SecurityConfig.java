@@ -53,14 +53,14 @@ public class SecurityConfig {
                         return config;
                     }
                 }))
-                .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos","/personas")
+                .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos","/personas","/cuotas","/generic")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
                         .requestMatchers("/transitos/**","/socios/**","/usuarios/**","/voluntariados/**","/voluntarios/**","/solicitudes/**","/auth/**").authenticated()
-                        .requestMatchers("/gatos","/personas").permitAll())
+                        .requestMatchers("/gatos","/personas","/cuotas","/generic").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
