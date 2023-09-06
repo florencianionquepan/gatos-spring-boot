@@ -41,25 +41,27 @@ public class Gato implements Serializable {
 
     @OneToMany(mappedBy = "gato", fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value="gato")
-    private List<Solicitud> listaSol;
+    private List<SolicitudAdopcion> solicitudesAdopcion;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name="volunt_dni")
     @JsonIgnoreProperties(value="listaGatos")
     private Voluntario voluntario;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name="transito_dni")
     @JsonIgnoreProperties(value="listaGatos")
     private Transito transito;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name="padrino_dni")
     @JsonIgnoreProperties(value="listaGatos")
     private Padrino padrino;
 
     private LocalDate adoptadoFecha;
-    private double cuotaMensual;
+
+    private double montoMensual;
+
+    @OneToMany(mappedBy = "gato", fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties(value="gato")
+    private List<Cuota> cuotas;
 
     @Override
     public String toString() {

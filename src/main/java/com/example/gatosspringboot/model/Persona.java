@@ -38,13 +38,17 @@ public class Persona implements Serializable {
     private String dire;
     @Column(nullable = false, length = 30)
     private String localidad;
+
     @OneToMany(mappedBy = "solicitante", cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value="solicitante")
-    private List<Solicitud> solicitudesAdopcion;
+    private List<SolicitudAdopcion> solicitudesAdopcion;
 
     @OneToMany(mappedBy = "aspirante", cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value="aspirante")
     private List<SolicitudVoluntariado> solicitudesVoluntariados;
+
+    @OneToMany(cascade = CascadeType.MERGE)
+    private List<Notificacion> notificaciones;
 
     @OneToOne
     @JoinColumn(name="us_id")

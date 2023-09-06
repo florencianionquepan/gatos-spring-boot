@@ -24,5 +24,6 @@ public class Ficha implements Serializable {
     private LocalDate ultimaTripleFelina;
     private LocalDate ultimaAntirrabica;
     private String comentarios;
+    private String pdf;
 
 }

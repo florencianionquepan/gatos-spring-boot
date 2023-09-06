@@ -4,7 +4,7 @@ import com.example.gatosspringboot.dto.GatoDTO;
 import com.example.gatosspringboot.dto.PersonaEmailDTO;
 import com.example.gatosspringboot.dto.SolicitudReqDTO;
 import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Solicitud;
+import com.example.gatosspringboot.model.SolicitudAdopcion;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -72,7 +72,7 @@ public class GatoMapper implements IGatoMapper{
                 .collect(Collectors.toList());
     }
 
-    private SolicitudReqDTO mapToSoliDTO(Solicitud soli){
+    private SolicitudReqDTO mapToSoliDTO(SolicitudAdopcion soli){
         SolicitudReqDTO dto=new SolicitudReqDTO();
         dto.setId(soli.getId());
         dto.setEstados(this.estadoMapper.mapToListDto(soli.getEstados()));
@@ -81,7 +81,7 @@ public class GatoMapper implements IGatoMapper{
         return dto;
     }
 
-    private List<SolicitudReqDTO> mapSoliToDto(List<Solicitud> solicitudes){
+    private List<SolicitudReqDTO> mapSoliToDto(List<SolicitudAdopcion> solicitudes){
         return solicitudes.stream()
                 .map(this::mapToSoliDTO)
                 .collect(Collectors.toList());
