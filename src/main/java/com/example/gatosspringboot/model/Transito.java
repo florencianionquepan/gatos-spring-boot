@@ -1,6 +1,8 @@
 package com.example.gatosspringboot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,18 +18,18 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Transito extends Persona implements Serializable {
+@AllArgsConstructor
+public class Transito implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @NotNull
+    private Persona persona;
+
     @OneToMany(mappedBy = "transito", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value="transito")
     private List<Gato> listaGatos;
-
-    public Transito(Long id, String dni, String nombre, String apellido, String tel,
-                    String email, LocalDate fechaNac, String dire, String localidad,
-                    List<SolicitudAdopcion> solicitudesAdopcion,
-                    List<SolicitudVoluntariado> solicitudesVoluntariados,
-                    Usuario usuario, List<Gato> listaGatos) {
-        super(id, dni, nombre, apellido, tel, email, fechaNac, dire,
-                localidad, solicitudesAdopcion, solicitudesVoluntariados, usuario);
-        this.listaGatos = listaGatos;
-    }
 }

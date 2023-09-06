@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +13,19 @@ import java.util.List;
 
 @Entity
 @Table(name="socios")
-@PrimaryKeyJoinColumn(referencedColumnName = "id")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Socio extends Persona implements Serializable {
+public class Socio implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @NotNull
+    private Persona persona;
 
     @OneToMany(mappedBy = "socio", cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value="socio")

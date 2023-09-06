@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,11 +12,18 @@ import java.util.List;
 
 @Entity
 @Table(name="voluntarios")
-@PrimaryKeyJoinColumn(referencedColumnName = "id")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Voluntario extends Persona implements Serializable {
+public class Voluntario implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @NotNull
+    private Persona persona;
 
     @OneToMany(mappedBy = "voluntario", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value="voluntario")
