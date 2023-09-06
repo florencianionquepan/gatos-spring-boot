@@ -23,17 +23,6 @@ public class VoluntarioMapper implements IVoluntarioMapper{
     //esto no se usa igualmente.
     public Voluntario mapToEntity(VoluntarioDTO volu) {
         Voluntario ent=new Voluntario();
-        ent.setId(volu.getId());
-        Persona perso=new Persona();
-        perso.setDni(volu.getDni());
-        perso.setNombre(volu.getNombre());
-        perso.setApellido(volu.getApellido());
-        perso.setTel(volu.getTel());
-        perso.setEmail(volu.getEmail());
-        perso.setFechaNac(volu.getFechaNac());
-        perso.setDire(volu.getDire());
-        perso.setLocalidad(volu.getLocalidad());
-        ent.setPersona(perso);
         //no se ingresan gatos al hacer post, para agregar ver
         return ent;
     }
