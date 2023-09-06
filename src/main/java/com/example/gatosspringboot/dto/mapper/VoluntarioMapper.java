@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.VoluntarioDTO;
+import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Voluntario;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-//lo uso para crear un nuevo voluntario
+//lo uso para mostrar datos de voluntario
+//el voluntario se crea cuando acepta solicitud voluntariado
 public class VoluntarioMapper implements IVoluntarioMapper{
 
     private final GatoMapper gatoMapper;
@@ -18,17 +20,20 @@ public class VoluntarioMapper implements IVoluntarioMapper{
     }
 
     @Override
+    //esto no se usa igualmente.
     public Voluntario mapToEntity(VoluntarioDTO volu) {
         Voluntario ent=new Voluntario();
         ent.setId(volu.getId());
-        ent.setDni(volu.getDni());
-        ent.setNombre(volu.getNombre());
-        ent.setApellido(volu.getApellido());
-        ent.setTel(volu.getTel());
-        ent.setEmail(volu.getEmail());
-        ent.setFechaNac(volu.getFechaNac());
-        ent.setDire(volu.getDire());
-        ent.setLocalidad(volu.getLocalidad());
+        Persona perso=new Persona();
+        perso.setDni(volu.getDni());
+        perso.setNombre(volu.getNombre());
+        perso.setApellido(volu.getApellido());
+        perso.setTel(volu.getTel());
+        perso.setEmail(volu.getEmail());
+        perso.setFechaNac(volu.getFechaNac());
+        perso.setDire(volu.getDire());
+        perso.setLocalidad(volu.getLocalidad());
+        ent.setPersona(perso);
         //no se ingresan gatos al hacer post, para agregar ver
         return ent;
     }
@@ -36,15 +41,16 @@ public class VoluntarioMapper implements IVoluntarioMapper{
     @Override
     public VoluntarioDTO mapToDto(Voluntario entity) {
         VoluntarioDTO dto=new VoluntarioDTO();
+        Persona perso=entity.getPersona();
         dto.setId(entity.getId());
-        dto.setDni(entity.getDni());
-        dto.setNombre(entity.getNombre());
-        dto.setApellido(entity.getApellido());
-        dto.setTel(entity.getTel());
-        dto.setEmail(entity.getEmail());
-        dto.setFechaNac(entity.getFechaNac());
-        dto.setDire(entity.getDire());
-        dto.setLocalidad(entity.getLocalidad());
+        dto.setDni(perso.getDni());
+        dto.setNombre(perso.getNombre());
+        dto.setApellido(perso.getApellido());
+        dto.setTel(perso.getTel());
+        dto.setEmail(perso.getEmail());
+        dto.setFechaNac(perso.getFechaNac());
+        dto.setDire(perso.getDire());
+        dto.setLocalidad(perso.getLocalidad());
         dto.setGatos(this.gatoMapper.mapListToDto(entity.getListaGatos()));
         return dto;
     }
