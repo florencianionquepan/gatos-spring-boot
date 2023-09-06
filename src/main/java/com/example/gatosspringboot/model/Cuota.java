@@ -22,6 +22,7 @@ public class Cuota implements Serializable {
     private Long id;
     private LocalDate fechaPago;
     private double montoMensual;
+
     @ManyToOne
     @JoinColumn(name="padrino_dni")
     @JsonIgnoreProperties(value="listaCuotas")
@@ -29,6 +30,6 @@ public class Cuota implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "gato_id")
-    @JsonIgnoreProperties(value={"padrino","listaSol"})
+    @JsonIgnoreProperties(value={"padrino","solicitudesAdopcion","cuotas"})
     private Gato gato;
 }

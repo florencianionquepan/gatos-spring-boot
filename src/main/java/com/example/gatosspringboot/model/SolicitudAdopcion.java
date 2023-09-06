@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Solicitud implements Serializable {
+public class SolicitudAdopcion implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

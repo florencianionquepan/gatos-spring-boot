@@ -1,18 +1,18 @@
 package com.example.gatosspringboot.service.interfaces;
 
-import com.example.gatosspringboot.model.Solicitud;
+import com.example.gatosspringboot.model.SolicitudAdopcion;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface ISolicitudService {
-    List<Solicitud> verSolicitudes();
-    List<Solicitud> verByEstado(String estado);
-    List<Solicitud> verByGato(Long idGato);
-    List<Solicitud> verBySolicitante(String dni);
-    List<Solicitud> verRangoFechas(LocalDate desde, LocalDate hasta);
-    List<Solicitud> verByGatoPendientes(Long idGato);
-    Solicitud altaSolicitud(Solicitud solicitud);
-    Solicitud aceptarAdopcion(Long id, String motivo);
-    Solicitud rechazarSolicitud(Solicitud solicitud, Long id);
+    List<SolicitudAdopcion> verSolicitudes();
+    List<SolicitudAdopcion> verByEstado(String estado);
+    List<SolicitudAdopcion> verByGato(Long idGato);
+    List<SolicitudAdopcion> verBySolicitante(String dni);
+    List<SolicitudAdopcion> verRangoFechas(LocalDate desde, LocalDate hasta);
+    List<SolicitudAdopcion> verByGatoPendientes(Long idGato);
+    SolicitudAdopcion altaSolicitud(SolicitudAdopcion solicitudAdopcion);
+    SolicitudAdopcion aceptarAdopcion(Long id, String motivo);
+    SolicitudAdopcion rechazarSolicitud(SolicitudAdopcion solicitudAdopcion, Long id);
 }

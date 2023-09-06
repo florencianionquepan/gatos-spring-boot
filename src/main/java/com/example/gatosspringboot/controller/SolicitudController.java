@@ -5,7 +5,7 @@ import com.example.gatosspringboot.dto.SolicitudRespDTO;
 import com.example.gatosspringboot.dto.mapper.ISolicitudMapper;
 import com.example.gatosspringboot.dto.validator.PostValidationGroup;
 import com.example.gatosspringboot.dto.validator.PutValidationGroup;
-import com.example.gatosspringboot.model.Solicitud;
+import com.example.gatosspringboot.model.SolicitudAdopcion;
 import com.example.gatosspringboot.service.interfaces.ISolicitudService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,36 +48,36 @@ public class SolicitudController {
     @PostMapping
     private ResponseEntity<?> nuevaSolicitud(@RequestBody @Validated(PostValidationGroup.class)
                                                  SolicitudReqDTO dto){
-        Solicitud nueva=this.mapper.mapToEntity(dto);
-        Solicitud creada=this.service.altaSolicitud(nueva);
+        SolicitudAdopcion nueva=this.mapper.mapToEntity(dto);
+        SolicitudAdopcion creada=this.service.altaSolicitud(nueva);
         SolicitudRespDTO dtoCreado=this.mapper.mapToDto(creada);
         return ResponseEntity.status(HttpStatus.CREATED).body(dtoCreado);
     }
 
     @GetMapping
     private ResponseEntity<?> listar(){
-        List<Solicitud> solicitudes=this.service.verSolicitudes();
+        List<SolicitudAdopcion> solicitudes=this.service.verSolicitudes();
         List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }
 
     @GetMapping("/estado/{estado}")
     private ResponseEntity<?> listarByEstado(@PathVariable String estado){
-        List<Solicitud> solicitudes=this.service.verByEstado(estado);
+        List<SolicitudAdopcion> solicitudes=this.service.verByEstado(estado);
         List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }
 
     @GetMapping("/gato/{id}")
     private ResponseEntity<?> listarByGato(@PathVariable Long id){
-        List<Solicitud> solicitudes=this.service.verByGato(id);
+        List<SolicitudAdopcion> solicitudes=this.service.verByGato(id);
         List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }
 
     @GetMapping("/solicitante/{dni}")
     private ResponseEntity<?> listarBySoli(@PathVariable String dni){
-        List<Solicitud> solicitudes=this.service.verBySolicitante(dni);
+        List<SolicitudAdopcion> solicitudes=this.service.verBySolicitante(dni);
         List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }
@@ -86,7 +86,7 @@ public class SolicitudController {
     private ResponseEntity<?> aceptarAdopcion(@PathVariable Long id, @RequestBody @Validated(PutValidationGroup.class)
                                               SolicitudReqDTO dto){
         String motivo= dto.getMotivo();
-        Solicitud actualizada=this.service.aceptarAdopcion(id,motivo);
+        SolicitudAdopcion actualizada=this.service.aceptarAdopcion(id,motivo);
         return this.successResponse(this.mapper.mapToDto(actualizada));
     }
 

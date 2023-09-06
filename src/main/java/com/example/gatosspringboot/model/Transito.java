@@ -23,7 +23,7 @@ public class Transito extends Persona implements Serializable {
 
     public Transito(Long id, String dni, String nombre, String apellido, String tel,
                     String email, LocalDate fechaNac, String dire, String localidad,
-                    List<Solicitud> solicitudesAdopcion,
+                    List<SolicitudAdopcion> solicitudesAdopcion,
                     List<SolicitudVoluntariado> solicitudesVoluntariados,
                     Usuario usuario, List<Gato> listaGatos) {
         super(id, dni, nombre, apellido, tel, email, fechaNac, dire,

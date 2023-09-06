@@ -36,12 +36,12 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
-    public List<Solicitud> verSolicitudes() {
-        return (List<Solicitud>) this.repo.findAll();
+    public List<SolicitudAdopcion> verSolicitudes() {
+        return (List<SolicitudAdopcion>) this.repo.findAll();
     }
 
     @Override
-    public List<Solicitud> verByEstado(String estado) {
+    public List<SolicitudAdopcion> verByEstado(String estado) {
         EstadoNombre nombre=EstadoNombre.valueOf(estado.toUpperCase());
         if (nombre==EstadoNombre.PENDIENTE ||
                 nombre==EstadoNombre.APROBADA ||
@@ -53,23 +53,23 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
-    public List<Solicitud> verByGato(Long idGato) {
+    public List<SolicitudAdopcion> verByGato(Long idGato) {
         return this.repo.findByGato(idGato);
     }
 
     @Override
-    public List<Solicitud> verBySolicitante(String dni) {
+    public List<SolicitudAdopcion> verBySolicitante(String dni) {
         return this.repo.findBySolicitante(dni);
     }
 
     @Override
-    public List<Solicitud> verRangoFechas(LocalDate desde, LocalDate hasta) {
-        return (List<Solicitud>) this.repo.findAll();
+    public List<SolicitudAdopcion> verRangoFechas(LocalDate desde, LocalDate hasta) {
+        return (List<SolicitudAdopcion>) this.repo.findAll();
     }
 
     @Override
     //que filtre las que tengan como ultimo estado pendiente
-    public List<Solicitud> verByGatoPendientes(Long idGato) {
+    public List<SolicitudAdopcion> verByGatoPendientes(Long idGato) {
         return this.repo.findByGato(idGato).stream()
                 .filter(s-> {
                     Estado ultimo=s.getEstados().stream()
@@ -83,30 +83,30 @@ public class SolicitudService implements ISolicitudService {
 
     @Override
     //puede tener hasta 3 pendientes
-    public Solicitud altaSolicitud(Solicitud solicitud) {
+    public SolicitudAdopcion altaSolicitud(SolicitudAdopcion solicitudAdopcion) {
         //buscar solicitante y gato:
-        Persona solicitantebd=this.persoService.findByEmailOrException(solicitud.getSolicitante().getEmail());
-        Gato gatobd=this.gatoService.buscarDisponibleById(solicitud.getGato().getId());
+        Persona solicitantebd=this.persoService.findByEmailOrException(solicitudAdopcion.getSolicitante().getEmail());
+        Gato gatobd=this.gatoService.buscarDisponibleById(solicitudAdopcion.getGato().getId());
         //chequear que no haya hecho ya una solicitud por el mismo gato
         this.solicitaMismoGato(solicitantebd, gatobd);
         this.poseeOtrosPendientes(solicitantebd);
         Estado pendiente=estadoService.crearPendiente();
         List<Estado> estados = new ArrayList<>();
         estados.add(pendiente);
-        solicitud.setEstados(estados);
+        solicitudAdopcion.setEstados(estados);
         //logger.info("solicitud= "+solicitud);
-        solicitud.setSolicitante(solicitantebd);
-        solicitud.setGato(gatobd);
+        solicitudAdopcion.setSolicitante(solicitantebd);
+        solicitudAdopcion.setGato(gatobd);
         //this.persoService.addSolicitudPersona(solicitud);
         //this.gatoService.addSolicitudGato(solicitud);
-        return this.repo.save(solicitud);
+        return this.repo.save(solicitudAdopcion);
     }
 
     //solo se puede enviar si se cerro porque el gato se adopto
     // y volvio a estar en adopcion
     private void solicitaMismoGato(Persona solicitante, Gato gato){
-        List<Solicitud> solicitudesAnteriores=solicitante.getSolicitudesAdopcion();
-        Optional<Solicitud> solicitudEncontrada = solicitudesAnteriores.stream()
+        List<SolicitudAdopcion> solicitudesAnteriores=solicitante.getSolicitudesAdopcion();
+        Optional<SolicitudAdopcion> solicitudEncontrada = solicitudesAnteriores.stream()
                 .filter(soli -> soli.getGato().getId().equals(gato.getId()))
                 .findFirst();
         if(solicitudEncontrada.isPresent()){
@@ -123,10 +123,10 @@ public class SolicitudService implements ISolicitudService {
     }
 
     private void poseeOtrosPendientes(Persona soli){
-        List<Solicitud> solicitudes=soli.getSolicitudesAdopcion();
+        List<SolicitudAdopcion> solicitudes=soli.getSolicitudesAdopcion();
         LocalDate fechaActual = LocalDate.now();
         LocalDate hace30Dias = fechaActual.minusDays(30);
-        List<Solicitud> solicitudesFiltradas = solicitudes.stream()
+        List<SolicitudAdopcion> solicitudesFiltradas = solicitudes.stream()
                 .filter(solicitud -> solicitud.getEstados().size() == 1 &&
                         solicitud.getEstados().get(0).getEstado() == EstadoNombre.PENDIENTE &&
                         solicitud.getEstados().get(0).getFecha().isAfter(hace30Dias))
@@ -140,38 +140,38 @@ public class SolicitudService implements ISolicitudService {
     //--------------Aceptar solicitud de adopcion :)-------------------
 
     @Override
-    public Solicitud aceptarAdopcion(Long id, String motivo) {
-        Solicitud solidb=this.findByIdOrException(id);
+    public SolicitudAdopcion aceptarAdopcion(Long id, String motivo) {
+        SolicitudAdopcion solidb=this.findByIdOrException(id);
         Gato gatoAdoptar= solidb.getGato();
         //chequear que el gato no este adoptado. gatoService lo chequea
         Gato gatoAdoptado=gatoService.adoptarGato(gatoAdoptar.getId());
-        Solicitud actualizada=this.addEstadoAprobado(solidb, motivo);
+        SolicitudAdopcion actualizada=this.addEstadoAprobado(solidb, motivo);
         //enviar email que adoptaste al gati
         //cerrar todas las demas solicitudes del gato
         this.cerrarPendientes(gatoAdoptar, solidb);
         return this.repo.save(actualizada);
     }
 
-    private void cerrarPendientes(Gato gatoAdoptar, Solicitud solicitudActual) {
-        List<Solicitud> pendientes=this.verByGatoPendientes(gatoAdoptar.getId()).stream()
-                .filter(solicitud -> !solicitud.getId().equals(solicitudActual.getId()))
+    private void cerrarPendientes(Gato gatoAdoptar, SolicitudAdopcion solicitudAdopcionActual) {
+        List<SolicitudAdopcion> pendientes=this.verByGatoPendientes(gatoAdoptar.getId()).stream()
+                .filter(solicitud -> !solicitud.getId().equals(solicitudAdopcionActual.getId()))
                 .collect(Collectors.toList());
-        for(Solicitud solicitud:pendientes){
+        for(SolicitudAdopcion solicitudAdopcion :pendientes){
             Estado cerrado=this.estadoService.crearCerrado();
-            List<Estado> estados=solicitud.getEstados();
+            List<Estado> estados= solicitudAdopcion.getEstados();
             estados.add(cerrado);
-            solicitud.setEstados(estados);
-            this.repo.save(solicitud);
+            solicitudAdopcion.setEstados(estados);
+            this.repo.save(solicitudAdopcion);
         }
     }
 
     @Override
-    public Solicitud rechazarSolicitud(Solicitud solicitud, Long id) {
+    public SolicitudAdopcion rechazarSolicitud(SolicitudAdopcion solicitudAdopcion, Long id) {
         return null;
     }
 
-    private Solicitud findByIdOrException(Long id){
-        Optional<Solicitud> oSoli=this.repo.findById(id);
+    private SolicitudAdopcion findByIdOrException(Long id){
+        Optional<SolicitudAdopcion> oSoli=this.repo.findById(id);
         if(oSoli.isEmpty()){
             throw new NonExistingException(
                     String.format("La solicitud %d no existe",id));
@@ -179,7 +179,7 @@ public class SolicitudService implements ISolicitudService {
         return oSoli.get();
     }
 
-    private Solicitud addEstadoAprobado(Solicitud solidb, String motivo){
+    private SolicitudAdopcion addEstadoAprobado(SolicitudAdopcion solidb, String motivo){
         //chequear que el estado no este aprobado ya
         List<Estado> estados=solidb.getEstados();
         Optional<Estado> oAprobado=estados.stream()

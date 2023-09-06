@@ -5,7 +5,7 @@ import com.example.gatosspringboot.dto.SolicitudReqDTO;
 import com.example.gatosspringboot.dto.SolicitudRespDTO;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Persona;
-import com.example.gatosspringboot.model.Solicitud;
+import com.example.gatosspringboot.model.SolicitudAdopcion;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,8 +27,8 @@ public class SolicitudMapper implements ISolicitudMapper{
     }
 
     @Override
-    public Solicitud mapToEntity(SolicitudReqDTO dto) {
-        Solicitud entity=new Solicitud();
+    public SolicitudAdopcion mapToEntity(SolicitudReqDTO dto) {
+        SolicitudAdopcion entity=new SolicitudAdopcion();
         Persona solicitante=new Persona();
         solicitante.setEmail(dto.getSolicitante().getEmail());
         entity.setSolicitante(solicitante);
@@ -39,7 +39,7 @@ public class SolicitudMapper implements ISolicitudMapper{
     }
 
     @Override
-    public SolicitudRespDTO mapToDto(Solicitud entity) {
+    public SolicitudRespDTO mapToDto(SolicitudAdopcion entity) {
         SolicitudRespDTO dto=new SolicitudRespDTO();
         dto.setId(entity.getId());
         dto.setEstados(this.estadoMapper.mapToListDto(entity.getEstados()));
@@ -50,7 +50,7 @@ public class SolicitudMapper implements ISolicitudMapper{
     }
 
     @Override
-    public List<SolicitudRespDTO> mapListToDto(List<Solicitud> entities) {
+    public List<SolicitudRespDTO> mapListToDto(List<SolicitudAdopcion> entities) {
         return entities.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());

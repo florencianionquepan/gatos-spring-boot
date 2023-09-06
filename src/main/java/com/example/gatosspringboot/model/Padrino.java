@@ -15,12 +15,12 @@ import java.util.List;
 @PrimaryKeyJoinColumn(referencedColumnName = "id")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Padrino extends Persona implements Serializable {
 
     @OneToMany(mappedBy = "padrino", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value="padrino")
+    @JsonIgnoreProperties(value={"padrino","solicitudesAdopcion"})
     private List<Gato> listaGatos;
 
     @OneToMany(mappedBy = "padrino", fetch = FetchType.LAZY)
