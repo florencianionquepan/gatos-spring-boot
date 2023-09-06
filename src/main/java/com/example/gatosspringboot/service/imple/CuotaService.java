@@ -11,6 +11,7 @@ import com.example.gatosspringboot.repository.database.PadrinoRepository;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.service.interfaces.ICuotaService;
 import com.example.gatosspringboot.service.interfaces.IMercadoPagoService;
+import com.example.gatosspringboot.service.interfaces.IPadrinoService;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,7 @@ public class CuotaService implements ICuotaService {
     private final GatoRepository gatoRepo;
     private final PersonaRepository persoRepo;
     private final PadrinoRepository padriRepo;
+    private final IPadrinoService padriService;
     private final IMercadoPagoService MPservice;
     private Logger logger= LoggerFactory.getLogger(CuotaService.class);
 
@@ -34,11 +36,13 @@ public class CuotaService implements ICuotaService {
                         GatoRepository gatoRepo,
                         PersonaRepository persoRepo,
                         PadrinoRepository padriRepo,
+                        IPadrinoService padriService,
                         IMercadoPagoService mPservice) {
         this.repo = repo;
         this.gatoRepo = gatoRepo;
         this.persoRepo = persoRepo;
         this.padriRepo = padriRepo;
+        this.padriService = padriService;
         MPservice = mPservice;
     }
 
@@ -52,14 +56,20 @@ public class CuotaService implements ICuotaService {
             );
         }
         Optional<Padrino> oPadri=this.padriRepo.buscarByEmail(cuota.getPadrino().getEmail());
-        if(oPadri.isEmpty()){
-/*            Optional<Persona> oPerso=(Optional<Persona>) this.persoRepo.findPersonByEmail(cuota.getPadrino().getEmail());
-            Persona perso=(Persona) oPerso.get();
-            this.padriRepo.savePadrino(oPerso.get().getId());
-            Padrino padrino=this.padriRepo.buscarByEmail(perso.getEmail()).get();
-            oGato.get().setPadrino(padrino);
-            this.gatoRepo.save(oGato.get());*/
-        }
+//        if(oPadri.isEmpty()){
+//            Optional<Persona> oPerso=this.persoRepo.findPersonByEmail(cuota.getPadrino().getEmail());
+//            Long idPersona=oPerso.get().getId();
+//            this.padriRepo.savePadrino(idPersona);
+//            Padrino padrino=this.padriService.buscarByEmailOrException(cuota.getPadrino().getEmail());
+//            logger.info("Padrino="+padrino);
+//            oGato.get().setPadrino(padrino);
+//            this.gatoRepo.save(oGato.get());
+//        }else{
+//            Padrino padrino=oPadri.get();
+//            oGato.get().setPadrino(padrino);
+//            this.gatoRepo.save(oGato.get());
+//        }
+        //logger.info("ahora="+oGato.get().getPadrino());
         try{
             this.MPservice.crearPago(oGato.get());
         } catch (MPException | MPApiException e) {

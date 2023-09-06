@@ -3,7 +3,6 @@ package com.example.gatosspringboot.service.imple;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.Persona;
-import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
@@ -46,7 +45,7 @@ public class PersonaService implements IPersonaService {
 
     @Override
     public Persona findByEmailOrException(String email) {
-        Optional<Persona> oPerso=this.repo.findByEmail(email);
+        Optional<Persona> oPerso=this.repo.findPersonByEmail(email);
         if(oPerso.isEmpty()){
             throw new PersonNotFound(
                     String.format("La persona con email %s no existe",email)
@@ -67,7 +66,7 @@ public class PersonaService implements IPersonaService {
 
     @Override
     public void validarEmailUnico(String email) {
-        Optional<Persona> oPerso=this.repo.findByEmail(email);
+        Optional<Persona> oPerso=this.repo.findPersonByEmail(email);
         if(oPerso.isPresent()){
             throw new NonExistingException(
                     String.format("Este email %s ya se encuentra registrado",email)

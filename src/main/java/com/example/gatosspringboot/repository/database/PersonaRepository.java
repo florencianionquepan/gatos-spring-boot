@@ -11,5 +11,5 @@ public interface PersonaRepository extends CrudRepository<Persona,Long> {
     Optional<Persona> findByDni(String dni);
 
     @Query("from Persona p where p.email= ?1")
-    Optional<Persona> findByEmail(String email);
+    Optional<Persona> findPersonByEmail(String email);
 }

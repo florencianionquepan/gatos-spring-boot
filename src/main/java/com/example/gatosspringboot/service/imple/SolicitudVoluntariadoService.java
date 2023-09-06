@@ -94,9 +94,19 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         TipoVoluntariado voluntariado=solicitud.getTipoVoluntariado();
         Persona perso=solicitud.getAspirante();
         if(voluntariado == TipoVoluntariado.VOLUNTARIO){
-            Voluntario vol=new Voluntario(perso.getId(),perso.getDni(),perso.getNombre(),perso.getApellido(),
-                    perso.getTel(),perso.getUsuario().getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
-                    perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),perso.getUsuario(),null);
+            Voluntario vol=new Voluntario();
+            vol.setId(perso.getId());
+            vol.setDni(perso.getDni());
+            vol.setNombre(perso.getNombre());
+            vol.setApellido(perso.getApellido());
+            vol.setFechaNac(perso.getFechaNac());
+            vol.setTel(perso.getTel());
+            vol.setDire(perso.getDire());
+            vol.setLocalidad(perso.getLocalidad());
+            vol.setSolicitudesAdopcion(perso.getSolicitudesAdopcion());
+            vol.setSolicitudesVoluntariados(perso.getSolicitudesVoluntariados());
+            vol.setUsuario(perso.getUsuario());
+            vol.setListaGatos(null);
             this.voluService.altaVolunt(vol);
             //enviar email notificando aceptacion (en alta usuario esta hecho)
         } else if (voluntariado == TipoVoluntariado.TRANSITO) {

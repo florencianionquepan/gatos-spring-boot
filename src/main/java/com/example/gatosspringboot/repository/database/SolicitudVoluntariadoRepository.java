@@ -1,7 +1,6 @@
 package com.example.gatosspringboot.repository.database;
 
 import com.example.gatosspringboot.model.EstadoNombre;
-import com.example.gatosspringboot.model.Solicitud;
 import com.example.gatosspringboot.model.SolicitudVoluntariado;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
