@@ -4,7 +4,6 @@ import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.Cuota;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Padrino;
-import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.repository.database.CuotaRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
 import com.example.gatosspringboot.repository.database.PadrinoRepository;
@@ -55,7 +54,7 @@ public class CuotaService implements ICuotaService {
                     String.format("El gato con id %d no existe",cuota.getGato().getId())
             );
         }
-        Optional<Padrino> oPadri=this.padriRepo.buscarByEmail(cuota.getPadrino().getEmail());
+        Optional<Padrino> oPadri=this.padriRepo.buscarByEmail(cuota.getPadrino().getPersona().getEmail());
 //        if(oPadri.isEmpty()){
 //            Optional<Persona> oPerso=this.persoRepo.findPersonByEmail(cuota.getPadrino().getEmail());
 //            Long idPersona=oPerso.get().getId();

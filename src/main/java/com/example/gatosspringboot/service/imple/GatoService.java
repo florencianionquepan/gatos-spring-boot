@@ -43,7 +43,7 @@ public class GatoService implements IGatoService {
 
     @Override
     public Gato altaGato(Gato gato) {
-        Voluntario volGato=this.voluService.buscarVolByEmailOrException(gato.getVoluntario().getEmail());
+        Voluntario volGato=this.voluService.buscarVolByEmailOrException(gato.getVoluntario().getPersona().getEmail());
         gato.setVoluntario(volGato);
         this.addGatoVol(gato);
         //queda tambien avisar al padrino y transito
@@ -60,7 +60,7 @@ public class GatoService implements IGatoService {
     }
 
     private void addGatoVol(Gato gato){
-        Voluntario volGato=this.voluService.buscarVolByEmailOrException(gato.getVoluntario().getEmail());
+        Voluntario volGato=this.voluService.buscarVolByEmailOrException(gato.getVoluntario().getPersona().getEmail());
         List<Gato> gatitosVol=volGato.getListaGatos();
         gatitosVol.add(gato);
         volGato.setListaGatos(gatitosVol);
