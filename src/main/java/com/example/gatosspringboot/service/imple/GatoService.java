@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.service.imple;
 
+import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.Ficha;
 import com.example.gatosspringboot.model.Gato;
@@ -39,6 +40,17 @@ public class GatoService implements IGatoService {
     @Override
     public List<Gato> verTodos() {
         return (List<Gato>) this.gatoRepo.findAll();
+    }
+
+    @Override
+    public Gato verById(Long id) {
+        Optional<Gato> oGato=this.gatoRepo.findById(id);
+        if(oGato.isEmpty()){
+            throw new NonExistingException(
+                    String.format("El gato con id %d no existe",id)
+            );
+        }
+        return oGato.get();
     }
 
     @Override
