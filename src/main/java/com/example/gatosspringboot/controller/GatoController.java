@@ -58,6 +58,12 @@ public class GatoController {
         List<Gato> gatos=this.gatoSer.verTodos();
         return this.successResponse(this.mapper.mapListToDto(gatos));
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> verById(@PathVariable Long id){
+        Gato gato=this.gatoSer.verById(id);
+        return this.successResponse(this.mapper.mapToDto(gato));
+    }
+
 
     @PostMapping
     @PreAuthorize("hasRole('VOLUNTARIO')")
