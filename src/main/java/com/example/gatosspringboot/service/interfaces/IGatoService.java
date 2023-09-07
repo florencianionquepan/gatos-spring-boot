@@ -9,6 +9,7 @@ import java.util.List;
 public interface IGatoService {
 
     List<Gato> verTodos();
+    Gato verById(Long id);
     Gato altaGato(Gato gato);
     Gato modiGato(Gato gato, Long id);
     boolean existeGato(Long id);
