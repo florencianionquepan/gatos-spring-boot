@@ -3,8 +3,6 @@ package com.example.gatosspringboot.dto.mapper;
 import com.example.gatosspringboot.dto.UsuarioReqDTO;
 import com.example.gatosspringboot.dto.UsuarioEmailDTO;
 import com.example.gatosspringboot.model.Usuario;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

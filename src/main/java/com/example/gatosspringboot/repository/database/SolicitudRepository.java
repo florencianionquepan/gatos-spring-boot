@@ -11,13 +11,13 @@ import java.util.List;
 @Repository
 public interface SolicitudRepository extends CrudRepository<SolicitudAdopcion,Long> {
 
-    @Query("SELECT s FROM Solicitud s JOIN s.estados e WHERE e.estado = ?1")
+    @Query("SELECT s FROM SolicitudAdopcion s JOIN s.estados e WHERE e.estado = ?1")
     List<SolicitudAdopcion> findByEstado(EstadoNombre nombre);
 
-    @Query("SELECT s FROM Solicitud s WHERE s.solicitante.dni = ?1")
+    @Query("SELECT s FROM SolicitudAdopcion s WHERE s.solicitante.dni = ?1")
     List<SolicitudAdopcion> findBySolicitante(String dni);
 
-    @Query("SELECT s FROM Solicitud s WHERE s.gato.id = ?1")
+    @Query("SELECT s FROM SolicitudAdopcion s WHERE s.gato.id = ?1")
     List<SolicitudAdopcion> findByGato(Long id);
 
 /*    @Query("select s from Solicitud s where s.fechaSolicitud>=?1 and s.fechaSolicitud<=?2")
