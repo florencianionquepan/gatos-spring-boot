@@ -78,6 +78,18 @@ public class UsuarioService implements IUsuarioService {
         return true;
     }
 
+    @Override
+    public void enviarValidacion(String email) {
+        Optional<Usuario> oUsuario=this.usRepo.findByEmail(email);
+        logger.info("ouser="+oUsuario);
+        if(oUsuario.isEmpty()){
+            throw new NonExistingException(
+                    String.format("El usuario con el email %s no existe",email)
+            );
+        }
+        this.enviarUrlToken(oUsuario.get());
+    }
+
     private void enviarUrlToken(Usuario nuevo) {
         String subject="Valida tu email!";
         String token=this.generarToken(nuevo);
