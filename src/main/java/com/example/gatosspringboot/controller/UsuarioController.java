@@ -4,8 +4,8 @@ import com.example.gatosspringboot.dto.UsuarioPasswordDTO;
 import com.example.gatosspringboot.dto.UsuarioEmailDTO;
 import com.example.gatosspringboot.dto.mapper.IUsuarioMapper;
 import com.example.gatosspringboot.dto.mapper.IUsuarioPasswordMapper;
+import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Usuario;
-import com.example.gatosspringboot.service.imple.UsuarioService;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
@@ -69,8 +69,21 @@ public class UsuarioController {
     public ResponseEntity<?> validarUsuario(@PathVariable("id") Long id,
                                             @PathVariable("token") String token){
         Boolean validado=this.usService.validarUsuario(id,token);
-        return ResponseEntity.ok("Email validado correctamente." +
+        mensajeBody.put("success",Boolean.TRUE);
+        mensajeBody.put("data","Email validado correctamente." +
                 "Ya puede iniciar sesion!");
+        return ResponseEntity.ok(mensajeBody);
+    }
+
+    @GetMapping("/{email}/validacion")
+    public ResponseEntity<?> enviarValidacion(@PathVariable String email){
+        if(email==null){
+            throw new NonExistingException("No enviaste ningun email!");
+        }
+        this.usService.enviarValidacion(email);
+        mensajeBody.put("success",Boolean.TRUE);
+        mensajeBody.put("data","Chequee su bandeja de entrada");
+        return ResponseEntity.ok(mensajeBody);
     }
 
 
