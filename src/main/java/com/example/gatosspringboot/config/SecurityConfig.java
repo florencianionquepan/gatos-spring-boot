@@ -53,14 +53,14 @@ public class SecurityConfig {
                         return config;
                     }
                 }))
-                .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos/**","/personas","/cuotas","/generic/**")
+                .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos/**","/personas","/cuotas","/generic/**","/usuarios/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
-                        .requestMatchers("/transitos/**","/socios/**","/usuarios/**","/voluntariados/**","/voluntarios/**","/solicitudes/**","/auth/**").authenticated()
-                        .requestMatchers("/gatos/**","/personas","/cuotas","/generic/**").permitAll())
+                        .requestMatchers("/transitos/**","/socios/**","/voluntariados/**","/voluntarios/**","/solicitudes/**","/auth/**").authenticated()
+                        .requestMatchers("/gatos/**","/personas","/cuotas","/generic/**","/usuarios/**").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
