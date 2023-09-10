@@ -18,7 +18,7 @@ public class RegistroDTO {
     @NotNull
     @NotEmpty
     @Pattern(regexp = "^[0-9]+$",message = "Solo se permiten numeros")
-    @Size(min=8,max=8)
+    @Size(min=8,max=8,message = "Debe contener 8 caracteres")
     private String dni;
     @NotNull
     @NotEmpty
@@ -40,7 +40,7 @@ public class RegistroDTO {
 
     @Valid
     private UsuarioReqDTO usuario;
-
+/*
     @NotNull
-    private String token;
+    private String token;*/
 }
