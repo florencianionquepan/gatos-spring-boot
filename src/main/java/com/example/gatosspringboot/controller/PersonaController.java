@@ -61,7 +61,7 @@ public class PersonaController {
                 .body(mensajeBody);
     }
 
-    @GetMapping("/validacion")
+/*    @GetMapping("/validacion")
     public ResponseEntity<?> validarEmail(@RequestBody UsuarioEmailDTO dto){
         String email=this.userMapper.mapToEntity(dto).getEmail();
         if(this.service.validarEmailIngresado(email)){
@@ -73,12 +73,11 @@ public class PersonaController {
              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                      .body(mensajeBody);
         }
-    }
+    }*/
 
     @PostMapping
     public ResponseEntity<?> nueva(@RequestBody @Valid RegistroDTO dto){
-        String tokenValue=dto.getToken();
-        Persona nueva=this.service.altaRegistro(this.registroMapper.mapToEntity(dto),tokenValue);
+        Persona nueva=this.service.registro(this.registroMapper.mapToEntity(dto));
         return this.successResponse(this.mapper.mapToDto(nueva));
     }
 
