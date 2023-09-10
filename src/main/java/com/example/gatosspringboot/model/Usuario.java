@@ -22,6 +22,7 @@ public class Usuario implements Serializable {
     private String email;
     @NotNull
     private String contrasenia;
+    private Boolean validado;
     private Boolean habilitado;
 
     @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
