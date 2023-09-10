@@ -17,6 +17,8 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class UsuarioService implements IUsuarioService {
@@ -25,6 +27,7 @@ public class UsuarioService implements IUsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final RolRepository rolRepo;
     private final IEmailService emailService;
+    private ConcurrentHashMap<Long, String> tokenCache = new ConcurrentHashMap<>();
     private Logger logger= LoggerFactory.getLogger(UsuarioService.class);
 
     public UsuarioService(UsuarioRepository usRepo,
@@ -50,11 +53,49 @@ public class UsuarioService implements IUsuarioService {
         );
         usuario.setContrasenia(this.passwordEncoder.encode(usuario.getContrasenia()));
         usuario.setRoles(rolesUser);
+        //inicialmente se crea como validado en false:
+        usuario.setValidado(false);
         Usuario nuevo=this.usRepo.save(usuario);
-        String subject="Su cuenta ha sido generada!";
-        String content="\nYa puede iniciar sesión con su email y su contraseña para enviar solicitudes!";
-        this.emailService.sendMessage(usuario.getEmail(),subject,content);
+        this.enviarUrlToken(nuevo);
         return nuevo;
+    }
+
+    @Override
+    public Boolean validarUsuario(Long id, String token) {
+        Optional<Usuario> oUsuario=this.usRepo.findById(id);
+        if(oUsuario.isEmpty()){
+            throw new NonExistingException("El usuario no existe");
+        }
+        if(!this.validarToken(id, token)){
+            throw new NonExistingException(
+                    "El código expiro o no es correcto." +
+                            "Vuelva al sitio para solicitar el envio del link nuevamente"
+            );
+        }
+        Usuario validado=oUsuario.get();
+        validado.setValidado(true);
+        this.usRepo.save(validado);
+        return true;
+    }
+
+    private void enviarUrlToken(Usuario nuevo) {
+        String subject="Valida tu email!";
+        String token=this.generarToken(nuevo);
+        String url="http://localhost:9090/usuarios/"+nuevo.getId()+"/validacion/"+token;
+        String content="\nHaga click en el siguiente link: \n"+url;
+        this.emailService.sendMessage(nuevo.getEmail(),subject,content);
+    }
+
+    private String generarToken(Usuario nuevo) {
+        String token = UUID.randomUUID().toString();
+        tokenCache.put(nuevo.getId(),token);
+        //logger.info("token cache= "+tokenCache);
+        return token;
+    }
+
+    private boolean validarToken(Long id,String token) {
+        String storekToken=tokenCache.get(id);
+        return storekToken!=null && storekToken.equals(token);
     }
 
 
