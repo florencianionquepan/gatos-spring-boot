@@ -76,23 +76,16 @@ public class PersonaService implements IPersonaService {
 
     @Override
     public boolean validarEmailIngresado(String email) {
-        this.validarEmailUnico(email);
-        String token=this.generarToken();
-        String text="Hola!" + "\nTe enviamos el siguiente codigo para " +
-                "validar tu identidad y poder crear una cuenta"+
-                "\nSi no has intentado enviar una solicitud " +
-                "para formar parte de Gatshan, por favor ignora este mensaje" +
-                "\n Código: "+token;
-        return this.emailService.sendMessage(email, "Valida tu identidad",text);
+        return false;
     }
 
     @Override
     public Persona altaRegistro(Persona persona, String token) {
-        if(!this.validarToken(token)){
-            throw new NonExistingException(
-                    "El código no coincide, Por favor ingresalo nuevamente."
-            );
-        }
+        return null;
+    }
+
+    @Override
+    public Persona registro(Persona persona) {
         this.validarDniUnico(persona.getDni());
         Usuario creado=this.userService.altaUsuario(persona.getUsuario());
         persona.setUsuario(creado);
@@ -106,16 +99,5 @@ public class PersonaService implements IPersonaService {
                     String.format("Este dni %s ya se encuentra registrado",dni)
             );
         }
-    }
-
-    private String generarToken() {
-        String token = UUID.randomUUID().toString();
-        tokenCache.put(token, true);
-        //logger.info("token cache= "+tokenCache);
-        return token;
-    }
-
-    private boolean validarToken(String token) {
-        return tokenCache.containsKey(token);
     }
 }
