@@ -9,4 +9,6 @@ public interface IPersonaService {
     void validarEmailUnico(String email);
     boolean validarEmailIngresado(String email);
     Persona altaRegistro(Persona persona, String token);
+
+    Persona registro(Persona persona);
 }

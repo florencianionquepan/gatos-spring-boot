@@ -64,7 +64,7 @@ public class VoluntarioController {
     public ResponseEntity<?> modiVoluntario(@RequestBody Voluntario volunt,
                                          @PathVariable Long id){
         Voluntario volModi=this.volService.modiVolunt(volunt, id);
-        mensajeBody.put("Success",Boolean.TRUE);
+        mensajeBody.put("success",Boolean.TRUE);
         mensajeBody.put("data",volModi);
         return ResponseEntity.ok(mensajeBody);
     }
