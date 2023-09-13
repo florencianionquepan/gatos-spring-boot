@@ -1,10 +1,8 @@
 package com.example.gatosspringboot.config;
 
-import com.example.gatosspringboot.controller.LoginController;
 import com.example.gatosspringboot.filter.*;
+import com.example.gatosspringboot.repository.database.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -13,7 +11,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
@@ -25,6 +22,12 @@ import java.util.Collections;
 
 @Configuration
 public class SecurityConfig {
+
+    public final UsuarioRepository repo;
+
+    public SecurityConfig(UsuarioRepository repo) {
+        this.repo = repo;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -58,6 +61,7 @@ public class SecurityConfig {
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTValidationFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(new EmailValidationFilter(repo), JWTGenerationFilter.class)
                 .authorizeHttpRequests((requests)->requests
                         .requestMatchers("/transitos/**","/socios/**","/voluntariados/**","/voluntarios/**","/solicitudes/**","/auth/**").authenticated()
                         .requestMatchers("/gatos/**","/personas","/cuotas","/generic/**","/usuarios/**").permitAll())
