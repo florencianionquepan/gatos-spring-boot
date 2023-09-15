@@ -3,6 +3,7 @@ package com.example.gatosspringboot.service.interfaces;
 import com.example.gatosspringboot.model.Ficha;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Transito;
+import com.example.gatosspringboot.model.Voluntario;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ public interface IGatoService {
 
     List<Gato> verTodos();
     Gato verById(Long id);
+    List<Gato> verByVoluntario(String email);
     Gato altaGato(Gato gato);
     Gato modiGato(Gato gato, Long id);
     boolean existeGato(Long id);

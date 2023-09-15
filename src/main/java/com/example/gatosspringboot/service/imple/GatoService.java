@@ -54,6 +54,12 @@ public class GatoService implements IGatoService {
     }
 
     @Override
+    public List<Gato> verByVoluntario(String email) {
+        Voluntario volGato=this.voluService.buscarVolByEmailOrException(email);
+        return this.gatoRepo.findByVoluntarioEmail(volGato.getPersona().getEmail());
+    }
+
+    @Override
     public Gato altaGato(Gato gato) {
         Voluntario volGato=this.voluService.buscarVolByEmailOrException(gato.getVoluntario().getPersona().getEmail());
         gato.setVoluntario(volGato);
