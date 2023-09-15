@@ -93,7 +93,7 @@ public class UsuarioService implements IUsuarioService {
     private void enviarUrlToken(Usuario nuevo) {
         String subject="Valida tu email!";
         String token=this.generarToken(nuevo);
-        String url="http://localhost:9090/usuarios/"+nuevo.getId()+"/validacion/"+token;
+        String url="http://localhost:4200:/usuarios/"+nuevo.getId()+"/validacion/"+token;
         String content="\nHaga click en el siguiente link: \n"+url;
         this.emailService.sendMessage(nuevo.getEmail(),subject,content);
     }
