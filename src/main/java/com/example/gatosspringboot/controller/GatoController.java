@@ -1,11 +1,10 @@
 package com.example.gatosspringboot.controller;
 
-import com.example.gatosspringboot.dto.FichaDTO;
-import com.example.gatosspringboot.dto.GatoDTO;
-import com.example.gatosspringboot.dto.TransitoIdDTO;
+import com.example.gatosspringboot.dto.*;
 import com.example.gatosspringboot.dto.mapper.IFichaMapper;
 import com.example.gatosspringboot.dto.mapper.IGatoMapper;
 import com.example.gatosspringboot.dto.mapper.ITransitoIdMapper;
+import com.example.gatosspringboot.dto.mapper.IVoluntarioEmailMapper;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import org.springframework.http.HttpStatus;
@@ -26,17 +25,20 @@ public class GatoController {
     private final IGatoMapper mapper;
     private final IFichaMapper fichaMap;
     private final ITransitoIdMapper transitoMap;
+    private final IVoluntarioEmailMapper voluMapper;
 
     public Map<String,Object> mensajeBody= new HashMap<>();
 
     public GatoController(IGatoService gatoSer,
                           IGatoMapper mapper,
                           IFichaMapper fichaMap,
-                          ITransitoIdMapper transitoMap) {
+                          ITransitoIdMapper transitoMap,
+                          IVoluntarioEmailMapper voluMapper) {
         this.gatoSer = gatoSer;
         this.mapper = mapper;
         this.fichaMap = fichaMap;
         this.transitoMap = transitoMap;
+        this.voluMapper = voluMapper;
     }
 
     private ResponseEntity<?> successResponse(Object data){
@@ -58,10 +60,18 @@ public class GatoController {
         List<Gato> gatos=this.gatoSer.verTodos();
         return this.successResponse(this.mapper.mapListToDto(gatos));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> verById(@PathVariable Long id){
         Gato gato=this.gatoSer.verById(id);
         return this.successResponse(this.mapper.mapToDto(gato));
+    }
+
+    @GetMapping("/voluntarios/{email}")
+    @PreAuthorize("hasRole('VOLUNTARIO')")
+    public ResponseEntity<?> verByVoluntario(@PathVariable String email){
+        List<Gato> gatos=this.gatoSer.verByVoluntario(email);
+        return this.successResponse(this.mapper.mapListToDto(gatos));
     }
 
 
@@ -95,7 +105,7 @@ public class GatoController {
     public ResponseEntity<?> modiGato(@RequestBody GatoDTO dto,
                                       @PathVariable Long id){
         Gato modi=this.gatoSer.modiGato(this.mapper.mapToEntity(dto),id);
-        GatoDTO resp=this.mapper.mapToDto(modi);
+        GatoRespDTO resp=this.mapper.mapToDto(modi);
         mensajeBody.put("Success",Boolean.TRUE);
         mensajeBody.put("data",resp);
         return ResponseEntity.ok(mensajeBody);
