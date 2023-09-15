@@ -13,12 +13,6 @@ import java.util.stream.Collectors;
 //el voluntario se crea cuando acepta solicitud voluntariado
 public class VoluntarioMapper implements IVoluntarioMapper{
 
-    private final GatoMapper gatoMapper;
-
-    public VoluntarioMapper(GatoMapper gatoMapper) {
-        this.gatoMapper = gatoMapper;
-    }
-
     @Override
     //esto no se usa igualmente.
     public Voluntario mapToEntity(VoluntarioDTO volu) {
@@ -40,7 +34,7 @@ public class VoluntarioMapper implements IVoluntarioMapper{
         dto.setFechaNac(perso.getFechaNac());
         dto.setDire(perso.getDire());
         dto.setLocalidad(perso.getLocalidad());
-        dto.setGatos(this.gatoMapper.mapListToDto(entity.getListaGatos()));
+        //dto.setGatos(this.gatoMapper.mapListToDto(entity.getListaGatos()));
         return dto;
     }
 
