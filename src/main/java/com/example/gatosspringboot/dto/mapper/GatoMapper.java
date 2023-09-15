@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.GatoDTO;
+import com.example.gatosspringboot.dto.GatoRespDTO;
 import com.example.gatosspringboot.dto.PersonaEmailDTO;
 import com.example.gatosspringboot.dto.SolicitudReqDTO;
 import com.example.gatosspringboot.model.Gato;
@@ -14,13 +15,19 @@ import java.util.stream.Collectors;
 public class GatoMapper implements IGatoMapper{
 
     private final IVoluntarioEmailMapper volMap;
+    private final IVoluntarioMapper voluMapper;
+    private final ITransitoMapper transitoMap;
     private final IFichaMapper fichaMap;
     private final IEstadoMapper estadoMapper;
 
     public GatoMapper(IVoluntarioEmailMapper volMap,
+                      IVoluntarioMapper voluMapper,
+                      ITransitoMapper transitoMap,
                       IFichaMapper fichaMap,
                       IEstadoMapper estadoMapper) {
         this.volMap = volMap;
+        this.voluMapper = voluMapper;
+        this.transitoMap = transitoMap;
         this.fichaMap = fichaMap;
         this.estadoMapper = estadoMapper;
     }
@@ -45,8 +52,8 @@ public class GatoMapper implements IGatoMapper{
     }
 
     @Override
-    public GatoDTO mapToDto(Gato entity) {
-        GatoDTO dto=new GatoDTO();
+    public GatoRespDTO mapToDto(Gato entity) {
+        GatoRespDTO dto=new GatoRespDTO();
         dto.setId(entity.getId());
         dto.setNombre(entity.getNombre());
         dto.setFotos(entity.getSrcFoto());
@@ -55,18 +62,24 @@ public class GatoMapper implements IGatoMapper{
         dto.setDescripcion(entity.getDescripcion());
         dto.setColor(entity.getColor());
         dto.setTipoPelo(entity.getTipoPelo());
-        dto.setFichaDTO(this.fichaMap.mapToDto(entity.getFichaVet()));
+        dto.setFicha(this.fichaMap.mapToDto(entity.getFichaVet()));
         if(entity.getSolicitudesAdopcion()!=null){
             dto.setSolicitudes(this.mapSoliToDto(entity.getSolicitudesAdopcion()));
         }
-        dto.setVoluntario(this.volMap.mapToDto(entity.getVoluntario()));
-        dto.setPadrino(entity.getPadrino());
+        if(entity.getPadrino()!=null){
+            //falta mapper de padrino
+            //dto.setPadrino(entity.getPadrino());
+        }
+        if(entity.getTransito()!=null){
+            dto.setTransito(this.transitoMap.mapToDto(entity.getTransito()));
+        }
+        dto.setVoluntario(this.voluMapper.mapToDto(entity.getVoluntario()));
         dto.setAdoptado(entity.getAdoptadoFecha());
         return dto;
     }
 
     @Override
-    public List<GatoDTO> mapListToDto(List<Gato> entities) {
+    public List<GatoRespDTO> mapListToDto(List<Gato> entities) {
         return entities.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
