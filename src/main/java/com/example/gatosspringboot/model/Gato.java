@@ -24,8 +24,8 @@ public class Gato implements Serializable {
 
     @Column(nullable = false, length = 15)
     private String nombre;
-    @ElementCollection(targetClass=String.class)
-    private List<String> srcFoto;
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
+    private List<Foto> fotos;
     @Column(nullable = false, length = 10)
     private String edad;
     @Column(nullable = false, length = 10)
