@@ -2,22 +2,22 @@ package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
-import com.example.gatosspringboot.model.Ficha;
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Transito;
-import com.example.gatosspringboot.model.Voluntario;
+import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.FichaRepository;
+import com.example.gatosspringboot.repository.database.FotoRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
+import com.example.gatosspringboot.service.interfaces.ICloudinaryService;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import com.example.gatosspringboot.service.interfaces.ITransitoService;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class GatoService implements IGatoService {
@@ -26,15 +26,21 @@ public class GatoService implements IGatoService {
     private final IVoluntarioService voluService;
     private final FichaRepository fichaRepo;
     private final ITransitoService tranSer;
+    private final ICloudinaryService cloudService;
+    private final FotoRepository fotoRepo;
 
     public GatoService(GatoRepository gatoRepo,
                        IVoluntarioService voluService,
                        FichaRepository fichaRepo,
-                       ITransitoService tranSer) {
+                       ITransitoService tranSer,
+                       ICloudinaryService cloudService,
+                       FotoRepository fotoRepo) {
         this.gatoRepo = gatoRepo;
         this.voluService = voluService;
         this.fichaRepo = fichaRepo;
         this.tranSer = tranSer;
+        this.cloudService = cloudService;
+        this.fotoRepo = fotoRepo;
     }
 
     @Override
@@ -60,11 +66,26 @@ public class GatoService implements IGatoService {
     }
 
     @Override
-    public Gato altaGato(Gato gato) {
+    @Transactional
+    public Gato altaGato(Gato gato, MultipartFile[] fotos) {
         Voluntario volGato=this.voluService.buscarVolByEmailOrException(gato.getVoluntario().getPersona().getEmail());
         gato.setVoluntario(volGato);
         this.addGatoVol(gato);
-        //queda tambien avisar al padrino y transito
+        //queda tambien avisar al padrino y transito-> transito le asigno aparte y padrino se asocia el mismo
+        //guardar urls fotos de cloudinary en db y asociarlas al gatito
+        List<Foto> fotosGatitos=new ArrayList<>();
+        try {
+            List<Map> results=this.cloudService.upload(fotos);
+            for(Map result:results){
+                Foto foto=new Foto(0L, (String) result.get("original_filename"),
+                        (String) result.get("url"), (String) result.get("public_id"));
+                Foto nueva=this.fotoRepo.save(foto);
+                fotosGatitos.add(nueva);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        gato.setFotos(fotosGatitos);
         return this.gatoRepo.save(gato);
     }
 
