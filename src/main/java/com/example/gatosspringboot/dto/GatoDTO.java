@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,8 +30,6 @@ public class GatoDTO {
     @NotEmpty
     @Pattern(regexp = "^[A-Za-z]+$", message = "Solamente permite caracteres de la A - Z")
     private String nombre;
-    @NotNull
-    @NotEmpty
     private List<String> fotos;
     @NotNull
     @NotEmpty
@@ -44,6 +44,7 @@ public class GatoDTO {
     @NotNull
     @NotEmpty
     private String tipoPelo;
+    private Double montoMensual;
 
     private FichaDTO fichaDTO;
 

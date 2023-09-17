@@ -38,12 +38,12 @@ public class GatoMapper implements IGatoMapper{
         Gato gato=new Gato();
         gato.setId(dto.getId());
         gato.setNombre(dto.getNombre());
-        gato.setSrcFoto(dto.getFotos());
         gato.setEdad(dto.getEdad());
         gato.setSexo(dto.getSexo());
         gato.setDescripcion(dto.getDescripcion());
         gato.setColor(dto.getColor());
         gato.setTipoPelo(dto.getTipoPelo());
+        gato.setMontoMensual(dto.getMontoMensual());
         gato.setFichaVet(this.fichaMap.mapToEntity(dto.getFichaDTO()));
         gato.setVoluntario(this.volMap.mapToEntity(dto.getVoluntario()));
         gato.setPadrino(dto.getPadrino());
@@ -56,12 +56,19 @@ public class GatoMapper implements IGatoMapper{
         GatoRespDTO dto=new GatoRespDTO();
         dto.setId(entity.getId());
         dto.setNombre(entity.getNombre());
-        dto.setFotos(entity.getSrcFoto());
+        if(entity.getFotos().size()>0){
+            List<String> urls = entity.getFotos()
+                    .stream()
+                    .map(foto -> foto.getFotoUrl())
+                    .collect(Collectors.toList());
+            dto.setFotos(urls);
+        }
         dto.setEdad(entity.getEdad());
         dto.setSexo(entity.getSexo());
         dto.setDescripcion(entity.getDescripcion());
         dto.setColor(entity.getColor());
         dto.setTipoPelo(entity.getTipoPelo());
+        dto.setMontoMensual(entity.getMontoMensual());
         dto.setFicha(this.fichaMap.mapToDto(entity.getFichaVet()));
         if(entity.getSolicitudesAdopcion()!=null){
             dto.setSolicitudes(this.mapSoliToDto(entity.getSolicitudesAdopcion()));
