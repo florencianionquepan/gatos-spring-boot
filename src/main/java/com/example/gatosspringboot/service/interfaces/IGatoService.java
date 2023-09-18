@@ -4,6 +4,7 @@ import com.example.gatosspringboot.model.Ficha;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.model.Voluntario;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface IGatoService {
     List<Gato> verTodos();
     Gato verById(Long id);
     List<Gato> verByVoluntario(String email);
-    Gato altaGato(Gato gato);
+    Gato altaGato(Gato gato, MultipartFile[] fotos);
     Gato modiGato(Gato gato, Long id);
     boolean existeGato(Long id);
     Gato adoptarGato(Long id);

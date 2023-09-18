@@ -45,7 +45,7 @@ public class SolicitudMapper implements ISolicitudMapper{
         dto.setEstados(this.estadoMapper.mapToListDto(entity.getEstados()));
         PersonaDTO personaDTO=this.persoMap.mapToDto(entity.getSolicitante());
         dto.setSolicitante(personaDTO);
-        dto.setGato(this.gatoMap.mapToDto(entity.getGato()));
+        //dto.setGato(this.gatoMap.mapToDto(entity.getGato()));
         return dto;
     }
 

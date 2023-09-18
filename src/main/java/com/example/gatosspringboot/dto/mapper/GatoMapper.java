@@ -43,7 +43,7 @@ public class GatoMapper implements IGatoMapper{
         gato.setDescripcion(dto.getDescripcion());
         gato.setColor(dto.getColor());
         gato.setTipoPelo(dto.getTipoPelo());
-        gato.setMontoMensual(dto.getMontoMensual());
+        //gato.setMontoMensual(dto.getMontoMensual());
         gato.setFichaVet(this.fichaMap.mapToEntity(dto.getFichaDTO()));
         gato.setVoluntario(this.volMap.mapToEntity(dto.getVoluntario()));
         gato.setPadrino(dto.getPadrino());
