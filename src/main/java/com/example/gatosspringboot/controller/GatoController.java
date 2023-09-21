@@ -9,16 +9,15 @@ import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
+import jakarta.validation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -28,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/gatos")
@@ -41,6 +39,7 @@ public class GatoController {
     private final IVoluntarioEmailMapper voluMapper;
 
     public Map<String,Object> mensajeBody= new HashMap<>();
+    private Logger logger= LoggerFactory.getLogger(GatoController.class);
 
     public GatoController(IGatoService gatoSer,
                           IGatoMapper mapper,
@@ -68,6 +67,41 @@ public class GatoController {
                 .body(mensajeBody);
     }
 
+    private GatoDTO obtenerJsonValido(String dto){
+        ObjectMapper objectMapper = new ObjectMapper();
+        GatoDTO dtoJson;
+        try{
+            dtoJson=objectMapper.readValue(dto,GatoDTO.class);
+        }catch(Exception ex){
+            logger.info("ex="+ex);
+            throw new NonExistingException("Error en la deserialización del DTO");
+        }
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        Set<ConstraintViolation<GatoDTO>> violations = validator.validate(dtoJson);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+        return dtoJson;
+    }
+
+    private ResponseEntity<?> validarFiles(MultipartFile[] multipartFiles){
+        if (multipartFiles == null || multipartFiles.length == 0) {
+            return this.notSuccessResponse("No se proporciono ninguna imagen del gatito",0);
+        }
+        for (MultipartFile multipartFile : multipartFiles){
+            BufferedImage bi= null;
+            try {
+                bi = ImageIO.read(multipartFile.getInputStream());
+            } catch (IOException e) {
+               return this.notSuccessResponse(e.getMessage(),0);
+            }
+            if(bi==null){
+               return this.notSuccessResponse("Alguna imagen no es válida",0);
+            }
+        }
+        return ResponseEntity.ok("imagenes ok");
+    }
+
     @GetMapping
     public ResponseEntity<?> verTodos(){
         List<Gato> gatos=this.gatoSer.verTodos();
@@ -90,28 +124,12 @@ public class GatoController {
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     //@PreAuthorize("hasRole('VOLUNTARIO')")
-    public ResponseEntity<?> altaGato(@RequestPart String dto,
-                                      @RequestParam MultipartFile[] multipartFiles) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        GatoDTO dtoJson=objectMapper.readValue(dto,GatoDTO.class);
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<GatoDTO>> violations = validator.validate(dtoJson);
-        if (!violations.isEmpty()) {
-            List<String> errores = violations.stream()
-                    .map(ConstraintViolation::getMessage)
-                    .collect(Collectors.toList());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error: " + errores);
-        }
-        if (multipartFiles == null || multipartFiles.length == 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("No se proporciono ninguna imagen del gatito");
-        }
-        for (MultipartFile multipartFile : multipartFiles){
-            BufferedImage bi= ImageIO.read(multipartFile.getInputStream());
-            if(bi==null){
-                throw new NonExistingException("Alguna imagen no es válida");
-            }
+    public ResponseEntity<?> altaGato(@RequestPart @Valid String dto,
+                                      @RequestParam MultipartFile[] multipartFiles) {
+        GatoDTO dtoJson=this.obtenerJsonValido(dto);
+        ResponseEntity<?> response=this.validarFiles(multipartFiles);
+        if(response.getStatusCode()!=HttpStatus.OK){
+            return response;
         }
         Gato nuevo=this.gatoSer.altaGato(this.mapper.mapToEntity(dtoJson), multipartFiles);
         mensajeBody.put("Success",Boolean.TRUE);
@@ -135,11 +153,14 @@ public class GatoController {
         return this.successResponse(this.mapper.mapToDto(modi));
     }
 
-    @PutMapping("/id")
-    @PreAuthorize("hasRole('VOLUNTARIO')")
-    public ResponseEntity<?> modiGato(@RequestBody GatoDTO dto,
+    @PutMapping("/{id}")
+    //@PreAuthorize("hasRole('VOLUNTARIO')")
+    public ResponseEntity<?> modiGato(@RequestPart @Valid String dto,
+                                      @RequestParam(required = false) MultipartFile[] multipartFiles,
                                       @PathVariable Long id){
-        Gato modi=this.gatoSer.modiGato(this.mapper.mapToEntity(dto),id);
+        GatoDTO dtoJson=this.obtenerJsonValido(dto);
+        Gato gato=this.mapper.mapToEntity(dtoJson);
+        Gato modi=this.gatoSer.modiGato(gato,multipartFiles,id);
         GatoRespDTO resp=this.mapper.mapToDto(modi);
         mensajeBody.put("Success",Boolean.TRUE);
         mensajeBody.put("data",resp);
