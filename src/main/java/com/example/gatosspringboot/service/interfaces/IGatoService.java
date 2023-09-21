@@ -14,7 +14,7 @@ public interface IGatoService {
     Gato verById(Long id);
     List<Gato> verByVoluntario(String email);
     Gato altaGato(Gato gato, MultipartFile[] fotos);
-    Gato modiGato(Gato gato, Long id);
+    Gato modiGato(Gato gato,MultipartFile[] files, Long id);
     boolean existeGato(Long id);
     Gato adoptarGato(Long id);
     Gato buscarDisponibleById(Long id);
