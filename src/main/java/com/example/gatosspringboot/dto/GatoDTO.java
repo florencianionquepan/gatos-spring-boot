@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.dto;
 
+import com.example.gatosspringboot.model.Foto;
 import com.example.gatosspringboot.model.Padrino;
 import com.example.gatosspringboot.model.Transito;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
