@@ -4,10 +4,12 @@ import com.example.gatosspringboot.dto.GatoDTO;
 import com.example.gatosspringboot.dto.GatoRespDTO;
 import com.example.gatosspringboot.dto.PersonaEmailDTO;
 import com.example.gatosspringboot.dto.SolicitudReqDTO;
+import com.example.gatosspringboot.model.Foto;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.SolicitudAdopcion;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,11 +45,22 @@ public class GatoMapper implements IGatoMapper{
         gato.setDescripcion(dto.getDescripcion());
         gato.setColor(dto.getColor());
         gato.setTipoPelo(dto.getTipoPelo());
-        //gato.setMontoMensual(dto.getMontoMensual());
+        if(dto.getMontoMensual()!=null){
+            gato.setMontoMensual(dto.getMontoMensual());
+        }
         gato.setFichaVet(this.fichaMap.mapToEntity(dto.getFichaDTO()));
         gato.setVoluntario(this.volMap.mapToEntity(dto.getVoluntario()));
         gato.setPadrino(dto.getPadrino());
         gato.setAdoptadoFecha(dto.getAdoptado());
+        List<Foto> fotos = new ArrayList<>();
+        if(dto.getFotos()!=null){
+            for (String url : dto.getFotos()) {
+                Foto foto = new Foto();
+                foto.setFotoUrl(url);
+                fotos.add(foto);
+            }
+        }
+        gato.setFotos(fotos);
         return gato;
     }
 
