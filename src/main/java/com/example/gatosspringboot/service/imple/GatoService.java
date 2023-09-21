@@ -84,15 +84,24 @@ public class GatoService implements IGatoService {
         return this.gatoRepo.save(gato);
     }
 
+    private boolean existenFiles(MultipartFile[] files){
+        boolean existe=false;
+        for (MultipartFile multipartFile : files){
+            if(!multipartFile.isEmpty()){
+                existe=true;
+            }
+        }
+        return existe;
+    }
+
     @Override
     @Transactional
     public Gato modiGato(Gato gato,MultipartFile[] files, Long id) {
         Voluntario volGato=this.voluService.buscarVolByEmailOrException(gato.getVoluntario().getPersona().getEmail());
         //List<Foto> todasLasFotos = new ArrayList<>();
         List<Foto> fotosGatitos =null;
-        if (Arrays.stream(files).count()==0L) {
+        if(existenFiles(files)){
             fotosGatitos = this.guardarFotos(files);
-            //todasLasFotos.addAll(fotosGatitos);
         }
         this.eliminarFotos(gato, id);
         gato.setVoluntario(volGato);
