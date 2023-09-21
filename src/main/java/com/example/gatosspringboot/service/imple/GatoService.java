@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.service.imple;
 
+import com.example.gatosspringboot.controller.GatoController;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.*;
@@ -11,6 +12,8 @@ import com.example.gatosspringboot.service.interfaces.IGatoService;
 import com.example.gatosspringboot.service.interfaces.ITransitoService;
 import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +21,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GatoService implements IGatoService {
@@ -28,6 +32,8 @@ public class GatoService implements IGatoService {
     private final ITransitoService tranSer;
     private final ICloudinaryService cloudService;
     private final FotoRepository fotoRepo;
+
+    private Logger logger= LoggerFactory.getLogger(GatoService.class);
 
     public GatoService(GatoRepository gatoRepo,
                        IVoluntarioService voluService,
@@ -73,29 +79,62 @@ public class GatoService implements IGatoService {
         this.addGatoVol(gato);
         //queda tambien avisar al padrino y transito-> transito le asigno aparte y padrino se asocia el mismo
         //guardar urls fotos de cloudinary en db y asociarlas al gatito
+        List<Foto> fotosGatitos=this.guardarFotos(fotos);
+        gato.setFotos(fotosGatitos);
+        return this.gatoRepo.save(gato);
+    }
+
+    @Override
+    @Transactional
+    public Gato modiGato(Gato gato,MultipartFile[] files, Long id) {
+        Voluntario volGato=this.voluService.buscarVolByEmailOrException(gato.getVoluntario().getPersona().getEmail());
+        //List<Foto> todasLasFotos = new ArrayList<>();
+        List<Foto> fotosGatitos =null;
+        if (Arrays.stream(files).count()==0L) {
+            fotosGatitos = this.guardarFotos(files);
+            //todasLasFotos.addAll(fotosGatitos);
+        }
+        this.eliminarFotos(gato, id);
+        gato.setVoluntario(volGato);
+        //luego vuelvo a buscar las fotos que quedaron
+        Gato gatodb=this.findGatoById(id);
+        gato.setId(id);
+        List<Foto> fotos=gatodb.getFotos();
+        if(fotosGatitos!=null){
+            fotos.addAll(fotosGatitos);
+        }
+        gato.setFotos(fotos);
+        return this.gatoRepo.save(gato);
+    }
+
+    private void eliminarFotos(Gato gatoMod, Long id){
+        Gato gatodb=this.findGatoById(id);
+        List<Foto> fotosDb = gatodb.getFotos();
+        List<Foto> fotosModificadas = gatoMod.getFotos();
+        List<Foto> fotosAEliminar = fotosDb.stream()
+                .filter(fotoDb -> fotosModificadas.stream()
+                        .noneMatch(fotoModificada -> fotoModificada.getFotoUrl().equals(fotoDb.getFotoUrl())))
+                .collect(Collectors.toList());
+        //logger.info("eliminar="+fotosAEliminar);
+        for(Foto foto:fotosAEliminar){
+            this.fotoRepo.deleteByFotoUrl(foto.getFotoUrl());
+        }
+    }
+
+    private List<Foto> guardarFotos(MultipartFile[] files){
         List<Foto> fotosGatitos=new ArrayList<>();
         try {
-            List<Map> results=this.cloudService.upload(fotos);
+            List<Map> results=this.cloudService.upload(files);
             for(Map result:results){
                 Foto foto=new Foto(0L, (String) result.get("original_filename"),
-                        (String) result.get("url"), (String) result.get("public_id"));
+                        (String) result.get("url"), (String) result.get("public_id"), null);
                 Foto nueva=this.fotoRepo.save(foto);
                 fotosGatitos.add(nueva);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        gato.setFotos(fotosGatitos);
-        return this.gatoRepo.save(gato);
-    }
-
-    @Override
-    public Gato modiGato(Gato gato, Long id) {
-        this.removeGatoVolViejo(id);
-        //queda tambien avisar al padrino y transito
-        gato.setId(id);
-        this.addGatoVol(gato);
-        return this.gatoRepo.save(gato);
+        return fotosGatitos;
     }
 
     private void addGatoVol(Gato gato){
@@ -165,6 +204,7 @@ public class GatoService implements IGatoService {
         return this.gatoRepo.save(gati);
     }
 
+    //or exception
     private Gato findGatoById(Long id){
         Optional<Gato> oGato=this.gatoRepo.findById(id);
         if(oGato.isEmpty()){
