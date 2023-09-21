@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,4 +21,18 @@ public class Foto {
     private String nombre;
     private String fotoUrl;
     private String fotoId;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value="fotos")
+    private Gato gato;
+
+    @Override
+    public String toString() {
+        return "Foto{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", fotoUrl='" + fotoUrl + '\'' +
+                ", fotoId='" + fotoId + '\'' +
+                '}';
+    }
 }
