@@ -5,10 +5,12 @@ import com.example.gatosspringboot.model.Ficha;
 import com.example.gatosspringboot.repository.database.FichaRepository;
 import com.example.gatosspringboot.service.interfaces.IAmazonService;
 import com.example.gatosspringboot.service.interfaces.IFichaService;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
+@Service
 public class FichaService implements IFichaService {
 
     private final FichaRepository repo;
@@ -22,7 +24,7 @@ public class FichaService implements IFichaService {
 
     @Override
     public Ficha crear(Ficha ficha, MultipartFile file) {
-        if(!file.isEmpty()){
+        if(file!=null){
             String fileName=this.amazonSer.uploadFile(file);
             ficha.setPdf(fileName);
         }

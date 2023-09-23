@@ -18,6 +18,6 @@ public interface IGatoService {
     boolean existeGato(Long id);
     Gato adoptarGato(Long id);
     Gato buscarDisponibleById(Long id);
-    Gato agregarFicha(Ficha ficha, Long id);
+    Gato agregarFicha(Ficha ficha,MultipartFile file, Long id);
     Gato agregarTransito(Transito transito, Long id);
 }

@@ -6,9 +6,13 @@ import com.example.gatosspringboot.dto.mapper.IGatoMapper;
 import com.example.gatosspringboot.dto.mapper.ITransitoIdMapper;
 import com.example.gatosspringboot.dto.mapper.IVoluntarioEmailMapper;
 import com.example.gatosspringboot.exception.NonExistingException;
+import com.example.gatosspringboot.model.Ficha;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jakarta.validation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +80,7 @@ public class GatoController {
             dtoJson=objectMapper.readValue(dto,GatoDTO.class);
         }catch(Exception ex){
             logger.info("ex="+ex);
-            throw new NonExistingException("Error en la deserialización del DTO");
+            throw new NonExistingException("Error en la deserialización del gato");
         }
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<GatoDTO>> violations = validator.validate(dtoJson);
@@ -84,6 +90,25 @@ public class GatoController {
         return dtoJson;
     }
 
+    private FichaDTO obtenerFichaDto(String ficha){
+        ObjectMapper objectMapper = new ObjectMapper();
+        FichaDTO dto;
+        try{
+            dto=objectMapper.readValue(ficha,FichaDTO.class);
+            objectMapper.registerModule(new JavaTimeModule());
+        }catch (Exception ex){
+            logger.info("ex="+ex);
+            throw new NonExistingException("Error en la deserialización de ficha");
+        }
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        Set<ConstraintViolation<FichaDTO>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+        return dto;
+    }
+
+    //se usa para el post solamente
     private ResponseEntity<?> validarFiles(MultipartFile[] multipartFiles){
         if (multipartFiles == null || multipartFiles.length == 0) {
             return this.notSuccessResponse("No se proporciono ninguna imagen del gatito",0);
@@ -138,10 +163,12 @@ public class GatoController {
     }
 
     @PutMapping("/{id}/ficha")
-    @PreAuthorize("hasRole('VOLUNTARIO')")
-    public ResponseEntity<?> agregarFicha(@RequestBody FichaDTO ficha,
+    //@PreAuthorize("hasRole('VOLUNTARIO')")
+    public ResponseEntity<?> agregarFicha(@RequestPart String ficha,
+                                          @RequestParam(required = false) MultipartFile pdf,
                                           @PathVariable Long id){
-        Gato modi=this.gatoSer.agregarFicha(this.fichaMap.mapToEntity(ficha), id);
+        FichaDTO dto=this.obtenerFichaDto(ficha);
+        Gato modi=this.gatoSer.agregarFicha(this.fichaMap.mapToEntity(dto),pdf, id);
         return this.successResponse(this.mapper.mapToDto(modi));
     }
 
