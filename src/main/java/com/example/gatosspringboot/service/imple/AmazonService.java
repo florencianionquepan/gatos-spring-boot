@@ -19,7 +19,7 @@ import java.io.IOException;
 @Service
 public class AmazonService implements IAmazonService {
 
-    @Value("${aws.s3.bucket}")
+    @Value("${application.bucket.name}")
     private String bucketName;
 
     @Autowired
