@@ -1,16 +1,12 @@
 package com.example.gatosspringboot.service.imple;
 
-import com.example.gatosspringboot.controller.GatoController;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.FichaRepository;
 import com.example.gatosspringboot.repository.database.FotoRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
-import com.example.gatosspringboot.service.interfaces.ICloudinaryService;
-import com.example.gatosspringboot.service.interfaces.IGatoService;
-import com.example.gatosspringboot.service.interfaces.ITransitoService;
-import com.example.gatosspringboot.service.interfaces.IVoluntarioService;
+import com.example.gatosspringboot.service.interfaces.*;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +24,7 @@ public class GatoService implements IGatoService {
 
     private final GatoRepository gatoRepo;
     private final IVoluntarioService voluService;
-    private final FichaRepository fichaRepo;
+    private final IFichaService fichaService;
     private final ITransitoService tranSer;
     private final ICloudinaryService cloudService;
     private final FotoRepository fotoRepo;
@@ -37,13 +33,13 @@ public class GatoService implements IGatoService {
 
     public GatoService(GatoRepository gatoRepo,
                        IVoluntarioService voluService,
-                       FichaRepository fichaRepo,
+                       IFichaService fichaService,
                        ITransitoService tranSer,
                        ICloudinaryService cloudService,
                        FotoRepository fotoRepo) {
         this.gatoRepo = gatoRepo;
         this.voluService = voluService;
-        this.fichaRepo = fichaRepo;
+        this.fichaService = fichaService;
         this.tranSer = tranSer;
         this.cloudService = cloudService;
         this.fotoRepo = fotoRepo;
@@ -197,10 +193,10 @@ public class GatoService implements IGatoService {
     }
 
     @Override
-    public Gato agregarFicha(Ficha ficha, Long id) {
+    public Gato agregarFicha(Ficha ficha,MultipartFile file, Long id) {
         Gato gati=this.findGatoById(id);
-        Ficha creada=this.fichaRepo.save(ficha);
-        gati.setFichaVet(creada);
+        Ficha nueva=this.fichaService.crear(ficha,file);
+        gati.setFichaVet(nueva);
         return this.gatoRepo.save(gati);
     }
 

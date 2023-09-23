@@ -31,7 +31,7 @@ public class AmazonService implements IAmazonService {
         String fileName=System.currentTimeMillis()+"_"+file.getOriginalFilename();
         s3Client.putObject(new PutObjectRequest(bucketName,fileName,fileObject));
         fileObject.delete();
-        return "FileUploaded:"+fileName;
+        return fileName;
     }
 
     @Override
