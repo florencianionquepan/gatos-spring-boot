@@ -20,4 +20,5 @@ public interface IGatoService {
     Gato buscarDisponibleById(Long id);
     Gato agregarFicha(Ficha ficha,MultipartFile file, Long id);
     Gato agregarTransito(Transito transito, Long id);
+    Ficha verFichaByGato(Long id);
 }

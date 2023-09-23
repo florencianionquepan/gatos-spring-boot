@@ -97,7 +97,7 @@ public class GatoController {
             dto=objectMapper.readValue(ficha,FichaDTO.class);
             objectMapper.registerModule(new JavaTimeModule());
         }catch (Exception ex){
-            logger.info("ex="+ex);
+            //logger.info("ex="+ex);
             throw new NonExistingException("Error en la deserialización de ficha");
         }
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -138,6 +138,12 @@ public class GatoController {
         Gato gato=this.gatoSer.verById(id);
         return this.successResponse(this.mapper.mapToDto(gato));
     }
+    @GetMapping("/{id}/ficha")
+    public ResponseEntity<?> verFichaById(@PathVariable Long id){
+        Ficha ficha=this.gatoSer.verFichaByGato(id);
+        return this.successResponse(ficha);
+    }
+
 
     @GetMapping("/voluntarios/{email}")
     @PreAuthorize("hasRole('VOLUNTARIO')")

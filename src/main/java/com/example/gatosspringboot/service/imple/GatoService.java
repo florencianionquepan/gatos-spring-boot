@@ -3,7 +3,6 @@ package com.example.gatosspringboot.service.imple;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.*;
-import com.example.gatosspringboot.repository.database.FichaRepository;
 import com.example.gatosspringboot.repository.database.FotoRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
 import com.example.gatosspringboot.service.interfaces.*;
@@ -195,6 +194,7 @@ public class GatoService implements IGatoService {
     @Override
     public Gato agregarFicha(Ficha ficha,MultipartFile file, Long id) {
         Gato gati=this.findGatoById(id);
+        logger.info("pdf="+file);
         Ficha nueva=this.fichaService.crear(ficha,file);
         gati.setFichaVet(nueva);
         return this.gatoRepo.save(gati);
@@ -207,6 +207,12 @@ public class GatoService implements IGatoService {
         Transito transitodb=this.tranSer.findByIdOrException(transito.getId());
         gati.setTransito(transitodb);
         return this.gatoRepo.save(gati);
+    }
+
+    @Override
+    public Ficha verFichaByGato(Long id) {
+        Gato gato=this.verById(id);
+        return gato.getFichaVet();
     }
 
     //or exception
