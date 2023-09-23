@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.service.interfaces.IAmazonService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,11 +22,8 @@ public class AmazonService implements IAmazonService {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    private final AmazonS3 s3Client;
-
-    public AmazonService(AmazonS3 s3Client) {
-        this.s3Client = s3Client;
-    }
+    @Autowired
+    private AmazonS3 s3Client;
 
     @Override
     public String uploadFile(MultipartFile file) {
