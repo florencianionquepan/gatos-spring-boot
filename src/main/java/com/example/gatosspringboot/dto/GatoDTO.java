@@ -19,8 +19,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//para crear nuevo gato
+//para crear y editar gato
 //queda mapear Padrino y solicitudes
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GatoDTO {
 
     private Long id;
