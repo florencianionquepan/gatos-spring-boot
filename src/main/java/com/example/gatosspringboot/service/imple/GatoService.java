@@ -194,8 +194,10 @@ public class GatoService implements IGatoService {
     @Override
     public Gato agregarFicha(Ficha ficha,MultipartFile file, Long id) {
         Gato gati=this.findGatoById(id);
-        logger.info("pdf="+file);
-        Ficha nueva=this.fichaService.crear(ficha,file);
+        logger.info("ficha="+ficha);
+        Ficha nueva=(ficha.getId()!=null)
+                ?this.fichaService.editar(ficha,file,ficha.getId())
+                :this.fichaService.crear(ficha,file);
         gati.setFichaVet(nueva);
         return this.gatoRepo.save(gati);
     }

@@ -1,8 +1,6 @@
 package com.example.gatosspringboot.dto;
 
-import com.example.gatosspringboot.model.Foto;
 import com.example.gatosspringboot.model.Padrino;
-import com.example.gatosspringboot.model.Transito;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +11,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
