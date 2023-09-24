@@ -74,7 +74,8 @@ public class GatoService implements IGatoService {
         this.addGatoVol(gato);
         //queda tambien avisar al padrino y transito-> transito le asigno aparte y padrino se asocia el mismo
         //guardar urls fotos de cloudinary en db y asociarlas al gatito
-        List<Foto> fotosGatitos=this.guardarFotos(fotos, gato);
+        Gato nuevo=this.gatoRepo.save(gato);
+        List<Foto> fotosGatitos=this.guardarFotos(fotos, nuevo);
         gato.setFotos(fotosGatitos);
         return this.gatoRepo.save(gato);
     }
