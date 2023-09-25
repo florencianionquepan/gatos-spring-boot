@@ -24,7 +24,7 @@ public class Gato implements Serializable {
 
     @Column(nullable = false, length = 15)
     private String nombre;
-    @OneToMany(mappedBy = "gato",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "gato",fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value="gato")
     private List<Foto> fotos;
     @Column(nullable = false, length = 10)
@@ -70,6 +70,7 @@ public class Gato implements Serializable {
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
                 ", adoptadoFecha=" + adoptadoFecha +
+                ", fotos="+ fotos +
                 '}';
     }
 }

@@ -41,7 +41,13 @@ public class JWTValidationFilter extends OncePerRequestFilter {
                         AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
-                throw new BadCredentialsException("Invalid Token received!");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                String jsonResponse = "{\"message\": \"" + "El token es invalido!" +
+                        "\", \"key\": \"" + "invalido" + "\"}";
+                response.getWriter().write(jsonResponse);
+                response.getWriter().flush();
+                return;
             }
 
         }

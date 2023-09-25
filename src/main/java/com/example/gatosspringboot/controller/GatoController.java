@@ -169,7 +169,7 @@ public class GatoController {
     }
 
     @PutMapping("/{id}/ficha")
-    //@PreAuthorize("hasRole('VOLUNTARIO')")
+    @PreAuthorize("hasRole('VOLUNTARIO')")
     public ResponseEntity<?> agregarFicha(@RequestPart String ficha,
                                           @RequestParam(required = false) MultipartFile pdf,
                                           @PathVariable Long id){
@@ -187,7 +187,7 @@ public class GatoController {
     }
 
     @PutMapping("/{id}")
-    //@PreAuthorize("hasRole('VOLUNTARIO')")
+    @PreAuthorize("hasRole('VOLUNTARIO')")
     public ResponseEntity<?> modiGato(@RequestPart @Valid String dto,
                                       @RequestParam(required = false) MultipartFile[] multipartFiles,
                                       @PathVariable Long id){
@@ -195,8 +195,6 @@ public class GatoController {
         Gato gato=this.mapper.mapToEntity(dtoJson);
         Gato modi=this.gatoSer.modiGato(gato,multipartFiles,id);
         GatoRespDTO resp=this.mapper.mapToDto(modi);
-        mensajeBody.put("Success",Boolean.TRUE);
-        mensajeBody.put("data",resp);
-        return ResponseEntity.ok(mensajeBody);
+        return this.successResponse(resp);
     }
 }

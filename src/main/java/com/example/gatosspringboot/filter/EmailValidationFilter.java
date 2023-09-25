@@ -1,7 +1,6 @@
 package com.example.gatosspringboot.filter;
 
 import com.example.gatosspringboot.config.UsuarioAuthenticationProvider;
-import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;
 import jakarta.servlet.FilterChain;
