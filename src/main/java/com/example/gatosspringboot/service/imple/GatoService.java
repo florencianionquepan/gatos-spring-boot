@@ -82,9 +82,11 @@ public class GatoService implements IGatoService {
 
     private boolean existenFiles(MultipartFile[] files){
         boolean existe=false;
-        for (MultipartFile multipartFile : files){
-            if(!multipartFile.isEmpty()){
-                existe=true;
+        if(files!=null){
+            for (MultipartFile multipartFile : files){
+                if(!multipartFile.isEmpty()){
+                    existe=true;
+                }
             }
         }
         return existe;
