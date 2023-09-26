@@ -36,7 +36,7 @@ public class Gato implements Serializable {
     private String color;
     @Column(nullable = false, length = 15)
     private String tipoPelo;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "ficha_vet")
     private Ficha fichaVet;
 

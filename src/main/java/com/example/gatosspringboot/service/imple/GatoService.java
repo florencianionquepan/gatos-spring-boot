@@ -75,19 +75,19 @@ public class GatoService implements IGatoService {
         //queda tambien avisar al padrino y transito-> transito le asigno aparte y padrino se asocia el mismo
         //guardar urls fotos de cloudinary en db y asociarlas al gatito
         Gato nuevo=this.gatoRepo.save(gato);
-        List<Foto> fotosGatitos=this.guardarFotos(fotos, nuevo);
+        List<Foto> fotosGatitos=new ArrayList<>();
+        if(existenFiles(fotos)){
+            fotosGatitos=this.guardarFotos(fotos, nuevo);
+        }
         gato.setFotos(fotosGatitos);
         return this.gatoRepo.save(gato);
     }
 
     private boolean existenFiles(MultipartFile[] files){
         boolean existe=false;
+        //logger.info("files="+files);
         if(files!=null){
-            for (MultipartFile multipartFile : files){
-                if(!multipartFile.isEmpty()){
-                    existe=true;
-                }
-            }
+            existe=true;
         }
         return existe;
     }
@@ -111,25 +111,30 @@ public class GatoService implements IGatoService {
     private List<Foto> eliminarFotos(Gato gatoMod, Long id){
         Gato gatodb=this.findGatoById(id);
         List<Foto> fotosDb = gatodb.getFotos(); //fotos de gato en db
-        List<String> urlsMantener = gatoMod.getFotos().stream()
-                .map(Foto::getFotoUrl)
-                .collect(Collectors.toList());
-        List<Foto> fotosAEliminar = fotosDb.stream()
-                .filter(fotoDb -> !urlsMantener.contains(fotoDb.getFotoUrl()))
-                .collect(Collectors.toList());
-        for(Foto foto:fotosDb){
-            if (!urlsMantener.contains(foto.getFotoUrl())) {
-                foto.setGato(null); // Desvincular la foto del gato
-                fotosAEliminar.add(foto);
+        if(gatoMod.getFotos().size()< fotosDb.size()){
+            List<String> urlsMantener = gatoMod.getFotos().stream()
+                    .map(Foto::getFotoUrl)
+                    .collect(Collectors.toList());
+            List<Foto> fotosAEliminar = fotosDb.stream()
+                    .filter(fotoDb -> !urlsMantener.contains(fotoDb.getFotoUrl()))
+                    .collect(Collectors.toList());
+            for(Foto foto:fotosDb){
+                if (!urlsMantener.contains(foto.getFotoUrl())) {
+                    foto.setGato(null); // Desvincular la foto del gato
+                    fotosAEliminar.add(foto);
+                }
             }
+            for(Foto foto:fotosAEliminar){
+                this.fotoRepo.deleteByFotoUrl(foto.getFotoUrl());
+            }
+            List<Foto> fotosMantener = fotosDb.stream()
+                    .filter(foto -> !fotosAEliminar.contains(foto))
+                    .collect(Collectors.toList());
+            return fotosMantener;
+        }else{
+            return fotosDb;
         }
-        for(Foto foto:fotosAEliminar){
-            this.fotoRepo.deleteByFotoUrl(foto.getFotoUrl());
-        }
-        List<Foto> fotosMantener = fotosDb.stream()
-                .filter(foto -> !fotosAEliminar.contains(foto))
-                .collect(Collectors.toList());
-        return fotosMantener;
+
     }
 
     private List<Foto> guardarFotos(MultipartFile[] files, Gato gato){

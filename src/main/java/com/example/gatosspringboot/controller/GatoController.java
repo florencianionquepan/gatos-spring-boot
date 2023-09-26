@@ -11,8 +11,6 @@ import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jakarta.validation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,17 +107,18 @@ public class GatoController {
     //se usa para el post solamente
     private ResponseEntity<?> validarFiles(MultipartFile[] multipartFiles){
         if (multipartFiles == null || multipartFiles.length == 0) {
-            return this.notSuccessResponse("No se proporciono ninguna imagen del gatito",0);
-        }
-        for (MultipartFile multipartFile : multipartFiles){
-            BufferedImage bi= null;
-            try {
-                bi = ImageIO.read(multipartFile.getInputStream());
-            } catch (IOException e) {
-               return this.notSuccessResponse(e.getMessage(),0);
-            }
-            if(bi==null){
-               return this.notSuccessResponse("Alguna imagen no es válida",0);
+            //return this.notSuccessResponse("No se proporciono ninguna imagen del gatito",0);
+        }else{
+            for (MultipartFile multipartFile : multipartFiles){
+                BufferedImage bi= null;
+                try {
+                    bi = ImageIO.read(multipartFile.getInputStream());
+                } catch (IOException e) {
+                    return this.notSuccessResponse(e.getMessage(),0);
+                }
+                if(bi==null){
+                    return this.notSuccessResponse("Alguna imagen no es válida",0);
+                }
             }
         }
         return ResponseEntity.ok("imagenes ok");
@@ -156,7 +153,7 @@ public class GatoController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     //@PreAuthorize("hasRole('VOLUNTARIO')")
     public ResponseEntity<?> altaGato(@RequestPart @Valid String dto,
-                                      @RequestParam MultipartFile[] multipartFiles) {
+                                      @RequestParam(required = false) MultipartFile[] multipartFiles) {
         GatoDTO dtoJson=this.obtenerJsonValido(dto);
         ResponseEntity<?> response=this.validarFiles(multipartFiles);
         if(response.getStatusCode()!=HttpStatus.OK){
