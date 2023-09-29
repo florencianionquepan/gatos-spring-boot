@@ -2,7 +2,6 @@ package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
-import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.model.Voluntario;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
@@ -47,23 +46,22 @@ public class VoluntarioService implements IVoluntarioService {
     //siempre va a ser por registro primero
     public Voluntario altaVolunt(Voluntario vol) {
         this.voluntarioExistente(vol);
-        Usuario modi=this.serUser.agregarRolVoluntario(vol.getEmail());
-        vol.setUsuario(modi);
-        this.voluRepo.saveVoluntario(vol.getId());
-        return vol;
+        Usuario modi=this.serUser.agregarRolVoluntario(vol.getPersona().getEmail());
+        vol.getPersona().setUsuario(modi);
+        return this.voluRepo.save(vol);
     }
 
     //si ya existe con otro dni o email no prosigue-
     private void voluntarioExistente(Voluntario volu){
-        Optional<Voluntario> oVoluDni=this.voluRepo.findByDni(volu.getDni());
+        Optional<Voluntario> oVoluDni=this.voluRepo.findByDni(volu.getPersona().getDni());
         if(oVoluDni.isPresent()){
             throw new ExistingException(
-                    String.format("El voluntario con dni %s ya existe",volu.getDni()));
+                    String.format("El voluntario con dni %s ya existe",volu.getPersona().getDni()));
         }
-        Optional<Voluntario> oVoluEmail=this.voluRepo.findByEmail(volu.getEmail());
+        Optional<Voluntario> oVoluEmail=this.voluRepo.findByEmail(volu.getPersona().getEmail());
         if(oVoluEmail.isPresent()){
             throw new ExistingException(
-                    String.format("El voluntario con email %s ya existe",volu.getEmail()));
+                    String.format("El voluntario con email %s ya existe",volu.getPersona().getEmail()));
         }
     }
 
@@ -75,10 +73,10 @@ public class VoluntarioService implements IVoluntarioService {
                             id)
             );
         }
-        if(this.existeDniConOtroId(vol.getDni(),id)){
+        if(this.existeDniConOtroId(vol.getPersona().getDni(), id)){
             throw new RuntimeException(
                     String.format("El dni %d corresponde a otro voluntario"
-                            ,vol.getDni())
+                            ,vol.getPersona().getDni())
             );
         }
         vol.setId(id);
