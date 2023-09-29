@@ -47,13 +47,11 @@ public class TransitoService implements ITransitoService {
     @Transactional
     public Transito nuevo(Transito transito) {
         this.TransitoExistente(transito);
-        Optional<Persona> oPerso=this.persoRepo.findByDni(transito.getDni());
+        Optional<Persona> oPerso=this.persoRepo.findByDni(transito.getPersona().getDni());
         //siempre va a existir porqie ahora debe registrarse primero pero igual lo dejo
         //por si a futuro implemento el alta directa
         if(oPerso.isPresent()){
-            transito.setId(oPerso.get().getId());
-            this.repo.saveTransito(transito.getId());
-            return transito;
+            return this.repo.save(transito);
         }
         return this.repo.save(transito);
     }
@@ -71,15 +69,15 @@ public class TransitoService implements ITransitoService {
 
     //si ya existe con otro dni o email no prosigue-
     private void TransitoExistente(Transito transito){
-        Optional<Transito> oTransitoDni=this.repo.findByDni(transito.getDni());
-        if(oTransitoDni.isPresent()){
+        Optional<Persona> oPersoDB=this.persoRepo.findByDni(transito.getPersona().getDni());
+        if(oPersoDB.isPresent()){
             throw new ExistingException(
-                    String.format("El transito con dni %s ya existe",transito.getDni()));
+                    String.format("El transito con dni %s ya existe",transito.getPersona().getDni()));
         }
-        Optional<Transito> oTransitoEmail=this.repo.findByEmail(transito.getEmail());
-        if(oTransitoEmail.isPresent()){
+        Optional<Persona> oPersoEmailDB=this.persoRepo.findByEmail(transito.getPersona().getEmail());
+        if(oPersoEmailDB.isPresent()){
             throw new ExistingException(
-                    String.format("El transito con email %s ya existe",transito.getEmail()));
+                    String.format("El transito con email %s ya existe",transito.getPersona().getEmail()));
         }
     }
 }
