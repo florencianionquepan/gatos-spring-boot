@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,10 @@ public class Notificacion {
     private LocalDate fechaCreacion;
     @NotNull
     private Boolean leida=false;
+    @ManyToOne(cascade=CascadeType.MERGE)
+    @NotNull
+    @JsonIgnoreProperties(value="notificaciones")
+    private Persona persona;
 
     @PrePersist
     protected void onCreate() {
