@@ -4,10 +4,7 @@ import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.SolicitudRepository;
-import com.example.gatosspringboot.service.interfaces.IEstadoService;
-import com.example.gatosspringboot.service.interfaces.IGatoService;
-import com.example.gatosspringboot.service.interfaces.IPersonaService;
-import com.example.gatosspringboot.service.interfaces.ISolicitudService;
+import com.example.gatosspringboot.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,16 +20,19 @@ public class SolicitudService implements ISolicitudService {
     private final IEstadoService estadoService;
     private final IGatoService gatoService;
     private final IPersonaService persoService;
+    private final INotificacionService notiService;
     private Logger logger= LoggerFactory.getLogger(SolicitudService.class);
 
     public SolicitudService(SolicitudRepository repo,
                             IEstadoService estadoService,
                             IGatoService gatoService,
-                            IPersonaService persoService) {
+                            IPersonaService persoService,
+                            INotificacionService notiService) {
         this.repo = repo;
         this.estadoService = estadoService;
         this.gatoService = gatoService;
         this.persoService = persoService;
+        this.notiService = notiService;
     }
 
     @Override
@@ -97,8 +97,8 @@ public class SolicitudService implements ISolicitudService {
         //logger.info("solicitud= "+solicitud);
         solicitudAdopcion.setSolicitante(solicitantebd);
         solicitudAdopcion.setGato(gatobd);
-        //this.persoService.addSolicitudPersona(solicitud);
-        //this.gatoService.addSolicitudGato(solicitud);
+        //crear notificacion al voluntario del gato
+        this.notiService.nuevaSolicitudAdopcion(gatobd);
         return this.repo.save(solicitudAdopcion);
     }
 
