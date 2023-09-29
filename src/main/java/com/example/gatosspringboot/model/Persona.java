@@ -46,7 +46,8 @@ public class Persona implements Serializable {
     @JsonIgnoreProperties(value="aspirante")
     private List<SolicitudVoluntariado> solicitudesVoluntariados;
 
-    @OneToMany(cascade = CascadeType.MERGE)
+    @OneToMany(cascade = CascadeType.MERGE, mappedBy = "persona")
+    @JsonIgnoreProperties(value="persona")
     private List<Notificacion> notificaciones;
 
     @OneToOne
