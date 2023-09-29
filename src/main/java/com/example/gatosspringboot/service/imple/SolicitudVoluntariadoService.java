@@ -65,7 +65,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     @Transactional
     public SolicitudVoluntariado rechazar(SolicitudVoluntariado solicitud, Long id, String motivo) {
         SolicitudVoluntariado soli=this.findById(id);
-        String email=solicitud.getSocio().getEmail();
+        String email=solicitud.getSocio().getPersona().getEmail();
         Socio socio=this.socioService.buscarByEmailOrException(email);
         List<Estado> estados=soli.getEstados();
         estados.add(this.estadoService.crearRechazado(motivo));
@@ -83,7 +83,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         Estado aceptado = estadoService.crearAprobado(motivo);
         estados.add(aceptado);
         solidb.setEstados(estados);
-        String emailSocio=solicitud.getSocio().getEmail();
+        String emailSocio=solicitud.getSocio().getPersona().getEmail();
         Socio socio=this.socioService.buscarByEmailOrException(emailSocio);
         solidb.setSocio(socio);
         this.crearTipoVoluntariado(solidb);
@@ -95,24 +95,13 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         Persona perso=solicitud.getAspirante();
         if(voluntariado == TipoVoluntariado.VOLUNTARIO){
             Voluntario vol=new Voluntario();
-            vol.setId(perso.getId());
-            vol.setDni(perso.getDni());
-            vol.setNombre(perso.getNombre());
-            vol.setApellido(perso.getApellido());
-            vol.setFechaNac(perso.getFechaNac());
-            vol.setTel(perso.getTel());
-            vol.setDire(perso.getDire());
-            vol.setLocalidad(perso.getLocalidad());
-            vol.setSolicitudesAdopcion(perso.getSolicitudesAdopcion());
-            vol.setSolicitudesVoluntariados(perso.getSolicitudesVoluntariados());
-            vol.setUsuario(perso.getUsuario());
+            vol.setPersona(perso);
             vol.setListaGatos(null);
             this.voluService.altaVolunt(vol);
             //enviar email notificando aceptacion (en alta usuario esta hecho)
         } else if (voluntariado == TipoVoluntariado.TRANSITO) {
-            Transito transito=new Transito(perso.getId(),perso.getDni(),perso.getNombre(),perso.getApellido(),
-                    perso.getTel(),perso.getUsuario().getEmail(),perso.getFechaNac(),perso.getDire(),perso.getLocalidad(),
-                    perso.getSolicitudesAdopcion(),perso.getSolicitudesVoluntariados(),perso.getUsuario(),null);
+            Transito transito=new Transito();
+            transito.setPersona(perso);
             this.transitoService.nuevo(transito);
             //enviar email notificando aceptacion
         }else{
