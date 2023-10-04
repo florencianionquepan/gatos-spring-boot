@@ -33,9 +33,9 @@ public class Persona implements Serializable {
     private String email;
     @Column(nullable = false)
     private LocalDate fechaNac;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 50)
     private String dire;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 50)
     private String localidad;
 
     @OneToMany(mappedBy = "solicitante", cascade = CascadeType.MERGE)
