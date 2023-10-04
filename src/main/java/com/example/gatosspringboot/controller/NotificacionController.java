@@ -3,10 +3,7 @@ package com.example.gatosspringboot.controller;
 import com.example.gatosspringboot.model.Notificacion;
 import com.example.gatosspringboot.service.interfaces.INotificacionService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,5 +31,12 @@ public class NotificacionController {
     public ResponseEntity<?> verByPersona(@PathVariable String email){
         List<Notificacion> noti=this.service.verByPersona(email);
         return this.successResponse(noti);
+    }
+
+    @PutMapping("persona/{email}/leidas")
+    public ResponseEntity<?> leerNotificaciones(@PathVariable String email,
+                                                @RequestBody List<Notificacion> notificaciones){
+        List<Notificacion> leidas=this.service.setearComoLeidas(notificaciones);
+        return this.successResponse(leidas);
     }
 }
