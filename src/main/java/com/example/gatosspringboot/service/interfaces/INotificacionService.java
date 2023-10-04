@@ -8,4 +8,5 @@ import java.util.List;
 public interface INotificacionService {
     Notificacion nuevaSolicitudAdopcion(Gato gato);
     List<Notificacion> verByPersona(String email);
+    List<Notificacion> setearComoLeidas(List<Notificacion> notificaciones);
 }
