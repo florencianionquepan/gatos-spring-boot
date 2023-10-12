@@ -1,10 +1,7 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Notificacion;
-import com.example.gatosspringboot.model.Persona;
-import com.example.gatosspringboot.model.Voluntario;
+import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.NotificacionRepository;
 import com.example.gatosspringboot.service.interfaces.INotificacionService;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
@@ -35,6 +32,30 @@ public class NotificacionService implements INotificacionService {
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(volu.getPersona());
+        return this.repo.save(nueva);
+    }
+
+    @Override
+    //al propio transito
+    public Notificacion asignacionTransito(Gato gato, Transito transito) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Gracias por brindarle a "+gato.getNombre()+"" +
+                "un hogar temporal. Ahora, "+gato.getNombre()+" forma parte de tu listado!");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(transito.getPersona());
+        return this.repo.save(nueva);
+    }
+
+    @Override
+    //al padrino
+    public Notificacion asignacionTransito(Gato gato, Padrino padrino) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion(gato.getNombre()+" esta en un nuevo hogar temporal!" +
+                "Accede a tu listado para ver su ubicacion actual y ponerte en contacto con su nuevo transito");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(padrino.getPersona());
         return this.repo.save(nueva);
     }
 
