@@ -82,7 +82,7 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
-    //puede tener hasta 3 pendientes
+    //puede tener hasta 2 pendientes
     public SolicitudAdopcion altaSolicitud(SolicitudAdopcion solicitudAdopcion) {
         //buscar solicitante y gato:
         Persona solicitantebd=this.persoService.findByEmailOrException(solicitudAdopcion.getSolicitante().getEmail());
@@ -131,7 +131,7 @@ public class SolicitudService implements ISolicitudService {
                         solicitud.getEstados().get(0).getEstado() == EstadoNombre.PENDIENTE &&
                         solicitud.getEstados().get(0).getFecha().isAfter(hace30Dias))
                 .collect(Collectors.toList());
-        if(solicitudesFiltradas.size()>2){
+        if(solicitudesFiltradas.size()>1){
             throw new ExistingException("Ya solicitaste la adopcion de dos gatitos en los ultimos 30 dias," +
                     "por favor espera a que revisemos las solicitudes enviadas!");
         };
@@ -146,7 +146,7 @@ public class SolicitudService implements ISolicitudService {
         //chequear que el gato no este adoptado. gatoService lo chequea
         Gato gatoAdoptado=gatoService.adoptarGato(gatoAdoptar.getId());
         SolicitudAdopcion actualizada=this.addEstadoAprobado(solidb, motivo);
-        //enviar email que adoptaste al gati
+        //enviar email que adoptaste al gati y noti
         //cerrar todas las demas solicitudes del gato
         this.cerrarPendientes(gatoAdoptar, solidb);
         return this.repo.save(actualizada);
@@ -166,8 +166,11 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
-    public SolicitudAdopcion rechazarSolicitud(SolicitudAdopcion solicitudAdopcion, Long id) {
-        return null;
+    public SolicitudAdopcion rechazarSolicitud(Long id, String motivo) {
+        SolicitudAdopcion solidb=this.findByIdOrException(id);
+        SolicitudAdopcion actualizada=this.addEstadoRechazada(solidb,motivo);
+        //enviar email de rechazo y noti
+        return this.repo.save(actualizada);
     }
 
     private SolicitudAdopcion findByIdOrException(Long id){
@@ -189,6 +192,21 @@ public class SolicitudService implements ISolicitudService {
             throw new RuntimeException("La solicitud ya fue aprobada");
         }
         Estado aprobado=estadoService.crearAprobado(motivo);
+        estados.add(aprobado);
+        solidb.setEstados(estados);
+        return solidb;
+    }
+
+    private SolicitudAdopcion addEstadoRechazada(SolicitudAdopcion solidb, String motivo){
+        //chequear que el estado no este rechazada ya
+        List<Estado> estados=solidb.getEstados();
+        Optional<Estado> oRechazada=estados.stream()
+                .filter(e->e.getEstado().equals(EstadoNombre.RECHAZADA))
+                .findAny();
+        if(oRechazada.isPresent()){
+            throw new RuntimeException("La solicitud ya fue rechazada");
+        }
+        Estado aprobado=estadoService.crearRechazado(motivo);
         estados.add(aprobado);
         solidb.setEstados(estados);
         return solidb;

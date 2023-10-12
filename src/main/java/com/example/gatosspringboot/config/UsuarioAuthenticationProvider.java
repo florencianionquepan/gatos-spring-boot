@@ -1,6 +1,5 @@
 package com.example.gatosspringboot.config;
 
-import com.example.gatosspringboot.controller.PersonaController;
 import com.example.gatosspringboot.model.Rol;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;

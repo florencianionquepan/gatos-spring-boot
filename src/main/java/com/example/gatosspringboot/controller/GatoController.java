@@ -151,7 +151,7 @@ public class GatoController {
 
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    //@PreAuthorize("hasRole('VOLUNTARIO')")
+    @PreAuthorize("hasRole('VOLUNTARIO')")
     public ResponseEntity<?> altaGato(@RequestPart @Valid String dto,
                                       @RequestParam(required = false) MultipartFile[] multipartFiles) {
         GatoDTO dtoJson=this.obtenerJsonValido(dto);

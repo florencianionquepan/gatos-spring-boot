@@ -1,7 +1,6 @@
 package com.example.gatosspringboot.repository.database;
 
 import com.example.gatosspringboot.model.Usuario;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
