@@ -2,10 +2,12 @@ package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
+import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.TransitoRepository;
+import com.example.gatosspringboot.service.interfaces.INotificacionService;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import com.example.gatosspringboot.service.interfaces.ITransitoService;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
@@ -22,15 +24,18 @@ public class TransitoService implements ITransitoService {
     public final PersonaRepository persoRepo;
     public final IPersonaService persoService;
     public final IUsuarioService userService;
+    private final INotificacionService notiSer;
 
     public TransitoService(TransitoRepository repo,
                            PersonaRepository persoRepo,
                            IPersonaService persoService,
-                           IUsuarioService userService) {
+                           IUsuarioService userService,
+                           INotificacionService notiSer) {
         this.repo = repo;
         this.persoRepo = persoRepo;
         this.persoService = persoService;
         this.userService = userService;
+        this.notiSer = notiSer;
     }
 
     @Override
@@ -65,6 +70,15 @@ public class TransitoService implements ITransitoService {
             );
         }
         return oTran.get();
+    }
+
+    @Override
+    public Transito addGato(Gato gato, Transito transito) {
+        List<Gato> gatos=transito.getListaGatos();
+        gatos.add(gato);
+        transito.setListaGatos(gatos);
+        this.notiSer.asignacionTransito(gato, transito);
+        return this.repo.save(transito);
     }
 
     //si ya existe con otro dni o email no prosigue-
