@@ -90,4 +90,12 @@ public class SolicitudController {
         return this.successResponse(this.mapper.mapToDto(actualizada));
     }
 
+    @PutMapping("/{id}/estados/rechazada")
+    private ResponseEntity<?> rechazarAdopcion(@PathVariable Long id, @RequestBody @Validated(PutValidationGroup.class)
+                                            SolicitudReqDTO dto){
+        String motivo= dto.getMotivo();
+        SolicitudAdopcion actualizada=this.service.rechazarSolicitud(id,motivo);
+        return this.successResponse(this.mapper.mapToDto(actualizada));
+    }
+
 }
