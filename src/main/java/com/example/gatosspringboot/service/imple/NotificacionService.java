@@ -60,6 +60,27 @@ public class NotificacionService implements INotificacionService {
     }
 
     @Override
+    public Notificacion rechazoAdopcion(Gato gato, Persona solicitante) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Tu solicitud por: "+gato.getNombre()+" fue rechazada!");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(solicitante);
+        return this.repo.save(nueva);
+    }
+
+    @Override
+    public Notificacion aprobacionAdopcion(Gato gato, Persona solicitante) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Nos alegra contarte que adoptaste a "+gato.getNombre()+
+                "!.Un voluntario se estara comunicando para coordinar el traspaso:)");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(solicitante);
+        return this.repo.save(nueva);
+    }
+
+    @Override
     public List<Notificacion> verByPersona(String email) {
         Persona perso=this.persoSer.findByEmailOrException(email);
         return this.repo.findAllByPersona(perso);
