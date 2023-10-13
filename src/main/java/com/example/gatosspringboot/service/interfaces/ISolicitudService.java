@@ -14,5 +14,5 @@ public interface ISolicitudService {
     List<SolicitudAdopcion> verByGatoPendientes(Long idGato);
     SolicitudAdopcion altaSolicitud(SolicitudAdopcion solicitudAdopcion);
     SolicitudAdopcion aceptarAdopcion(Long id, String motivo);
-    SolicitudAdopcion rechazarSolicitud(SolicitudAdopcion solicitudAdopcion, Long id);
+    SolicitudAdopcion rechazarSolicitud(Long id, String motivo);
 }

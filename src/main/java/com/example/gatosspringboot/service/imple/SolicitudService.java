@@ -21,18 +21,21 @@ public class SolicitudService implements ISolicitudService {
     private final IGatoService gatoService;
     private final IPersonaService persoService;
     private final INotificacionService notiService;
+    private final IEmailService emailService;
     private Logger logger= LoggerFactory.getLogger(SolicitudService.class);
 
     public SolicitudService(SolicitudRepository repo,
                             IEstadoService estadoService,
                             IGatoService gatoService,
                             IPersonaService persoService,
-                            INotificacionService notiService) {
+                            INotificacionService notiService,
+                            IEmailService emailService) {
         this.repo = repo;
         this.estadoService = estadoService;
         this.gatoService = gatoService;
         this.persoService = persoService;
         this.notiService = notiService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -147,6 +150,8 @@ public class SolicitudService implements ISolicitudService {
         Gato gatoAdoptado=gatoService.adoptarGato(gatoAdoptar.getId());
         SolicitudAdopcion actualizada=this.addEstadoAprobado(solidb, motivo);
         //enviar email que adoptaste al gati y noti
+        this.enviarEmailAprobada(solidb);
+        this.notiService.aprobacionAdopcion(gatoAdoptar,solidb.getSolicitante());
         //cerrar todas las demas solicitudes del gato
         this.cerrarPendientes(gatoAdoptar, solidb);
         return this.repo.save(actualizada);
@@ -170,6 +175,8 @@ public class SolicitudService implements ISolicitudService {
         SolicitudAdopcion solidb=this.findByIdOrException(id);
         SolicitudAdopcion actualizada=this.addEstadoRechazada(solidb,motivo);
         //enviar email de rechazo y noti
+        this.enviarEmailRechazada(solidb);
+        this.notiService.rechazoAdopcion(solidb.getGato(),solidb.getSolicitante());
         return this.repo.save(actualizada);
     }
 
@@ -197,6 +204,14 @@ public class SolicitudService implements ISolicitudService {
         return solidb;
     }
 
+    private void enviarEmailAprobada(SolicitudAdopcion solidb){
+        String gato=solidb.getGato().getNombre();
+        String soliNombre=solidb.getSolicitante().getNombre();
+        String subject="Novedades en solicitud de adopcion";
+        String texto="Hola "+soliNombre+"! Nos complace contarte que hemos aceptado tu solicitud para adoptar a "+gato+"!";
+        this.emailService.armarEnviarEmail(solidb.getSolicitante().getEmail(), subject,texto);
+    }
+
     private SolicitudAdopcion addEstadoRechazada(SolicitudAdopcion solidb, String motivo){
         //chequear que el estado no este rechazada ya
         List<Estado> estados=solidb.getEstados();
@@ -210,5 +225,13 @@ public class SolicitudService implements ISolicitudService {
         estados.add(aprobado);
         solidb.setEstados(estados);
         return solidb;
+    }
+
+    private void enviarEmailRechazada(SolicitudAdopcion solidb){
+        String gato=solidb.getGato().getNombre();
+        String soliNombre=solidb.getSolicitante().getNombre();
+        String subject="Novedades en solicitud de adopcion";
+        String texto="Hola "+soliNombre+"! Lamentamos comentarte que tu solicitud para adoptar a "+gato+" fue rechazada.";
+        this.emailService.armarEnviarEmail(solidb.getSolicitante().getEmail(), subject,texto);
     }
 }
