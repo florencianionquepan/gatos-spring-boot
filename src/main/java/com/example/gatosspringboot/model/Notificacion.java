@@ -28,7 +28,7 @@ public class Notificacion {
     private Boolean leida=false;
     @ManyToOne(cascade=CascadeType.MERGE)
     @NotNull
-    @JsonIgnoreProperties(value="notificaciones")
+    @JsonIgnoreProperties(value={"notificaciones","solicitudesAdopcion","solicitudesVoluntariados","usuario"})
     private Persona persona;
 
     @PrePersist
