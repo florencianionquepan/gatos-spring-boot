@@ -1,8 +1,10 @@
 package com.example.gatosspringboot.dto.mapper;
 
+import com.example.gatosspringboot.dto.GatoDTO;
 import com.example.gatosspringboot.dto.PersonaDTO;
 import com.example.gatosspringboot.dto.SolicitudReqDTO;
 import com.example.gatosspringboot.dto.SolicitudRespDTO;
+import com.example.gatosspringboot.model.Foto;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.SolicitudAdopcion;
@@ -45,7 +47,12 @@ public class SolicitudMapper implements ISolicitudMapper{
         dto.setEstados(this.estadoMapper.mapToListDto(entity.getEstados()));
         PersonaDTO personaDTO=this.persoMap.mapToDto(entity.getSolicitante());
         dto.setSolicitante(personaDTO);
-        //dto.setGato(this.gatoMap.mapToDto(entity.getGato()));
+        GatoDTO gatodto=new GatoDTO();
+        gatodto.setId(entity.getGato().getId());
+        gatodto.setNombre(entity.getGato().getNombre());
+        gatodto.setFotos(entity.getGato().getFotos().stream()
+                .map(Foto::getFotoUrl).collect(Collectors.toList()));
+        dto.setGato(gatodto);
         return dto;
     }
 
