@@ -12,5 +12,6 @@ public interface IPersonaService {
     boolean validarEmailIngresado(String email);
     Persona altaRegistro(Persona persona, String token);
     Persona registro(Persona persona);
+    Persona modificar(Persona persona, Long id);
     List<String> tiposVoluntario(String dni);
 }
