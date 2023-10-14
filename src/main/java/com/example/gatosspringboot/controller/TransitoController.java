@@ -24,9 +24,9 @@ public class TransitoController {
         this.mapper = mapper;
     }
 
-    private ResponseEntity<?> successResponse(List<?> lista){
+    private ResponseEntity<?> successResponse(Object data){
         mensajeBody.put("success",Boolean.TRUE);
-        mensajeBody.put("data",lista);
+        mensajeBody.put("data",data);
         return ResponseEntity.ok(mensajeBody);
     }
 
