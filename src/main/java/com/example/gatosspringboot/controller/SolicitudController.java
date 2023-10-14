@@ -82,6 +82,13 @@ public class SolicitudController {
         return this.successResponse(dtos);
     }
 
+    @GetMapping("/aceptadas/solicitante/{dni}")
+    private ResponseEntity<?> listarAceptadasBySoli(@PathVariable String dni){
+        List<SolicitudAdopcion> solicitudes=this.service.verAceptadasBySolicitante(dni);
+        List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
+        return this.successResponse(dtos);
+    }
+
     @PutMapping("/{id}/estados/aceptada")
     private ResponseEntity<?> aceptarAdopcion(@PathVariable Long id, @RequestBody @Validated(PutValidationGroup.class)
                                               SolicitudReqDTO dto){
