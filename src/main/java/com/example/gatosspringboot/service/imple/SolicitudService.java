@@ -66,6 +66,21 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
+    public List<SolicitudAdopcion> verAceptadasBySolicitante(String dni) {
+        List<SolicitudAdopcion> solicitudesPorSolicitante = this.repo.findBySolicitante(dni);
+        List<SolicitudAdopcion> solicitudesAceptadas = new ArrayList<>();
+        for (SolicitudAdopcion solicitud : solicitudesPorSolicitante) {
+            for (Estado estado : solicitud.getEstados()) {
+                if (estado.getEstado() == EstadoNombre.APROBADA) {
+                    solicitudesAceptadas.add(solicitud);
+                    break; // Salir del bucle si se encuentra una solicitud aceptada
+                }
+            }
+        }
+        return solicitudesAceptadas;
+    }
+
+    @Override
     public List<SolicitudAdopcion> verRangoFechas(LocalDate desde, LocalDate hasta) {
         return (List<SolicitudAdopcion>) this.repo.findAll();
     }
