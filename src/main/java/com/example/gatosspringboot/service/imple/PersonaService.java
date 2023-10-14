@@ -2,9 +2,11 @@ package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
-import com.example.gatosspringboot.model.Persona;
-import com.example.gatosspringboot.model.Usuario;
+import com.example.gatosspringboot.model.*;
+import com.example.gatosspringboot.repository.database.PadrinoRepository;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
+import com.example.gatosspringboot.repository.database.TransitoRepository;
+import com.example.gatosspringboot.repository.database.VoluntarioRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
@@ -21,15 +23,24 @@ public class PersonaService implements IPersonaService {
     private final PersonaRepository repo;
     private final IEmailService emailService;
     private final IUsuarioService userService;
+    private final PadrinoRepository padrinoRepo;
+    private final TransitoRepository transitoRepo;
+    private final VoluntarioRepository voluRepo;
     private ConcurrentHashMap<String, Boolean> tokenCache = new ConcurrentHashMap<>();
     private Logger logger= LoggerFactory.getLogger(PersonaService.class);
 
     public PersonaService(PersonaRepository repo,
                           IEmailService emailService,
-                          IUsuarioService userService) {
+                          IUsuarioService userService,
+                          PadrinoRepository padrinoRepo,
+                          TransitoRepository transitoRepo,
+                          VoluntarioRepository voluRepo) {
         this.repo = repo;
         this.emailService = emailService;
         this.userService = userService;
+        this.padrinoRepo = padrinoRepo;
+        this.transitoRepo = transitoRepo;
+        this.voluRepo = voluRepo;
     }
 
     @Override
@@ -90,6 +101,25 @@ public class PersonaService implements IPersonaService {
         Usuario creado=this.userService.altaUsuario(persona.getUsuario());
         persona.setUsuario(creado);
         return this.repo.save(persona);
+    }
+
+    @Override
+    public List<String> tiposVoluntario(String dni) {
+        List<String> tipos=new ArrayList<>();
+        Persona perso=this.findByDni(dni);
+        Optional<Padrino> oPadri=this.padrinoRepo.buscarByEmail(perso.getEmail());
+        if(oPadri.isPresent()){
+            tipos.add("Padrino");
+        }
+        Optional<Transito> oTransi=this.transitoRepo.findByEmail(perso.getEmail());
+        if(oTransi.isPresent()){
+            tipos.add("Transito");
+        }
+        Optional<Voluntario> oVolu=this.voluRepo.findByEmail(perso.getEmail());
+        if(oVolu.isPresent()){
+            tipos.add("Voluntario");
+        }
+        return tipos;
     }
 
     private void validarDniUnico(String dni) {
