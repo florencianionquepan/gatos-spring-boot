@@ -10,6 +10,7 @@ public interface ISolicitudService {
     List<SolicitudAdopcion> verByEstado(String estado);
     List<SolicitudAdopcion> verByGato(Long idGato);
     List<SolicitudAdopcion> verBySolicitante(String dni);
+    List<SolicitudAdopcion> verAceptadasBySolicitante(String dni);
     List<SolicitudAdopcion> verRangoFechas(LocalDate desde, LocalDate hasta);
     List<SolicitudAdopcion> verByGatoPendientes(Long idGato);
     SolicitudAdopcion altaSolicitud(SolicitudAdopcion solicitudAdopcion);
