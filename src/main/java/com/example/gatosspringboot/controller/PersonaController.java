@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +61,13 @@ public class PersonaController {
         return this.successResponse(this.mapper.mapToDto(nueva));
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("#dto.email==authentication.principal")
+    public ResponseEntity<?> actualizarDatos(@RequestBody @Valid PersonaDTO dto, @PathVariable Long id){
+        Persona modi=this.service.modificar(this.mapper.mapToPersona(dto), id);
+        return this.successResponse(this.mapper.mapToDto(modi));
+    }
+
     @GetMapping("/search/dni")
     //puede ser utilizado por socios solamente y voluntarios
     @PreAuthorize("hasAnyRole('SOCIO', 'VOLUNTARIO')")
@@ -69,9 +77,10 @@ public class PersonaController {
         return this.successResponse(dto);
     }
 
-    @GetMapping("/search/email")
+    @GetMapping("/search")
     //puede ser utilizado por socios y voluntarios solamente
-    @PreAuthorize("hasAnyRole('SOCIO', 'VOLUNTARIO')")
+    //@PreAuthorize("hasAnyRole('SOCIO', 'VOLUNTARIO')")
+    @PreAuthorize("#email==authentication.principal")
     public ResponseEntity<?> obtenerDatosByEmail(@RequestParam
                                                      @Email(message="El email no es válido") String email){
         PersonaDTO dto=this.mapper.mapToDto(this.service.findByEmailOrException(email));
