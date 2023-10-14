@@ -124,14 +124,13 @@ public class PersonaService implements IPersonaService {
         return oPerso.get();
     }
 
-    private Persona dniExistenteNoPropio(Long id, String dni){
+    private void dniExistenteNoPropio(Long id, String dni){
         Optional<Persona> perso=this.repo.findByDni(dni);
         if(perso.isPresent() && perso.get().getId()!=id){
             throw new ExistingException(
                     String.format("Este dni %s ya se encuentra registrado",dni)
             );
         }
-        return perso.get();
     }
 
     @Override
