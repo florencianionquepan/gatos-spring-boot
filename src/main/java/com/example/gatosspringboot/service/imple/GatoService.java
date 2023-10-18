@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.service.imple;
 
+import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.*;
@@ -218,8 +219,15 @@ public class GatoService implements IGatoService {
     //si tenia un transito anterior se va a pisar
     public Gato agregarTransito(Transito transito, Long id) {
         Gato gati=this.findGatoById(id);
+        if(gati.getAdoptadoFecha()!=null){
+            throw new ExistingException("El gato ya fue adoptado!");
+        }
         Transito transitodb=this.tranSer.findByIdOrException(transito.getId());
         gati.setTransito(transitodb);
+        Transito tran=this.tranSer.addGato(gati,transitodb);
+        if(gati.getPadrino() !=null){
+            //agregar al padrino la creacion de notificaciones
+        }
         return this.gatoRepo.save(gati);
     }
 
