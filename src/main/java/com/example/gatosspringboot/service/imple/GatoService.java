@@ -99,6 +99,19 @@ public class GatoService implements IGatoService {
         Voluntario volGato=this.voluService.buscarVolByEmailOrException(gato.getVoluntario().getPersona().getEmail());
         gato.setVoluntario(volGato);
         Gato gatodb=this.findGatoById(id);
+        //si ya fue adoptado en teoria no lo editaria pero igual
+        if(gatodb.getAdoptadoFecha()!=null){
+            gato.setAdoptadoFecha(gatodb.getAdoptadoFecha());
+        }
+        if(gatodb.getFichaVet()!=null){
+            gato.setFichaVet(gatodb.getFichaVet());
+        }
+        if(gatodb.getTransito()!=null){
+            gato.setTransito(gatodb.getTransito());
+        }
+        if(gatodb.getPadrino()!=null){
+            gato.setPadrino(gatodb.getPadrino());
+        }
         List<Foto> fotosMantener=this.eliminarFotos(gato, id);
         if(existenFiles(files)){
             List<Foto> fotosGatitos = this.guardarFotos(files, gatodb);
