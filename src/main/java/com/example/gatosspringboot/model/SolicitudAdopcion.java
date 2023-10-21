@@ -32,7 +32,7 @@ public class SolicitudAdopcion implements Serializable {
     @ManyToOne(cascade=CascadeType.MERGE)
     @JoinColumn(name="gato_id")
     @NotNull
-    @JsonIgnoreProperties(value="listaSol")
+    @JsonIgnoreProperties(value="solicitudesAdopcion")
     private Gato gato;
 
     @ManyToMany(cascade=CascadeType.MERGE)

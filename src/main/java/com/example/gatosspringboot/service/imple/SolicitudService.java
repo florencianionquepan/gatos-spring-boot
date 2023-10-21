@@ -61,8 +61,8 @@ public class SolicitudService implements ISolicitudService {
     }
 
     @Override
-    public List<SolicitudAdopcion> verBySolicitante(String dni) {
-        return this.repo.findBySolicitante(dni);
+    public List<SolicitudAdopcion> verBySolicitante(String email) {
+        return this.repo.findBySolicitanteEmail(email);
     }
 
     @Override

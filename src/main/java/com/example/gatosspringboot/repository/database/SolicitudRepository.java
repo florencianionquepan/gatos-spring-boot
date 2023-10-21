@@ -17,6 +17,9 @@ public interface SolicitudRepository extends CrudRepository<SolicitudAdopcion,Lo
     @Query("SELECT s FROM SolicitudAdopcion s WHERE s.solicitante.dni = ?1")
     List<SolicitudAdopcion> findBySolicitante(String dni);
 
+    @Query("SELECT s FROM SolicitudAdopcion s WHERE s.solicitante.email = ?1")
+    List<SolicitudAdopcion> findBySolicitanteEmail(String email);
+
     @Query("SELECT s FROM SolicitudAdopcion s WHERE s.gato.id = ?1")
     List<SolicitudAdopcion> findByGato(Long id);
 

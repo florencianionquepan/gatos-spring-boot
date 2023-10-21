@@ -21,5 +21,5 @@ public class SolicitudRespDTO {
     PersonaDTO solicitante;
 
     @JsonIgnoreProperties(value="solicitudes")
-    GatoDTO gato;
+    GatoRespDTO gato;
 }
