@@ -91,6 +91,28 @@ public class NotificacionService implements INotificacionService {
     }
 
     @Override
+    public Notificacion notificarAdopcion(Transito transito, Gato gato) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Queremos notificarte que tu transito "+gato.getNombre()+
+                "fue adoptado!.Un voluntario se estara comunicando para coordinar el traspaso:)");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(transito.getPersona());
+        return this.repo.save(nueva);
+    }
+
+    @Override
+    public Notificacion notificarAdopcion(Padrino padrino, Gato gato) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Queremos notificarte que "+gato.getNombre()+
+                "fue adoptado!.Podés seguir apadrinando algunos de nuestros michis!");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(padrino.getPersona());
+        return this.repo.save(nueva);
+    }
+
+    @Override
     public Notificacion cierreAdopcion(Gato gato, Persona solicitante) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Tu solicitud de adopcion por "+gato.getNombre()+

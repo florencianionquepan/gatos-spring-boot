@@ -11,6 +11,8 @@ public interface INotificacionService {
     Notificacion desasignacionTransito(Gato gato, Transito transitoAnterior);
     Notificacion rechazoAdopcion(Gato gato, Persona solicitante);
     Notificacion aprobacionAdopcion(Gato gato, Persona solicitante);
+    Notificacion notificarAdopcion(Transito transito, Gato gato);
+    Notificacion notificarAdopcion(Padrino padrino, Gato gato);
     Notificacion cierreAdopcion(Gato gato, Persona solicitante);
     List<Notificacion> verByPersona(String email);
     List<Notificacion> setearComoLeidas(List<Notificacion> notificaciones);
