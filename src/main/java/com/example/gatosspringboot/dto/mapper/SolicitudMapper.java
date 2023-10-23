@@ -1,13 +1,7 @@
 package com.example.gatosspringboot.dto.mapper;
 
-import com.example.gatosspringboot.dto.GatoDTO;
-import com.example.gatosspringboot.dto.PersonaDTO;
-import com.example.gatosspringboot.dto.SolicitudReqDTO;
-import com.example.gatosspringboot.dto.SolicitudRespDTO;
-import com.example.gatosspringboot.model.Foto;
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Persona;
-import com.example.gatosspringboot.model.SolicitudAdopcion;
+import com.example.gatosspringboot.dto.*;
+import com.example.gatosspringboot.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -47,11 +41,23 @@ public class SolicitudMapper implements ISolicitudMapper{
         dto.setEstados(this.estadoMapper.mapToListDto(entity.getEstados()));
         PersonaDTO personaDTO=this.persoMap.mapToDto(entity.getSolicitante());
         dto.setSolicitante(personaDTO);
-        GatoDTO gatodto=new GatoDTO();
+        GatoRespDTO gatodto=new GatoRespDTO();
         gatodto.setId(entity.getGato().getId());
         gatodto.setNombre(entity.getGato().getNombre());
         gatodto.setFotos(entity.getGato().getFotos().stream()
                 .map(Foto::getFotoUrl).collect(Collectors.toList()));
+        if(entity.getGato().getTransito()!=null){
+            Transito transito=entity.getGato().getTransito();
+            TransitoRespDTO tranDTO=new TransitoRespDTO();
+            tranDTO.setNombre(transito.getPersona().getNombre());
+            tranDTO.setLocalidad(transito.getPersona().getLocalidad());
+            gatodto.setTransito(tranDTO);
+        }
+        Voluntario volu=entity.getGato().getVoluntario();
+        VoluntarioDTO voluDTO=new VoluntarioDTO();
+        voluDTO.setNombre(volu.getPersona().getNombre());
+        voluDTO.setLocalidad(volu.getPersona().getLocalidad());
+        gatodto.setVoluntario(voluDTO);
         dto.setGato(gatodto);
         return dto;
     }
