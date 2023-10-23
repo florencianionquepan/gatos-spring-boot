@@ -60,6 +60,16 @@ public class NotificacionService implements INotificacionService {
     }
 
     @Override
+    public Notificacion desasignacionTransito(Gato gato, Transito transitoAnterior) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion(gato.getNombre()+" ya no forma parte de tu transito.");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(transitoAnterior.getPersona());
+        return this.repo.save(nueva);
+    }
+
+    @Override
     public Notificacion rechazoAdopcion(Gato gato, Persona solicitante) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Tu solicitud por: "+gato.getNombre()+" fue rechazada!");
@@ -74,6 +84,17 @@ public class NotificacionService implements INotificacionService {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Nos alegra contarte que adoptaste a "+gato.getNombre()+
                 "!.Un voluntario se estara comunicando para coordinar el traspaso:)");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(solicitante);
+        return this.repo.save(nueva);
+    }
+
+    @Override
+    public Notificacion cierreAdopcion(Gato gato, Persona solicitante) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Tu solicitud de adopcion por "+gato.getNombre()+
+                " ha sido cerrada porque se acepto otra solicitud.");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(solicitante);
