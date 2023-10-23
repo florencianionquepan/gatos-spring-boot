@@ -236,6 +236,15 @@ public class GatoService implements IGatoService {
             throw new ExistingException("El gato ya fue adoptado!");
         }
         Transito transitodb=this.tranSer.findByIdOrException(transito.getId());
+        if(gati.getTransito()!=null){
+            if(gati.getTransito().getId()== transito.getId()){
+                throw new ExistingException("El gato ya tiene este mismo transito asignado!");
+            }else{
+                //avisarle al transito anterior
+                Transito anterior=gati.getTransito();
+                Transito ante=this.tranSer.removeGato(gati,anterior);
+            }
+        }
         gati.setTransito(transitodb);
         Transito tran=this.tranSer.addGato(gati,transitodb);
         if(gati.getPadrino() !=null){
