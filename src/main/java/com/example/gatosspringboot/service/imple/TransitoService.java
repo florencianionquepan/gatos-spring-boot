@@ -84,6 +84,15 @@ public class TransitoService implements ITransitoService {
     }
 
     @Override
+    public Transito removeGato(Gato gato, Transito anterior) {
+        List<Gato> gatos=anterior.getListaGatos();
+        gatos.remove(gato);
+        anterior.setListaGatos(gatos);
+        this.notiSer.desasignacionTransito(gato, anterior);
+        return this.repo.save(anterior);
+    }
+
+    @Override
     public List<Gato> listarGatos(String email) {
         Optional<Transito> oTran=this.repo.findByEmail(email);
         if(oTran.isEmpty()){
