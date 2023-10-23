@@ -17,4 +17,5 @@ public class UserResponseDTO {
     String localidad;
     @JsonIgnoreProperties(value = "usuarios")
     List<Rol> roles;
+    boolean esTransito;
 }

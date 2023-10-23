@@ -43,7 +43,9 @@ public class LoginController {
     public ResponseEntity<?> getUserDetailsAfterLogin(Authentication authentication){
         Usuario user=userService.buscarByEmail(authentication.getName());
         Persona perso=this.persoSer.findByEmailOrException(authentication.getName());
-        return this.successResponse(this.mapper.mapToDTO(user,perso));
+        boolean esTransito=this.persoSer.tiposVoluntario(perso.getDni()).contains("Transito");
+        logger.info("esTransito",esTransito);
+        return this.successResponse(this.mapper.mapToDTO(user,perso,esTransito));
     }
 
 }

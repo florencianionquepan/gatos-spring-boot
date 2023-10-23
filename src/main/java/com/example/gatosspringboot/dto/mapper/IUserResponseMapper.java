@@ -5,5 +5,5 @@ import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Usuario;
 
 public interface IUserResponseMapper {
-    UserResponseDTO mapToDTO(Usuario user, Persona perso);
+    UserResponseDTO mapToDTO(Usuario user, Persona perso, boolean esTransito);
 }
