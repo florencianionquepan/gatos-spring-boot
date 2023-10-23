@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.ExistingException;
+import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Persona;
@@ -55,6 +56,7 @@ public class TransitoService implements ITransitoService {
         Optional<Persona> oPerso=this.persoRepo.findByDni(transito.getPersona().getDni());
         //siempre va a existir porqie ahora debe registrarse primero pero igual lo dejo
         //por si a futuro implemento el alta directa
+        //agregar rol voluntario al usuario si no lo tiene
         if(oPerso.isPresent()){
             return this.repo.save(transito);
         }
@@ -79,6 +81,17 @@ public class TransitoService implements ITransitoService {
         transito.setListaGatos(gatos);
         this.notiSer.asignacionTransito(gato, transito);
         return this.repo.save(transito);
+    }
+
+    @Override
+    public List<Gato> listarGatos(String email) {
+        Optional<Transito> oTran=this.repo.findByEmail(email);
+        if(oTran.isEmpty()){
+            throw new NonExistingException(
+                    String.format("El usuario con email %s no existe",email)
+            );
+        }
+        return oTran.get().getListaGatos();
     }
 
     //si ya existe con otro dni o email no prosigue-

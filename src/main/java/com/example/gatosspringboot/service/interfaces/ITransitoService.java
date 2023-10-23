@@ -11,4 +11,5 @@ public interface ITransitoService {
     Transito nuevo(Transito transito);
     Transito findByIdOrException(Long id);
     Transito addGato(Gato gato, Transito transito);
+    List<Gato> listarGatos(String email);
 }
