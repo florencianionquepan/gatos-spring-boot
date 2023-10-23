@@ -193,8 +193,13 @@ public class GatoService implements IGatoService {
     public Gato adoptarGato(Long id) {
         Gato gati=this.buscarDisponibleById(id);
         gati.setAdoptadoFecha(LocalDate.now());
-        //notificarPadrino
-        //notificarTransito
+        //notificarPadrino y transito
+        if(gati.getPadrino()!=null){
+            //this.padrinoservice.notificarAdopcion... 
+        }
+        if(gati.getTransito()!=null){
+            this.tranSer.notificarAdopcion(gati.getTransito(),gati);
+        }
         return this.gatoRepo.save(gati);
     }
 
