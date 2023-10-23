@@ -181,6 +181,8 @@ public class SolicitudService implements ISolicitudService {
             List<Estado> estados= solicitudAdopcion.getEstados();
             estados.add(cerrado);
             solicitudAdopcion.setEstados(estados);
+            //crear notificaciones
+            Notificacion noti=this.notiService.cierreAdopcion(gatoAdoptar,solicitudAdopcion.getSolicitante());
             this.repo.save(solicitudAdopcion);
         }
     }
