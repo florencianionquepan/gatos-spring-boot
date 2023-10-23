@@ -13,4 +13,5 @@ public interface ITransitoService {
     Transito addGato(Gato gato, Transito transito);
     Transito removeGato(Gato gato, Transito anterior);
     List<Gato> listarGatos(String email);
+    void notificarAdopcion(Transito transito, Gato gato);
 }
