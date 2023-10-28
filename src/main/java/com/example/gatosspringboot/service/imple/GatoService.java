@@ -81,7 +81,8 @@ public class GatoService implements IGatoService {
             fotosGatitos=this.guardarFotos(fotos, nuevo);
         }
         gato.setFotos(fotosGatitos);
-        return this.gatoRepo.save(gato);
+        //lo actualizo con las fotos:
+        return this.gatoRepo.save(nuevo);
     }
 
     private boolean existenFiles(MultipartFile[] files){
@@ -195,7 +196,7 @@ public class GatoService implements IGatoService {
         gati.setAdoptadoFecha(LocalDate.now());
         //notificarPadrino y transito
         if(gati.getPadrino()!=null){
-            //this.padrinoservice.notificarAdopcion... 
+            //this.padrinoservice.notificarAdopcion...
         }
         if(gati.getTransito()!=null){
             this.tranSer.notificarAdopcion(gati.getTransito(),gati);
