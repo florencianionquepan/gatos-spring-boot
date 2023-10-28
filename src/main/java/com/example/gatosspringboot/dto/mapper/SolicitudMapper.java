@@ -46,6 +46,7 @@ public class SolicitudMapper implements ISolicitudMapper{
         gatodto.setNombre(entity.getGato().getNombre());
         gatodto.setFotos(entity.getGato().getFotos().stream()
                 .map(Foto::getFotoUrl).collect(Collectors.toList()));
+        gatodto.setAdoptado(entity.getGato().getAdoptadoFecha());
         if(entity.getGato().getTransito()!=null){
             Transito transito=entity.getGato().getTransito();
             TransitoRespDTO tranDTO=new TransitoRespDTO();

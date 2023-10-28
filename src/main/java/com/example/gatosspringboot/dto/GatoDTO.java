@@ -56,4 +56,9 @@ public class GatoDTO {
     private Padrino padrino;
 
     private LocalDate adoptado;
+
+    public GatoDTO(Long id, LocalDate adoptado) {
+        this.id = id;
+        this.adoptado = adoptado;
+    }
 }

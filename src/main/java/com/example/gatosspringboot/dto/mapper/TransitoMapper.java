@@ -1,8 +1,6 @@
 package com.example.gatosspringboot.dto.mapper;
 
-import com.example.gatosspringboot.dto.GatoIdDTO;
-import com.example.gatosspringboot.dto.TransitoIdDTO;
-import com.example.gatosspringboot.dto.TransitoRespDTO;
+import com.example.gatosspringboot.dto.*;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Transito;
 import org.springframework.stereotype.Component;
@@ -27,12 +25,12 @@ public class TransitoMapper implements ITransitoMapper{
         dto.setTel(perso.getTel());
         dto.setDire(perso.getDire());
         dto.setLocalidad(perso.getLocalidad());
-        List<GatoIdDTO> gatos=new ArrayList<>();
+        List<GatoDTO> gatos=new ArrayList<>();
         if(entity.getListaGatos() != null && !entity.getListaGatos().isEmpty()){
-            List<GatoIdDTO> gatosIdDTO = entity.getListaGatos().stream()
-                    .map(gato -> new GatoIdDTO(gato.getId()))
+            List<GatoDTO> gatosdto = entity.getListaGatos().stream()
+                    .map(gato -> new GatoDTO(gato.getId(), gato.getAdoptadoFecha()))
                     .collect(Collectors.toList());
-            dto.setGatos(gatosIdDTO);
+            dto.setGatos(gatosdto);
         }else{
             dto.setGatos(gatos);
         }

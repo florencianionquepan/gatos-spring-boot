@@ -10,5 +10,5 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class TransitoRespDTO extends PersonaDTO{
-    List<GatoIdDTO> gatos;
+    List<GatoDTO> gatos;
 }
