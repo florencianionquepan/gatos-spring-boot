@@ -9,13 +9,14 @@ import org.springframework.stereotype.Component;
 public class UserResponseMapper implements IUserResponseMapper{
 
     @Override
-    public UserResponseDTO mapToDTO(Usuario user, Persona perso, boolean esTransito) {
+    public UserResponseDTO mapToDTO(Usuario user, Persona perso, boolean esTransito, boolean esPadrino) {
         UserResponseDTO dto=new UserResponseDTO();
         dto.setEmail(user.getEmail());
         dto.setNombre(perso.getNombre());
         dto.setLocalidad(perso.getLocalidad());
         dto.setRoles(user.getRoles());
         dto.setEsTransito(esTransito);
+        dto.setEsPadrino(esPadrino);
         return dto;
     }
 }

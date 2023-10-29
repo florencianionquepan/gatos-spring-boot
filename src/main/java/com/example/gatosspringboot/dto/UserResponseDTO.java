@@ -18,4 +18,5 @@ public class UserResponseDTO {
     @JsonIgnoreProperties(value = "usuarios")
     List<Rol> roles;
     boolean esTransito;
+    boolean esPadrino;
 }
