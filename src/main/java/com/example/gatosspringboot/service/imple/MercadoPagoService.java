@@ -50,8 +50,8 @@ public class MercadoPagoService implements IMercadoPagoService {
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(items)
                 .backUrls(PreferenceBackUrlsRequest.builder()
-                        .success("http://localhost:9090/generic")
-                        .failure("http://localhost:9090/generic")
+                        .success("http://localhost:9090/cuotas/generic")
+                        .failure("http://localhost:9090/cuotas/generic")
                         .build())
                 .additionalInfo(String.valueOf(PaymentAdditionalInfoRequest.builder()
                         .payer(PaymentAdditionalInfoPayerRequest.builder()
@@ -70,30 +70,10 @@ public class MercadoPagoService implements IMercadoPagoService {
             logger.info("preferenceId:"+preference.getId());
             logger.info("url:"+preference.getSandboxInitPoint());
             response=preference.getSandboxInitPoint();
-            //logger.info("urlc:"+preference.getInitPoint());
-            //logger.info("preferenceResponse:"+preference.getResponse());
-            //logger.info("preferenceURL:"+preference.getBackUrls());
         }catch (MPException | MPApiException ex){
             logger.error(ex.getLocalizedMessage(),ex);
         }
         return response;
     }
 
-    //    State: APROVED
-    //    Type: Mastercard
-    //    Number:    5031755734530604
-    //    CVV: 123
-    //    Expire at: 11/25
-    //    Holder: APRO GOMEZ
-    //    DNI: 31256588
-    //    Email: apro_gomez@gmail.com
-    //---------------------------------
-    //    State: REJECTED
-    //    Type: Mastercard
-    //    Number:    5031755734530604
-    //    CVV: 123
-    //    Expire at: 11/25
-    //    Holder: EXPI GOMEZ
-    //    DNI: 31256588
-    //    Email: expi_gomez@gmail.com
 }
