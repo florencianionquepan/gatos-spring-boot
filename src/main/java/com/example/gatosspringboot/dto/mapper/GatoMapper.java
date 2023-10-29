@@ -4,9 +4,7 @@ import com.example.gatosspringboot.dto.GatoDTO;
 import com.example.gatosspringboot.dto.GatoRespDTO;
 import com.example.gatosspringboot.dto.PersonaEmailDTO;
 import com.example.gatosspringboot.dto.SolicitudReqDTO;
-import com.example.gatosspringboot.model.Foto;
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.SolicitudAdopcion;
+import com.example.gatosspringboot.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -90,8 +88,13 @@ public class GatoMapper implements IGatoMapper{
             //falta mapper de padrino
             //dto.setPadrino(entity.getPadrino());
         }
-        if(entity.getTransito()!=null){
-            dto.setTransito(this.transitoMap.mapToDto(entity.getTransito()));
+        //aca le paso el ultimo
+        if(entity.getTransitos()!=null && !entity.getTransitos().isEmpty()){
+            List<Transito> transitos=entity.getTransitos().stream()
+                    .map(GatoTransito::getTransito)
+                    .collect(Collectors.toList());
+            Transito ultimo=transitos.get(transitos.size()-1);
+            dto.setTransito(this.transitoMap.mapToDto(ultimo));
         }
         dto.setVoluntario(this.voluMapper.mapToDto(entity.getVoluntario()));
         dto.setAdoptado(entity.getAdoptadoFecha());
