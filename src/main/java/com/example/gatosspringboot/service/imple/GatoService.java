@@ -107,8 +107,8 @@ public class GatoService implements IGatoService {
         if(gatodb.getFichaVet()!=null){
             gato.setFichaVet(gatodb.getFichaVet());
         }
-        if(gatodb.getTransito()!=null){
-            gato.setTransito(gatodb.getTransito());
+        if(gatodb.getTransitos()!=null){
+            gato.setTransitos(gatodb.getTransitos());
         }
         if(gatodb.getPadrino()!=null){
             gato.setPadrino(gatodb.getPadrino());
@@ -198,8 +198,11 @@ public class GatoService implements IGatoService {
         if(gati.getPadrino()!=null){
             //this.padrinoservice.notificarAdopcion...
         }
-        if(gati.getTransito()!=null){
-            this.tranSer.notificarAdopcion(gati.getTransito(),gati);
+        if(gati.getTransitos()!=null && !gati.getTransitos().isEmpty()){
+            List<Transito> transitos=gati.getTransitos().stream()
+                    .map(GatoTransito::getTransito)
+                    .collect(Collectors.toList());
+            this.tranSer.notificarAdopcion(transitos.get(transitos.size()-1),gati);
         }
         return this.gatoRepo.save(gati);
     }
@@ -242,16 +245,22 @@ public class GatoService implements IGatoService {
             throw new ExistingException("El gato ya fue adoptado!");
         }
         Transito transitodb=this.tranSer.findByIdOrException(transito.getId());
-        if(gati.getTransito()!=null){
-            if(gati.getTransito().getId()== transito.getId()){
+        if(gati.getTransitos()!=null && !gati.getTransitos().isEmpty()){
+            if(gati.getTransitos().get(gati.getTransitos().size()-1).getId()== transito.getId()){
                 throw new ExistingException("El gato ya tiene este mismo transito asignado!");
             }else{
                 //avisarle al transito anterior
-                Transito anterior=gati.getTransito();
+                List<Transito> transitos=gati.getTransitos().stream()
+                        .map(GatoTransito::getTransito)
+                        .collect(Collectors.toList());
+                Transito anterior=transitos.get(transitos.size()-1);
                 Transito ante=this.tranSer.removeGato(gati,anterior);
             }
         }
-        gati.setTransito(transitodb);
+        //ahora lo agrego a su lista de transitos
+        //List<Transito> transitos=gati.getTransitos();
+        //transitos.add(transitodb);
+        //gati.setTransitos(transitos);
         Transito tran=this.tranSer.addGato(gati,transitodb);
         if(gati.getPadrino() !=null){
             //agregar al padrino la creacion de notificaciones
