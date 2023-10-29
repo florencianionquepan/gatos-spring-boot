@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -43,9 +44,10 @@ public class LoginController {
     public ResponseEntity<?> getUserDetailsAfterLogin(Authentication authentication){
         Usuario user=userService.buscarByEmail(authentication.getName());
         Persona perso=this.persoSer.findByEmailOrException(authentication.getName());
-        boolean esTransito=this.persoSer.tiposVoluntario(perso.getDni()).contains("Transito");
-        logger.info("esTransito",esTransito);
-        return this.successResponse(this.mapper.mapToDTO(user,perso,esTransito));
+        List<String> voluntariados=this.persoSer.tiposVoluntario(perso.getDni());
+        boolean esTransito=voluntariados.contains("Transito");
+        boolean esPadrino=voluntariados.contains("Padrino");
+        return this.successResponse(this.mapper.mapToDTO(user,perso,esTransito,esPadrino));
     }
 
 }
