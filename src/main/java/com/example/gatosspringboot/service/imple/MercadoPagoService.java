@@ -1,9 +1,8 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.model.Cuota;
+import com.example.gatosspringboot.repository.database.CuotaRepository;
 import com.example.gatosspringboot.service.interfaces.IMercadoPagoService;
-import com.mercadopago.client.common.PhoneRequest;
-import com.mercadopago.client.payment.*;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
@@ -22,7 +21,12 @@ import java.util.List;
 
 @Service
 public class MercadoPagoService implements IMercadoPagoService {
+    private final CuotaRepository cuotaRepo;
     private Logger logger= LoggerFactory.getLogger(MercadoPagoService.class);
+
+    public MercadoPagoService(CuotaRepository cuotaRepo) {
+        this.cuotaRepo = cuotaRepo;
+    }
 
     @Override
     public void crearPago(Cuota cuota) throws MPException, MPApiException {
@@ -34,13 +38,13 @@ public class MercadoPagoService implements IMercadoPagoService {
         LocalDate fecha=LocalDate.now();
         PreferenceItemRequest itemRequest =
                 PreferenceItemRequest.builder()
-                        .id("1234")
+                        .id(String.valueOf(cuota.getId()))
                         .title("Apadrinamiento "+cuota.getGato().getNombre())
                         .description("GatoId="+cuota.getGato().getId()+" Mes Cuota="+fecha.getMonth())
                         .pictureUrl("http://picture.com/PS5")
                         .categoryId("Apadrinamientos")
                         .quantity(1)
-                        .currencyId("ARS")
+                        .currencyId("BRL")
                         .unitPrice(new BigDecimal(cuota.getGato().getMontoMensual()))
                         .build();
         List<PreferenceItemRequest> items = new ArrayList<>();
@@ -53,22 +57,15 @@ public class MercadoPagoService implements IMercadoPagoService {
                         .success("http://localhost:9090/cuotas/generic")
                         .failure("http://localhost:9090/cuotas/generic")
                         .build())
-                .additionalInfo(String.valueOf(PaymentAdditionalInfoRequest.builder()
-                        .payer(PaymentAdditionalInfoPayerRequest.builder()
-                                .firstName(cuota.getPadrino().getPersona().getNombre())
-                                .lastName(cuota.getPadrino().getPersona().getApellido())
-                                .phone(
-                                        PhoneRequest.builder().number(cuota.getPadrino().getPersona().getTel())
-                                                .build())
-                                .build())
-                        .build()))
-                        .build();
+                .build();
         PreferenceClient client = new PreferenceClient();
         String response="";
         try{
             Preference preference = client.create(preferenceRequest);
             logger.info("preferenceId:"+preference.getId());
             logger.info("url:"+preference.getSandboxInitPoint());
+            cuota.setPreferencia_id(preference.getId());
+            this.cuotaRepo.save(cuota);
             response=preference.getSandboxInitPoint();
         }catch (MPException | MPApiException ex){
             logger.error(ex.getLocalizedMessage(),ex);
