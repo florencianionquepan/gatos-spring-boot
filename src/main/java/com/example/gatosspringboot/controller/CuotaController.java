@@ -79,7 +79,8 @@ public class CuotaController {
             logger.info("actualizar cuotacon pref.id"+preferenceId);
             Cuota paga=this.service.modiCuota(preferenceId);
         }
-        return new RedirectView("http://localhost:4200/");
+        //por ahora ridirigotodo a success, pero luego contemplar pago erroneo y meter esta view al if
+        return new RedirectView("http://localhost:4200/backoffice/cuotas/success");
     }
 
 //    @GetMapping("/preferencia/{id}")
