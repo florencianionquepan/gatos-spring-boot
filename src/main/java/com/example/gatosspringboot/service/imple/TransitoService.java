@@ -3,18 +3,17 @@ package com.example.gatosspringboot.service.imple;
 import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Notificacion;
-import com.example.gatosspringboot.model.Persona;
-import com.example.gatosspringboot.model.Transito;
+import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.TransitoRepository;
 import com.example.gatosspringboot.service.interfaces.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TransitoService implements ITransitoService {
@@ -76,8 +75,10 @@ public class TransitoService implements ITransitoService {
 
     @Override
     public Transito addGato(Gato gato, Transito transito) {
-        List<Gato> gatos=transito.getListaGatos();
-        gatos.add(gato);
+        List<GatoTransito> gatos=transito.getListaGatos();
+        LocalDate fecha=LocalDate.now();
+        GatoTransito asociacion=new GatoTransito(0L,gato,transito,fecha);
+        gatos.add(asociacion);
         transito.setListaGatos(gatos);
         this.notiSer.asignacionTransito(gato, transito);
         return this.repo.save(transito);
@@ -85,11 +86,14 @@ public class TransitoService implements ITransitoService {
 
     @Override
     public Transito removeGato(Gato gato, Transito anterior) {
-        List<Gato> gatos=anterior.getListaGatos();
-        gatos.remove(gato);
-        anterior.setListaGatos(gatos);
+//        List<Gato> gatos=anterior.getListaGatos();
+//        //aca ver si cambia de transito se lo saco de su listado??
+//        gatos.remove(gato);
+//        anterior.setListaGatos(gatos);
+//        this.notiSer.desasignacionTransito(gato, anterior);
+//        return this.repo.save(anterior);
         this.notiSer.desasignacionTransito(gato, anterior);
-        return this.repo.save(anterior);
+        return null;
     }
 
     @Override
@@ -100,7 +104,9 @@ public class TransitoService implements ITransitoService {
                     String.format("El usuario con email %s no existe",email)
             );
         }
-        return oTran.get().getListaGatos();
+        return oTran.get().getListaGatos().stream()
+                .map(GatoTransito::getGato)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -22,6 +22,9 @@ public class Cuota implements Serializable {
     private Long id;
     private LocalDate fechaPago;
     private double montoMensual;
+    private String preferencia_id;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean pagada;
 
     @ManyToOne
     @JoinColumn(name="padrino_dni")

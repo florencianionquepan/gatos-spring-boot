@@ -39,29 +39,15 @@ public class CuotaController {
         return ResponseEntity.ok(mensajeBody);
     }
 
-    private ResponseEntity<?> notSuccessResponse(String mensaje,int id){
-        mensajeBody.put("success",Boolean.FALSE);
-        mensajeBody.put("data", String.format(mensaje,id));
-        return ResponseEntity
-                .badRequest()
-                .body(mensajeBody);
-    }
-
     @GetMapping
     public ResponseEntity<?> verByPadrino(Padrino padrino){
         return null;
     }
 
-    @PostMapping("/preferencia")
-    public ResponseEntity<?> crearPreferencia(@RequestBody CuotaDTO cuota){
+    @PostMapping
+    public ResponseEntity<?> crearPreferenciaYCuota(@RequestBody CuotaDTO cuota){
         String response=this.service.creacionPreferencia(this.mapper.mapToEntity(cuota));
         return this.successResponse(response);
-    }
-
-    @PostMapping
-    public ResponseEntity<?> pagoCuota(@RequestBody CuotaDTO dto){
-            Cuota cuotaPaga=this.service.nuevaCuota(this.mapper.mapToEntity(dto));
-            return this.successResponse(cuotaPaga);
     }
 
     @GetMapping("/generic")
@@ -89,8 +75,9 @@ public class CuotaController {
         attributes.addFlashAttribute("processing_mode",processingMode);
         attributes.addFlashAttribute("merchant_account_id",merchantAccountId);
         logger.info("attributes="+attributes.getAttribute(collectionStatus));
-        if(attributes.getAttribute(collectionStatus).equals("approved")){
-            //Cuota nueva=this.service.nuevaCuota()
+        if(attributes.getAttribute(collectionStatus)!=null && attributes.getAttribute(collectionStatus).equals("approved")){
+            logger.info("actualizar cuotacon pref.id"+preferenceId);
+            Cuota paga=this.service.modiCuota(preferenceId);
         }
         return new RedirectView("http://localhost:4200/");
     }

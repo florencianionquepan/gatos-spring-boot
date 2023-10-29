@@ -31,5 +31,5 @@ public class Transito implements Serializable {
 
     @OneToMany(mappedBy = "transito", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value="transito")
-    private List<Gato> listaGatos;
+    private List<GatoTransito> listaGatos;
 }

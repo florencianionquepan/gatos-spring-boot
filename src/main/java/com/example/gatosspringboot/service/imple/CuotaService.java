@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -76,9 +77,12 @@ public class CuotaService implements ICuotaService {
             //oGato.get().setPadrino(padrino);
             //this.gatoRepo.save(oGato.get());
         }
+        LocalDate fecha=LocalDate.now();
+        cuota.setFechaPago(fecha);
+        Cuota nueva=this.repo.save(cuota);
         String response;
         try{
-            response=this.MPservice.crearPreferencia(cuota);
+            response=this.MPservice.crearPreferencia(nueva);
         } catch (MPException | MPApiException e) {
             throw new RuntimeException(e);
         }
@@ -87,7 +91,10 @@ public class CuotaService implements ICuotaService {
 
     @Override
     @Transactional
-    public Cuota nuevaCuota(Cuota cuota) {
-        return null;
+    public Cuota modiCuota(String preferenciaId) {
+        Cuota cuota=this.repo.findByPreferencia_id(preferenciaId);
+        cuota.setPagada(true);
+        Cuota modi=this.repo.save(cuota);
+        return modi;
     }
 }
