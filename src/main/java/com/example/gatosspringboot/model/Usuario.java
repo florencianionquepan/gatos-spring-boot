@@ -22,7 +22,9 @@ public class Usuario implements Serializable {
     private String email;
     @NotNull
     private String contrasenia;
+    @Column(columnDefinition = "boolean default false")
     private Boolean validado;
+    @Column(columnDefinition = "boolean default true")
     private Boolean habilitado;
 
     @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
