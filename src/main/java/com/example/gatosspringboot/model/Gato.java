@@ -48,9 +48,9 @@ public class Gato implements Serializable {
     @JsonIgnoreProperties(value="listaGatos")
     private Voluntario voluntario;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "gato", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value="listaGatos")
-    private Transito transito;
+    private List<GatoTransito> transitos;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value="listaGatos")
