@@ -47,11 +47,14 @@ public class SolicitudMapper implements ISolicitudMapper{
         gatodto.setFotos(entity.getGato().getFotos().stream()
                 .map(Foto::getFotoUrl).collect(Collectors.toList()));
         gatodto.setAdoptado(entity.getGato().getAdoptadoFecha());
-        if(entity.getGato().getTransito()!=null){
-            Transito transito=entity.getGato().getTransito();
+        if(entity.getGato().getTransitos()!=null && !entity.getGato().getTransitos().isEmpty()){
+            List<Transito> transitos=entity.getGato().getTransitos().stream()
+                    .map(GatoTransito::getTransito)
+                    .collect(Collectors.toList());
+            Transito ultimo=transitos.get(transitos.size()-1);
             TransitoRespDTO tranDTO=new TransitoRespDTO();
-            tranDTO.setNombre(transito.getPersona().getNombre());
-            tranDTO.setLocalidad(transito.getPersona().getLocalidad());
+            tranDTO.setNombre(ultimo.getPersona().getNombre());
+            tranDTO.setLocalidad(ultimo.getPersona().getLocalidad());
             gatodto.setTransito(tranDTO);
         }
         Voluntario volu=entity.getGato().getVoluntario();
