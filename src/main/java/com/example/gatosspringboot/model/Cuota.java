@@ -20,11 +20,11 @@ public class Cuota implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private LocalDate fechaCreacion;
     private LocalDate fechaPago;
     private double montoMensual;
     private String preferencia_id;
-    @Column(columnDefinition = "boolean default false")
-    private Boolean pagada;
+    private EstadoPago estadoPago=EstadoPago.PENDIENTE;
 
     @ManyToOne
     @JoinColumn(name="padrino_dni")
