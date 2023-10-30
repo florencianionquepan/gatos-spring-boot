@@ -45,13 +45,18 @@ public class CuotaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> crearPreferenciaYCuota(@RequestBody CuotaDTO cuota){
+    public ResponseEntity<?> crearCuotaPrimeraVez(@RequestBody CuotaDTO cuota){
         String response=this.service.creacionPreferencia(this.mapper.mapToEntity(cuota));
         return this.successResponse(response);
     }
 
+    @GetMapping("/preferencia/{id}")
+    public RedirectView realizarPago(@PathVariable String id){
+        return new RedirectView("https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id="+id);
+    }
+
     @GetMapping("/generic")
-    public RedirectView success(
+    public RedirectView generic(
             HttpServletRequest request,
             @RequestParam("collection_id") String collectionId,
             @RequestParam("collection_status") String collectionStatus,
@@ -74,13 +79,13 @@ public class CuotaController {
         attributes.addFlashAttribute("site_id",siteId);
         attributes.addFlashAttribute("processing_mode",processingMode);
         attributes.addFlashAttribute("merchant_account_id",merchantAccountId);
-        logger.info("attributes="+attributes.getAttribute(collectionStatus));
-        if(attributes.getAttribute(collectionStatus)!=null && attributes.getAttribute(collectionStatus).equals("approved")){
-            logger.info("actualizar cuotacon pref.id"+preferenceId);
-            Cuota paga=this.service.modiCuota(preferenceId);
+        if(collectionStatus.equals("approved")){
+            Cuota paga=this.service.pagoCuotaAprobado(preferenceId);
+            return new RedirectView("http://localhost:4200/backoffice/cuotas/success");
+        }else if(collectionStatus.equals("rejected")){
+            Cuota rechazada=this.service.pagoCuotaRechazado(preferenceId);
         }
-        //por ahora ridirigotodo a success, pero luego contemplar pago erroneo y meter esta view al if
-        return new RedirectView("http://localhost:4200/backoffice/cuotas/success");
+        return new RedirectView("http://localhost:4200/backoffice/cuotas/failure");
     }
 
 //    @GetMapping("/preferencia/{id}")
