@@ -1,6 +1,7 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.model.Cuota;
+import com.example.gatosspringboot.model.EstadoPago;
 import com.example.gatosspringboot.repository.database.CuotaRepository;
 import com.example.gatosspringboot.service.interfaces.IMercadoPagoService;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
@@ -65,6 +66,7 @@ public class MercadoPagoService implements IMercadoPagoService {
             logger.info("preferenceId:"+preference.getId());
             logger.info("url:"+preference.getSandboxInitPoint());
             cuota.setPreferencia_id(preference.getId());
+            cuota.setEstadoPago(EstadoPago.DESCONOCIDO);
             this.cuotaRepo.save(cuota);
             response=preference.getSandboxInitPoint();
         }catch (MPException | MPApiException ex){
