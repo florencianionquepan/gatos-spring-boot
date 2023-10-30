@@ -2,10 +2,7 @@ package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
-import com.example.gatosspringboot.model.Cuota;
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Padrino;
-import com.example.gatosspringboot.model.Persona;
+import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.CuotaRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
 import com.example.gatosspringboot.repository.database.PadrinoRepository;
@@ -51,6 +48,19 @@ public class CuotaService implements ICuotaService {
 
     @Override
     public String creacionPreferencia(Cuota cuota) {
+        Cuota nueva=this.creacionCuota(cuota);
+        String response;
+        try{
+            response=this.MPservice.crearPreferencia(nueva);
+        } catch (MPException | MPApiException e) {
+            throw new RuntimeException(e);
+        }
+        return response;
+    }
+
+    @Override
+    //este metodo se va a ejecutar cuando pasen 30 dias de cuota aprobada tambien
+    public Cuota creacionCuota(Cuota cuota) {
         Optional<Gato> oGato=this.gatoRepo.findById(cuota.getGato().getId());
         if(oGato.isEmpty()){
             throw new PersonNotFound(
@@ -68,32 +78,40 @@ public class CuotaService implements ICuotaService {
                 Padrino nuevo = new Padrino(0L, perso, new ArrayList<>(), new ArrayList<>());
                 Padrino padrino = this.padriRepo.save(nuevo);
                 cuota.setPadrino(padrino);
-                //oGato.get().setPadrino(padrino);
-                //this.gatoRepo.save(oGato.get());
+                //le seteamos al gato el padrino nuevo:
+                oGato.get().setPadrino(padrino);
+                this.gatoRepo.save(oGato.get());
             }
         }else{
+            //si el padrino ya es padrino
             Padrino padrino=oPadri.get();
             cuota.setPadrino(padrino);
-            //oGato.get().setPadrino(padrino);
-            //this.gatoRepo.save(oGato.get());
+            //si el padrino no es de este gato
+            if(!padrino.getListaGatos().contains(oGato.get())){
+                oGato.get().setPadrino(padrino);
+                this.gatoRepo.save(oGato.get());
+            }
         }
         LocalDate fecha=LocalDate.now();
-        cuota.setFechaPago(fecha);
-        Cuota nueva=this.repo.save(cuota);
-        String response;
-        try{
-            response=this.MPservice.crearPreferencia(nueva);
-        } catch (MPException | MPApiException e) {
-            throw new RuntimeException(e);
-        }
-        return response;
+        cuota.setFechaCreacion(fecha);
+        return this.repo.save(cuota);
     }
 
     @Override
     @Transactional
-    public Cuota modiCuota(String preferenciaId) {
+    public Cuota pagoCuotaAprobado(String preferenciaId) {
         Cuota cuota=this.repo.findByPreferencia_id(preferenciaId);
-        cuota.setPagada(true);
+        LocalDate actual=LocalDate.now();
+        cuota.setFechaPago(actual);
+        cuota.setEstadoPago(EstadoPago.APROBADO);
+        Cuota modi=this.repo.save(cuota);
+        return modi;
+    }
+
+    @Override
+    public Cuota pagoCuotaRechazado(String preferenciaId) {
+        Cuota cuota=this.repo.findByPreferencia_id(preferenciaId);
+        cuota.setEstadoPago(EstadoPago.RECHAZADO);
         Cuota modi=this.repo.save(cuota);
         return modi;
     }
