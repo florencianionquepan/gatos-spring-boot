@@ -1,9 +1,6 @@
 package com.example.gatosspringboot.dto.mapper;
 
-import com.example.gatosspringboot.dto.GatoDTO;
-import com.example.gatosspringboot.dto.GatoRespDTO;
-import com.example.gatosspringboot.dto.PersonaEmailDTO;
-import com.example.gatosspringboot.dto.SolicitudReqDTO;
+import com.example.gatosspringboot.dto.*;
 import com.example.gatosspringboot.model.*;
 import org.springframework.stereotype.Component;
 
@@ -85,8 +82,12 @@ public class GatoMapper implements IGatoMapper{
             dto.setSolicitudes(this.mapSoliToDto(entity.getSolicitudesAdopcion()));
         }
         if(entity.getPadrino()!=null){
-            //falta mapper de padrino
-            //dto.setPadrino(entity.getPadrino());
+            //luego ver que otros datos necesito...
+            Persona perso=entity.getPadrino().getPersona();
+            PadrinoDTO dtoPad=new PadrinoDTO();
+            dtoPad.setNombre(perso.getNombre());
+            dtoPad.setDni(perso.getDni());
+            dto.setPadrino(dtoPad);
         }
         //aca le paso el ultimo
         if(entity.getTransitos()!=null && !entity.getTransitos().isEmpty()){

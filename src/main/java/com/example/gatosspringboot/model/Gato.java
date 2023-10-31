@@ -71,6 +71,7 @@ public class Gato implements Serializable {
                 ", nombre='" + nombre + '\'' +
                 ", adoptadoFecha=" + adoptadoFecha +
                 ", fotos="+ fotos +
+                ", padrino="+ padrino +
                 '}';
     }
 }

@@ -27,7 +27,7 @@ public class Padrino implements Serializable {
     @NotNull
     private Persona persona;
 
-    @OneToMany(mappedBy = "padrino", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "padrino", fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value={"padrino","solicitudesAdopcion"})
     private List<Gato> listaGatos;
 
@@ -35,4 +35,11 @@ public class Padrino implements Serializable {
     @JsonIgnoreProperties(value="padrino")
     private List<Cuota> listaCuotas;
 
+    @Override
+    public String toString() {
+        return "Padrino{" +
+                "id=" + id +
+                ", persona=" + persona +
+                '}';
+    }
 }

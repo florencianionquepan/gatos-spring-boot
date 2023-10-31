@@ -1,6 +1,5 @@
 package com.example.gatosspringboot.dto;
 
-import com.example.gatosspringboot.model.Padrino;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
