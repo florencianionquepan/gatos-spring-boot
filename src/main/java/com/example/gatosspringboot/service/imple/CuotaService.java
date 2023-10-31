@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,6 +45,16 @@ public class CuotaService implements ICuotaService {
         this.padriRepo = padriRepo;
         this.padriService = padriService;
         MPservice = mPservice;
+    }
+
+    @Override
+    public List<Cuota> listarByPadrino(String email) {
+        Optional<Padrino> oPadri=this.padriRepo.buscarByEmail(email);
+        if(oPadri.isEmpty()){
+            throw new NonExistingException(
+                    String.format("El padrino con email %s no existe",email));
+        }
+        return this.repo.listarByPadrino(email);
     }
 
     @Override
