@@ -60,8 +60,8 @@ public class Gato implements Serializable {
 
     private double montoMensual;
 
-    @OneToMany(mappedBy = "gato", fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
-    @JsonIgnoreProperties(value="gato")
+    @OneToMany(mappedBy = "gato",fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties(value={"gato","padrino"})
     private List<Cuota> cuotas;
 
     @Override
