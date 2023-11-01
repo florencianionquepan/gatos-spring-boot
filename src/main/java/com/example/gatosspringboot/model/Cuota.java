@@ -27,8 +27,8 @@ public class Cuota implements Serializable {
     private EstadoPago estadoPago=EstadoPago.PENDIENTE;
 
     @ManyToOne
-    @JoinColumn(name="padrino_dni")
-    @JsonIgnoreProperties(value="listaCuotas")
+    @JoinColumn(name="padrino_id")
+    @JsonIgnoreProperties(value={"listaCuotas","gato"})
     private Padrino padrino;
 
     @ManyToOne
