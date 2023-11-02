@@ -126,10 +126,6 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>2.15.2</version>
 		</dependency>
-
-
-
-
 	</dependencies>
 
 	<build>
@@ -137,6 +133,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.1.0</version>
 				<configuration>
 					<excludes>
 						<exclude>
