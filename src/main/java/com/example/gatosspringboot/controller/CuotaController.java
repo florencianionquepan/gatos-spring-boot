@@ -58,7 +58,7 @@ public class CuotaController {
         return this.successResponse(response);
     }
 
-    @GetMapping("/pendiente/{id}")
+    @GetMapping("/pendiente/{idCuota}")
     public ResponseEntity<?> realizarPagoPendiente(@PathVariable Long idCuota){
         String response=this.service.creacionPreferencia(idCuota);
         return this.successResponse(response);
