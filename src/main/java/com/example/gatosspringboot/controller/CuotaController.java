@@ -3,7 +3,6 @@ package com.example.gatosspringboot.controller;
 import com.example.gatosspringboot.dto.CuotaDTO;
 import com.example.gatosspringboot.dto.mapper.ICuotaMapper;
 import com.example.gatosspringboot.model.Cuota;
-import com.example.gatosspringboot.model.Padrino;
 import com.example.gatosspringboot.service.imple.MercadoPagoService;
 import com.example.gatosspringboot.service.interfaces.ICuotaService;
 import com.mercadopago.exceptions.MPException;
@@ -16,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,20 +39,29 @@ public class CuotaController {
         return ResponseEntity.ok(mensajeBody);
     }
 
-    @GetMapping
-    public ResponseEntity<?> verByPadrino(Padrino padrino){
-        return null;
+    @GetMapping("/padrino/{email}")
+    public ResponseEntity<?> verByPadrino(@PathVariable String email){
+        List<Cuota> cuotas=this.service.listarByPadrino(email);
+        return this.successResponse(cuotas);
     }
 
     @PostMapping
     public ResponseEntity<?> crearCuotaPrimeraVez(@RequestBody CuotaDTO cuota){
-        String response=this.service.creacionPreferencia(this.mapper.mapToEntity(cuota));
+        String response=this.service.creacionPreferenciaPrimeraCuota(this.mapper.mapToEntity(cuota));
         return this.successResponse(response);
     }
 
     @GetMapping("/preferencia/{id}")
-    public RedirectView realizarPago(@PathVariable String id){
-        return new RedirectView("https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id="+id);
+    public ResponseEntity<?> realizarPagoRechazadoDesconocido(@PathVariable String id){
+        String response="https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id="+id;
+        logger.info(response);
+        return this.successResponse(response);
+    }
+
+    @GetMapping("/pendiente/{id}")
+    public ResponseEntity<?> realizarPagoPendiente(@PathVariable Long idCuota){
+        String response=this.service.creacionPreferencia(idCuota);
+        return this.successResponse(response);
     }
 
     @GetMapping("/generic")
