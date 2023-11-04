@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CuotaService implements ICuotaService {
@@ -54,7 +56,47 @@ public class CuotaService implements ICuotaService {
             throw new NonExistingException(
                     String.format("El padrino con email %s no existe",email));
         }
-        return this.repo.listarByPadrino(email);
+        List<Cuota> cuotas=this.repo.listarByPadrino(email);
+        //chequear  estado aprobado (fecha de esas cuotas) y ver si hay que crear nuevas
+        List<Cuota> cuotasTotales=this.actualizarCuotas(cuotas, oPadri.get());
+        return cuotasTotales;
+    }
+
+    private List<Cuota> actualizarCuotas(List<Cuota> cuotas, Padrino padri) {
+        List<Gato> gatosPadrino= padri.getListaGatos();
+        LocalDate fechaActual = LocalDate.now();
+        Map<Long, Cuota> cuotasFiltradasMap = cuotas.stream()
+                //revisar si es parte del listado de gatos de padrino
+                .filter(cuota->gatosPadrino.stream().anyMatch(gato -> gato.getId() ==cuota.getGato().getId()))
+                //solo busco en cuotas aprobadas
+                .filter(cuota -> cuota.getEstadoPago().equals(EstadoPago.APROBADO))
+                //si hay de mismos gatos, solo devolveme la ultima!
+                .collect(Collectors.toMap(
+                        cuota -> cuota.getGato().getId(),
+                        cuota -> cuota,
+                        (existing, replacement) -> existing.getFechaCreacion().isAfter(replacement.getFechaCreacion()) ? existing : replacement
+                ));
+        //una vez que obtuve la ultima cuota del gato, ahi chequeo si es de otro mes distinto...
+        List<Cuota> cuotasFiltradas = cuotasFiltradasMap.values().stream()
+                .filter(cuota -> cuota.getFechaCreacion().getMonth() != fechaActual.getMonth())
+                .collect(Collectors.toList());
+
+        if(!cuotasFiltradas.isEmpty()){
+            cuotasFiltradas.forEach(cuota->{
+                Cuota nueva=new Cuota();
+                Gato gatodb=this.findGatoByIdOrException(cuota.getGato());
+                nueva.setGato(gatodb);
+                nueva.setPadrino(padri);
+                LocalDate fecha=LocalDate.now();
+                nueva.setFechaCreacion(fecha);
+                nueva.setEstadoPago(EstadoPago.PENDIENTE);
+                //actualizo monto de cuota al del gato
+                nueva.setMontoMensual(gatodb.getMontoMensual());
+                Cuota nuevaGuardada=this.repo.save(cuota);
+                cuotas.add(nueva);
+            });
+        }
+        return cuotas;
     }
 
     @Override
@@ -70,15 +112,10 @@ public class CuotaService implements ICuotaService {
     }
 
     @Override
-    //este metodo se va a ejecutar cuando pasen 30 dias de cuota aprobada tambien
+    //este metodo se va a ejecutar cuando pasen 30 dias de cuota aprobada tambien? no al final no.
     public Cuota creacionCuota(Cuota cuota) {
-        Optional<Gato> oGato=this.gatoRepo.findById(cuota.getGato().getId());
-        if(oGato.isEmpty()){
-            throw new PersonNotFound(
-                    String.format("El gato con id %d no existe",cuota.getGato().getId())
-            );
-        }
-        cuota.setGato(oGato.get());
+        Gato gatodb=this.findGatoByIdOrException(cuota.getGato());
+        cuota.setGato(gatodb);
         Optional<Padrino> oPadri=this.padriRepo.buscarByEmail(cuota.getPadrino().getPersona().getEmail());
         if(oPadri.isEmpty()){
             Optional<Persona> oPerso=this.persoRepo.findByEmail(cuota.getPadrino().getPersona().getEmail());
@@ -90,22 +127,34 @@ public class CuotaService implements ICuotaService {
                 Padrino padrino = this.padriRepo.save(nuevo);
                 cuota.setPadrino(padrino);
                 //le seteamos al gato el padrino nuevo:
-                oGato.get().setPadrino(padrino);
-                this.gatoRepo.save(oGato.get());
+                gatodb.setPadrino(padrino);
+                this.gatoRepo.save(gatodb);
             }
         }else{
             //si el padrino ya es padrino
             Padrino padrino=oPadri.get();
             cuota.setPadrino(padrino);
             //si el padrino no es de este gato
-            if(!padrino.getListaGatos().contains(oGato.get())){
-                oGato.get().setPadrino(padrino);
-                this.gatoRepo.save(oGato.get());
+            if(!padrino.getListaGatos().contains(gatodb)){
+                gatodb.setPadrino(padrino);
+                this.gatoRepo.save(gatodb);
             }
         }
         LocalDate fecha=LocalDate.now();
         cuota.setFechaCreacion(fecha);
+        cuota.setEstadoPago(EstadoPago.PENDIENTE);
         return this.repo.save(cuota);
+    }
+
+    //este es el gato que viene en cuota
+    private Gato findGatoByIdOrException(Gato objeto){
+        Optional<Gato> oGato=this.gatoRepo.findById(objeto.getId());
+        if(oGato.isEmpty()){
+            throw new PersonNotFound(
+                    String.format("El gato con id %d no existe",objeto.getId())
+            );
+        }
+        return oGato.get();
     }
 
     @Override
