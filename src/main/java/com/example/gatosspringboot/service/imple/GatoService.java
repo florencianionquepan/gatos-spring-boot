@@ -197,6 +197,8 @@ public class GatoService implements IGatoService {
         //notificarPadrino y transito
         if(gati.getPadrino()!=null){
             //this.padrinoservice.notificarAdopcion...
+            //hago esto para que ya no sea parte del listado de padrino, por la renovacion de cuotas
+            gati.setPadrino(null);
         }
         if(gati.getTransitos()!=null && !gati.getTransitos().isEmpty()){
             List<Transito> transitos=gati.getTransitos().stream()
