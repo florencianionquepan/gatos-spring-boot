@@ -100,7 +100,7 @@ public class CuotaService implements ICuotaService {
     }
 
     @Override
-    public String creacionPreferencia(Cuota cuota) {
+    public String creacionPreferenciaPrimeraCuota(Cuota cuota) {
         Cuota nueva=this.creacionCuota(cuota);
         String response;
         try{
@@ -144,6 +144,23 @@ public class CuotaService implements ICuotaService {
         cuota.setFechaCreacion(fecha);
         cuota.setEstadoPago(EstadoPago.PENDIENTE);
         return this.repo.save(cuota);
+    }
+
+    @Override
+    public String creacionPreferencia(Long idCuota) {
+        Optional<Cuota> oCuota=this.repo.findById(idCuota);
+        if(oCuota.isEmpty()){
+            throw new NonExistingException(
+                    String.format("La cuota con id %d no existe",idCuota)
+            );
+        }
+        String response="";
+        try{
+            response=this.MPservice.crearPreferencia(oCuota.get());
+        } catch (MPException | MPApiException e) {
+            throw new RuntimeException(e);
+        }
+        return response;
     }
 
     //este es el gato que viene en cuota
