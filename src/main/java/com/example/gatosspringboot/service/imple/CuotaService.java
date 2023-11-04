@@ -18,10 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,24 +62,30 @@ public class CuotaService implements ICuotaService {
     private List<Cuota> actualizarCuotas(List<Cuota> cuotas, Padrino padri) {
         List<Gato> gatosPadrino= padri.getListaGatos();
         LocalDate fechaActual = LocalDate.now();
-        Map<Long, Cuota> cuotasFiltradasMap = cuotas.stream()
+        List<Cuota> cuotasFiltradas1 = cuotas.stream()
                 //revisar si es parte del listado de gatos de padrino
                 .filter(cuota->gatosPadrino.stream().anyMatch(gato -> gato.getId() ==cuota.getGato().getId()))
-                //solo busco en cuotas aprobadas
-                .filter(cuota -> cuota.getEstadoPago().equals(EstadoPago.APROBADO))
-                //si hay de mismos gatos, solo devolveme la ultima!
-                .collect(Collectors.toMap(
-                        cuota -> cuota.getGato().getId(),
-                        cuota -> cuota,
-                        (existing, replacement) -> existing.getFechaCreacion().isAfter(replacement.getFechaCreacion()) ? existing : replacement
-                ));
+                .collect(Collectors.toList());
+        //si hay de mismos gatos, solo devolveme la ultima!;
+        List<Cuota> cuotasFiltradas2=new ArrayList<>();
+        Map<Long,Cuota> mapCuotas=new HashMap<>();
+        for(Cuota cuota:cuotasFiltradas1){
+            if(!mapCuotas.containsKey(cuota.getGato().getId())
+                    || mapCuotas.containsKey(cuota.getGato().getId()) && cuota.getFechaCreacion().isAfter(mapCuotas.get(cuota.getGato().getId()).getFechaCreacion())){
+                    mapCuotas.put(cuota.getGato().getId(),cuota);
+            }
+        }
+        for(Map.Entry<Long,Cuota> entry:mapCuotas.entrySet()){
+            cuotasFiltradas2.add(entry.getValue());
+        }
+
         //una vez que obtuve la ultima cuota del gato, ahi chequeo si es de otro mes distinto...
-        List<Cuota> cuotasFiltradas = cuotasFiltradasMap.values().stream()
+        List<Cuota> cuotasFiltradasFinales = cuotasFiltradas2.stream()
                 .filter(cuota -> cuota.getFechaCreacion().getMonth() != fechaActual.getMonth())
                 .collect(Collectors.toList());
 
-        if(!cuotasFiltradas.isEmpty()){
-            cuotasFiltradas.forEach(cuota->{
+        if(!cuotasFiltradasFinales.isEmpty()){
+            cuotasFiltradasFinales.forEach(cuota->{
                 Cuota nueva=new Cuota();
                 Gato gatodb=this.findGatoByIdOrException(cuota.getGato());
                 nueva.setGato(gatodb);
@@ -92,8 +95,8 @@ public class CuotaService implements ICuotaService {
                 nueva.setEstadoPago(EstadoPago.PENDIENTE);
                 //actualizo monto de cuota al del gato
                 nueva.setMontoMensual(gatodb.getMontoMensual());
-                Cuota nuevaGuardada=this.repo.save(cuota);
-                cuotas.add(nueva);
+                Cuota nuevaGuardada=this.repo.save(nueva);
+                cuotas.add(nuevaGuardada);
             });
         }
         return cuotas;

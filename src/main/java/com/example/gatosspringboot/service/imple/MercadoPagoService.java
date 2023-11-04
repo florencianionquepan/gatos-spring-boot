@@ -30,11 +30,6 @@ public class MercadoPagoService implements IMercadoPagoService {
     }
 
     @Override
-    public void crearPago(Cuota cuota) throws MPException, MPApiException {
-
-    }
-
-    @Override
     public String crearPreferencia(Cuota cuota) throws MPException, MPApiException {
         LocalDate fecha=LocalDate.now();
         PreferenceItemRequest itemRequest =
@@ -50,7 +45,6 @@ public class MercadoPagoService implements IMercadoPagoService {
                         .build();
         List<PreferenceItemRequest> items = new ArrayList<>();
         items.add(itemRequest);
-
 
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(items)
