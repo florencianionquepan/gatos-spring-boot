@@ -1,9 +1,8 @@
 package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.NonExistingException;
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Notificacion;
-import com.example.gatosspringboot.model.Padrino;
+import com.example.gatosspringboot.model.*;
+import com.example.gatosspringboot.repository.database.CuotaRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
 import com.example.gatosspringboot.repository.database.PadrinoRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
@@ -11,7 +10,9 @@ import com.example.gatosspringboot.service.interfaces.INotificacionService;
 import com.example.gatosspringboot.service.interfaces.IPadrinoService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PadrinoService implements IPadrinoService {
@@ -20,15 +21,18 @@ public class PadrinoService implements IPadrinoService {
     private final INotificacionService notiService;
     private final IEmailService emailService;
     private final GatoRepository gatoRepo;
+    private final CuotaRepository cuotaRepo;
 
     public PadrinoService(PadrinoRepository repo,
                           INotificacionService notiService,
                           IEmailService emailService,
-                          GatoRepository gatoRepo) {
+                          GatoRepository gatoRepo,
+                          CuotaRepository cuotaRepo) {
         this.repo = repo;
         this.notiService = notiService;
         this.emailService = emailService;
         this.gatoRepo = gatoRepo;
+        this.cuotaRepo = cuotaRepo;
     }
 
     @Override
@@ -60,6 +64,19 @@ public class PadrinoService implements IPadrinoService {
         oGato.get().setPadrino(null);
         this.gatoRepo.save(oGato.get());
         padri.getListaGatos().remove(oGato.get());
+        //las cuotas de ese gatito que no estaban aprobadas cerrarlas
+        this.cerrarCuotasGatoNoAprobadas(padri,gato);
         return this.repo.save(padri);
+    }
+
+    private void cerrarCuotasGatoNoAprobadas(Padrino padri, Gato gato) {
+        List<Cuota> cuotas=padri.getListaCuotas().stream()
+                .filter(cuota-> cuota.getGato().getId()==gato.getId())
+                .filter(cuota->cuota.getEstadoPago()!= EstadoPago.APROBADO)
+                .collect(Collectors.toList());
+        for(Cuota cuota:cuotas){
+            cuota.setEstadoPago(EstadoPago.CENCELADO);
+            this.cuotaRepo.save(cuota);
+        }
     }
 }
