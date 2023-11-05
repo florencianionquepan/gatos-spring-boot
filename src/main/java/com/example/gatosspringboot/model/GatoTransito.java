@@ -28,4 +28,9 @@ public class GatoTransito {
     private Transito transito;
 
     private LocalDate fechaAsociacion;
+
+    @PrePersist
+    public void prePersist() {
+        fechaAsociacion = LocalDate.now();
+    }
 }
