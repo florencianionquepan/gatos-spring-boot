@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,18 +75,17 @@ public class TransitoService implements ITransitoService {
     }
 
     @Override
-    public Transito addGato(Gato gato, Transito transito) {
-        List<GatoTransito> gatos=transito.getListaGatos();
-        LocalDate fecha=LocalDate.now();
-        GatoTransito asociacion=new GatoTransito(0L,gato,transito,fecha);
+    public Transito addGato(GatoTransito asociacion) {
+        Transito nuevoTran=asociacion.getTransito();
+        List<GatoTransito> gatos=nuevoTran.getAsignacionesGatos();
         gatos.add(asociacion);
-        transito.setListaGatos(gatos);
-        this.notiSer.asignacionTransito(gato, transito);
-        return this.repo.save(transito);
+        nuevoTran.setAsignacionesGatos(gatos);
+        this.notiSer.asignacionTransito(asociacion.getGato(),nuevoTran);
+        return this.repo.save(nuevoTran);
     }
 
     @Override
-    public Transito removeGato(Gato gato, Transito anterior) {
+    public Transito notificarTransitoAnterior(Gato gato, Transito anterior) {
 //        List<Gato> gatos=anterior.getListaGatos();
 //        //aca ver si cambia de transito se lo saco de su listado??
 //        gatos.remove(gato);
@@ -97,16 +97,20 @@ public class TransitoService implements ITransitoService {
     }
 
     @Override
-    public List<Gato> listarGatos(String email) {
+    public HashMap<LocalDate,Gato> listarAsignacionesGatos(String email) {
         Optional<Transito> oTran=this.repo.findByEmail(email);
         if(oTran.isEmpty()){
             throw new NonExistingException(
                     String.format("El usuario con email %s no existe",email)
             );
         }
-        return oTran.get().getListaGatos().stream()
-                .map(GatoTransito::getGato)
-                .collect(Collectors.toList());
+        return oTran.get().getAsignacionesGatos().stream()
+                .collect(Collectors.toMap(
+                        GatoTransito::getFechaAsociacion, // Clave del mapa: Fecha de asociación
+                        GatoTransito::getGato,           // Valor del mapa: Gato asignado
+                        (existing, replacement) -> existing, // En caso de claves duplicadas, mantener el valor existente
+                        HashMap::new                      // Tipo de mapa a utilizar
+                ));
     }
 
     @Override
