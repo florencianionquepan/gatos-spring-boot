@@ -214,6 +214,7 @@ public class GatoService implements IGatoService {
     }
 
     @Override
+    //tambien se chequea sino fue adoptado
     public Gato buscarDisponibleById(Long id) {
         Optional<Gato> oGato=this.gatoRepo.findById(id);
         if(oGato.isEmpty()){

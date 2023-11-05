@@ -4,6 +4,7 @@ import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.*;
+import com.example.gatosspringboot.repository.database.GatoTransitoRepository;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.TransitoRepository;
 import com.example.gatosspringboot.service.interfaces.*;
@@ -25,19 +26,22 @@ public class TransitoService implements ITransitoService {
     public final IUsuarioService userService;
     private final INotificacionService notiSer;
     private final IEmailService emailSer;
+    private final GatoTransitoRepository asignacionRepo;
 
     public TransitoService(TransitoRepository repo,
                            PersonaRepository persoRepo,
                            IPersonaService persoService,
                            IUsuarioService userService,
                            INotificacionService notiSer,
-                           IEmailService emailSer) {
+                           IEmailService emailSer,
+                           GatoTransitoRepository asignacionRepo) {
         this.repo = repo;
         this.persoRepo = persoRepo;
         this.persoService = persoService;
         this.userService = userService;
         this.notiSer = notiSer;
         this.emailSer = emailSer;
+        this.asignacionRepo = asignacionRepo;
     }
 
     @Override
@@ -86,35 +90,31 @@ public class TransitoService implements ITransitoService {
 
     @Override
     public Transito notificarTransitoAnterior(Gato gato, Transito anterior) {
-//        List<Gato> gatos=anterior.getListaGatos();
-//        //aca ver si cambia de transito se lo saco de su listado??
-//        gatos.remove(gato);
-//        anterior.setListaGatos(gatos);
-//        this.notiSer.desasignacionTransito(gato, anterior);
-//        return this.repo.save(anterior);
+        GatoTransito asign=this.asignacionRepo.findByGatoAndTransito(gato,anterior);
+        LocalDate actual=LocalDate.now();
+        asign.setFechaFin(actual);
+        this.asignacionRepo.save(asign);
         this.notiSer.desasignacionTransito(gato, anterior);
         return null;
     }
 
     @Override
-    public HashMap<LocalDate,Gato> listarAsignacionesGatos(String email) {
+    public List<GatoTransito> listarAsignacionesGatos(String email) {
         Optional<Transito> oTran=this.repo.findByEmail(email);
         if(oTran.isEmpty()){
             throw new NonExistingException(
                     String.format("El usuario con email %s no existe",email)
             );
         }
-        return oTran.get().getAsignacionesGatos().stream()
-                .collect(Collectors.toMap(
-                        GatoTransito::getFechaAsociacion, // Clave del mapa: Fecha de asociación
-                        GatoTransito::getGato,           // Valor del mapa: Gato asignado
-                        (existing, replacement) -> existing, // En caso de claves duplicadas, mantener el valor existente
-                        HashMap::new                      // Tipo de mapa a utilizar
-                ));
+        return this.asignacionRepo.findByTransito(oTran.get());
     }
 
     @Override
     public void notificarAdopcion(Transito transito, Gato gato) {
+        GatoTransito asignacion=this.asignacionRepo.findByGatoAndTransito(gato,transito);
+        LocalDate fechaFin=LocalDate.now();
+        asignacion.setFechaFin(fechaFin);
+        this.asignacionRepo.save(asignacion);
         Notificacion noti=this.notiSer.notificarAdopcion(transito,gato);
         String subject=gato.getNombre()+" fue adoptado!";
         this.emailSer.armarEnviarEmail(transito.getPersona().getEmail(),subject,noti.getDescripcion());
