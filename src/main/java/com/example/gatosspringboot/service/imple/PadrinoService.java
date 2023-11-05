@@ -10,6 +10,7 @@ import com.example.gatosspringboot.service.interfaces.INotificacionService;
 import com.example.gatosspringboot.service.interfaces.IPadrinoService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,6 +68,26 @@ public class PadrinoService implements IPadrinoService {
         //las cuotas de ese gatito que no estaban aprobadas cerrarlas
         this.cerrarCuotasGatoNoAprobadas(padri,gato);
         return this.repo.save(padri);
+    }
+
+    @Override
+    public Padrino revisarCuotasImpagas(Long id) {
+        Optional<Padrino> oPadri=this.repo.findById(id);
+        if(oPadri.isEmpty()){
+            throw new NonExistingException("El padrino no existe");
+        }
+        Padrino padrino=oPadri.get();
+        LocalDate actual=LocalDate.now();
+        List<Cuota> cuotasImpagas = padrino.getListaCuotas().stream()
+                .filter(cuota -> cuota.getEstadoPago() == EstadoPago.RECHAZADO || cuota.getEstadoPago() == EstadoPago.DESCONOCIDO || cuota.getEstadoPago() == EstadoPago.PENDIENTE)
+                .filter(cuota -> cuota.getEstadoPago() == EstadoPago.PENDIENTE ? cuota.getFechaCreacion().isBefore(actual.minusDays(10)) : cuota.getFechaCreacion().isBefore(actual.minusDays(7)))
+                .collect(Collectors.toList());
+        if(!cuotasImpagas.isEmpty()){
+            cuotasImpagas.forEach(cuota->{
+                this.removerGato(oPadri.get().getPersona().getEmail(), cuota.getGato());
+            });
+        }
+        return padrino;
     }
 
     private void cerrarCuotasGatoNoAprobadas(Padrino padri, Gato gato) {
