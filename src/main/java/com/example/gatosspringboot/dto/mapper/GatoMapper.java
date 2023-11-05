@@ -85,13 +85,14 @@ public class GatoMapper implements IGatoMapper{
             //luego ver que otros datos necesito...
             Persona perso=entity.getPadrino().getPersona();
             PadrinoDTO dtoPad=new PadrinoDTO();
+            dtoPad.setId(entity.getPadrino().getId());
             dtoPad.setNombre(perso.getNombre());
             dtoPad.setDni(perso.getDni());
             dto.setPadrino(dtoPad);
         }
         //aca le paso el ultimo
-        if(entity.getTransitos()!=null && !entity.getTransitos().isEmpty()){
-            List<Transito> transitos=entity.getTransitos().stream()
+        if(entity.getAsignacionesTransitos()!=null && !entity.getAsignacionesTransitos().isEmpty()){
+            List<Transito> transitos=entity.getAsignacionesTransitos().stream()
                     .map(GatoTransito::getTransito)
                     .collect(Collectors.toList());
             Transito ultimo=transitos.get(transitos.size()-1);

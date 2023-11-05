@@ -28,8 +28,8 @@ public class TransitoMapper implements ITransitoMapper{
         dto.setDire(perso.getDire());
         dto.setLocalidad(perso.getLocalidad());
         List<GatoDTO> gatos=new ArrayList<>();
-        if(entity.getListaGatos() != null && !entity.getListaGatos().isEmpty()){
-            List<Gato> gatitos=entity.getListaGatos().stream()
+        if(entity.getAsignacionesGatos() != null && !entity.getAsignacionesGatos().isEmpty()){
+            List<Gato> gatitos=entity.getAsignacionesGatos().stream()
                     .map(GatoTransito::getGato)
                     .collect(Collectors.toList());
             List<GatoDTO> gatosdto = gatitos.stream()
