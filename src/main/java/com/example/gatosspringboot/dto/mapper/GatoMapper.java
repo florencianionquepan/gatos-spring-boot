@@ -104,6 +104,40 @@ public class GatoMapper implements IGatoMapper{
     }
 
     @Override
+    public GatoDTO mapToDtoSimple(Gato entity) {
+        GatoDTO dto=new GatoDTO();
+        dto.setId(entity.getId());
+        dto.setNombre(entity.getNombre());
+        if(entity.getFotos().size()>0){
+            List<String> urls = entity.getFotos()
+                    .stream()
+                    .map(foto -> foto.getFotoUrl())
+                    .collect(Collectors.toList());
+            dto.setFotos(urls);
+        }
+        dto.setEdad(entity.getEdad());
+        dto.setSexo(entity.getSexo());
+        dto.setDescripcion(entity.getDescripcion());
+        dto.setColor(entity.getColor());
+        dto.setTipoPelo(entity.getTipoPelo());
+        dto.setMontoMensual(entity.getMontoMensual());
+        dto.setFichaDTO(this.fichaMap.mapToDto(entity.getFichaVet()));
+        if(entity.getSolicitudesAdopcion()!=null){
+            dto.setSolicitudes(this.mapSoliToDto(entity.getSolicitudesAdopcion()));
+        }
+        if(entity.getPadrino()!=null){
+            Padrino dtoPad=new Padrino();
+            Persona perso=new Persona();
+            perso.setNombre(entity.getPadrino().getPersona().getNombre());
+            perso.setDni(entity.getPadrino().getPersona().getDni());
+            dtoPad.setPersona(perso);
+            dto.setPadrino(dtoPad);
+        }
+        dto.setAdoptado(entity.getAdoptadoFecha());
+        return dto;
+    }
+
+    @Override
     public List<GatoRespDTO> mapListToDto(List<Gato> entities) {
         return entities.stream()
                 .map(this::mapToDto)
