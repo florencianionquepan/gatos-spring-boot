@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,13 +22,16 @@ public class GatoTransito {
 
     @ManyToOne
     @JoinColumn(name = "gato_id")
+    @JsonIgnoreProperties(value="asignacionesTransitos")
     private Gato gato;
 
     @ManyToOne
     @JoinColumn(name = "transito_id")
+    @JsonIgnoreProperties(value="asignacionesGatos")
     private Transito transito;
 
     private LocalDate fechaAsociacion;
+    private LocalDate fechaFin;
 
     @PrePersist
     public void prePersist() {
