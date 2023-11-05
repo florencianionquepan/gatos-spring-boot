@@ -6,6 +6,7 @@ import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.FotoRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
+import com.example.gatosspringboot.repository.database.GatoTransitoRepository;
 import com.example.gatosspringboot.service.interfaces.*;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public class GatoService implements IGatoService {
     private final ITransitoService tranSer;
     private final ICloudinaryService cloudService;
     private final FotoRepository fotoRepo;
+    private final GatoTransitoRepository asociacionRepo;
 
     private Logger logger= LoggerFactory.getLogger(GatoService.class);
 
@@ -36,13 +38,15 @@ public class GatoService implements IGatoService {
                        IFichaService fichaService,
                        ITransitoService tranSer,
                        ICloudinaryService cloudService,
-                       FotoRepository fotoRepo) {
+                       FotoRepository fotoRepo,
+                       GatoTransitoRepository asociacionRepo) {
         this.gatoRepo = gatoRepo;
         this.voluService = voluService;
         this.fichaService = fichaService;
         this.tranSer = tranSer;
         this.cloudService = cloudService;
         this.fotoRepo = fotoRepo;
+        this.asociacionRepo = asociacionRepo;
     }
 
     @Override
@@ -107,8 +111,8 @@ public class GatoService implements IGatoService {
         if(gatodb.getFichaVet()!=null){
             gato.setFichaVet(gatodb.getFichaVet());
         }
-        if(gatodb.getTransitos()!=null){
-            gato.setTransitos(gatodb.getTransitos());
+        if(gatodb.getAsignacionesTransitos()!=null){
+            gato.setAsignacionesTransitos(gatodb.getAsignacionesTransitos());
         }
         if(gatodb.getPadrino()!=null){
             gato.setPadrino(gatodb.getPadrino());
@@ -175,7 +179,7 @@ public class GatoService implements IGatoService {
         volGato.setListaGatos(gatitosVol);
     }
 
-    //Para cuando actualizas el voluntario del gato
+    //Para cuando actualizas el voluntario del gato: no lo estoy implementando eso ahora
     private void removeGatoVolViejo(Long id){
         Gato gatoAnte=this.findGatoById(id);
         if(gatoAnte.getVoluntario()!=null){
@@ -200,8 +204,8 @@ public class GatoService implements IGatoService {
             //hago esto para que ya no sea parte del listado de padrino, por la renovacion de cuotas
             gati.setPadrino(null);
         }
-        if(gati.getTransitos()!=null && !gati.getTransitos().isEmpty()){
-            List<Transito> transitos=gati.getTransitos().stream()
+        if(gati.getAsignacionesTransitos()!=null && !gati.getAsignacionesTransitos().isEmpty()){
+            List<Transito> transitos=gati.getAsignacionesTransitos().stream()
                     .map(GatoTransito::getTransito)
                     .collect(Collectors.toList());
             this.tranSer.notificarAdopcion(transitos.get(transitos.size()-1),gati);
@@ -247,23 +251,29 @@ public class GatoService implements IGatoService {
             throw new ExistingException("El gato ya fue adoptado!");
         }
         Transito transitodb=this.tranSer.findByIdOrException(transito.getId());
-        if(gati.getTransitos()!=null && !gati.getTransitos().isEmpty()){
-            if(gati.getTransitos().get(gati.getTransitos().size()-1).getId()== transito.getId()){
+        if(gati.getAsignacionesTransitos()!=null && !gati.getAsignacionesTransitos().isEmpty()){
+            GatoTransito ultimaAsignacion=gati.getAsignacionesTransitos().get(gati.getAsignacionesTransitos().size()-1);
+            Transito ultimoTransito=ultimaAsignacion.getTransito();
+            if(ultimoTransito.getId()==transito.getId()){
                 throw new ExistingException("El gato ya tiene este mismo transito asignado!");
             }else{
                 //avisarle al transito anterior
-                List<Transito> transitos=gati.getTransitos().stream()
+                List<Transito> transitos=gati.getAsignacionesTransitos().stream()
                         .map(GatoTransito::getTransito)
                         .collect(Collectors.toList());
-                Transito anterior=transitos.get(transitos.size()-1);
-                Transito ante=this.tranSer.removeGato(gati,anterior);
+                Transito ultimo=transitos.get(transitos.size()-1);
+                Transito ante=this.tranSer.notificarTransitoAnterior(gati,ultimo);
             }
         }
         //ahora lo agrego a su lista de transitos
-        //List<Transito> transitos=gati.getTransitos();
-        //transitos.add(transitodb);
-        //gati.setTransitos(transitos);
-        Transito tran=this.tranSer.addGato(gati,transitodb);
+        GatoTransito asociacion=new GatoTransito();
+        asociacion.setGato(gati);
+        asociacion.setTransito(transitodb);
+        GatoTransito nueva=this.asociacionRepo.save(asociacion);
+        List<GatoTransito> transitosAsign=gati.getAsignacionesTransitos();
+        transitosAsign.add(nueva);
+        gati.setAsignacionesTransitos(transitosAsign);
+        Transito tran=this.tranSer.addGato(nueva);
         if(gati.getPadrino() !=null){
             //agregar al padrino la creacion de notificaciones
         }
