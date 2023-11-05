@@ -39,4 +39,10 @@ public class PadrinoController {
         Padrino modi=this.service.removerGato(email,this.gatoMapper.mapToEntity(dto));
         return this.successResponse(modi);
     }
+
+    @GetMapping("/{idPadrino}/cuotas")
+    public ResponseEntity<?> revisarCuotas(@PathVariable Long idPadrino){
+        Padrino modi=this.service.revisarCuotasImpagas(idPadrino);
+        return this.successResponse(modi);
+    }
 }
