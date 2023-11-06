@@ -287,6 +287,12 @@ public class GatoService implements IGatoService {
         return gato.getFichaVet();
     }
 
+    @Override
+    public List<GatoTransito> asignaciones(Long idGato) {
+        Gato gato=this.findGatoById(idGato);
+        return this.asociacionRepo.findByGato(gato);
+    }
+
     //or exception
     private Gato findGatoById(Long id){
         Optional<Gato> oGato=this.gatoRepo.findById(id);

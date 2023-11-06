@@ -1,13 +1,11 @@
 package com.example.gatosspringboot.controller;
 
 import com.example.gatosspringboot.dto.*;
-import com.example.gatosspringboot.dto.mapper.IFichaMapper;
-import com.example.gatosspringboot.dto.mapper.IGatoMapper;
-import com.example.gatosspringboot.dto.mapper.ITransitoIdMapper;
-import com.example.gatosspringboot.dto.mapper.IVoluntarioEmailMapper;
+import com.example.gatosspringboot.dto.mapper.*;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Ficha;
 import com.example.gatosspringboot.model.Gato;
+import com.example.gatosspringboot.model.GatoTransito;
 import com.example.gatosspringboot.service.interfaces.IGatoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -39,6 +37,7 @@ public class GatoController {
     private final IFichaMapper fichaMap;
     private final ITransitoIdMapper transitoMap;
     private final IVoluntarioEmailMapper voluMapper;
+    private final IAsignGatoMapper asignMapper;
 
     public Map<String,Object> mensajeBody= new HashMap<>();
     private Logger logger= LoggerFactory.getLogger(GatoController.class);
@@ -47,12 +46,14 @@ public class GatoController {
                           IGatoMapper mapper,
                           IFichaMapper fichaMap,
                           ITransitoIdMapper transitoMap,
-                          IVoluntarioEmailMapper voluMapper) {
+                          IVoluntarioEmailMapper voluMapper,
+                          IAsignGatoMapper asignMapper) {
         this.gatoSer = gatoSer;
         this.mapper = mapper;
         this.fichaMap = fichaMap;
         this.transitoMap = transitoMap;
         this.voluMapper = voluMapper;
+        this.asignMapper = asignMapper;
     }
 
     private ResponseEntity<?> successResponse(Object data){
@@ -193,5 +194,12 @@ public class GatoController {
         Gato modi=this.gatoSer.modiGato(gato,multipartFiles,id);
         GatoRespDTO resp=this.mapper.mapToDto(modi);
         return this.successResponse(resp);
+    }
+
+    @GetMapping("/{id}/transitos")
+    @PreAuthorize("hasRole('VOLUNTARIO')")
+    public ResponseEntity<?> listarTransitosByGato(@PathVariable Long id){
+        List<GatoTransito> asignGato=this.gatoSer.asignaciones(id);
+        return this.successResponse(this.asignMapper.mapToListDtoTransito(asignGato));
     }
 }

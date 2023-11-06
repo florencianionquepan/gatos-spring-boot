@@ -1,9 +1,6 @@
 package com.example.gatosspringboot.service.interfaces;
 
-import com.example.gatosspringboot.model.Ficha;
-import com.example.gatosspringboot.model.Gato;
-import com.example.gatosspringboot.model.Transito;
-import com.example.gatosspringboot.model.Voluntario;
+import com.example.gatosspringboot.model.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -21,4 +18,5 @@ public interface IGatoService {
     Gato agregarFicha(Ficha ficha,MultipartFile file, Long id);
     Gato agregarTransito(Transito transito, Long id);
     Ficha verFichaByGato(Long id);
+    List<GatoTransito> asignaciones(Long idGato);
 }
