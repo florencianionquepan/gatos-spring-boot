@@ -1,9 +1,9 @@
 package com.example.gatosspringboot.controller;
 
-import com.example.gatosspringboot.dto.GatoRespDTO;
+import com.example.gatosspringboot.dto.mapper.IAsignGatoMapper;
 import com.example.gatosspringboot.dto.mapper.IGatoMapper;
 import com.example.gatosspringboot.dto.mapper.ITransitoMapper;
-import com.example.gatosspringboot.model.Gato;
+import com.example.gatosspringboot.model.GatoTransito;
 import com.example.gatosspringboot.model.Transito;
 import com.example.gatosspringboot.service.interfaces.ITransitoService;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +21,17 @@ public class TransitoController {
     private final ITransitoService service;
     private final ITransitoMapper mapper;
     private final IGatoMapper gatoMapper;
+    private final IAsignGatoMapper asignGatoMapper;
     public Map<String,Object> mensajeBody= new HashMap<>();
 
     public TransitoController(ITransitoService service,
                               ITransitoMapper mapper,
-                              IGatoMapper gatoMapper) {
+                              IGatoMapper gatoMapper,
+                              IAsignGatoMapper asignGatoMapper) {
         this.service = service;
         this.mapper = mapper;
         this.gatoMapper = gatoMapper;
+        this.asignGatoMapper = asignGatoMapper;
     }
 
     private ResponseEntity<?> successResponse(Object data){
@@ -54,8 +57,8 @@ public class TransitoController {
     @GetMapping("/{email}/gatos")
     @PreAuthorize("#email==authentication.principal")
     public ResponseEntity<?> verGatos(@PathVariable String email){
-        List<Gato> gatos=this.service.listarGatos(email);
-        return this.successResponse(this.gatoMapper.mapListToDto(gatos));
+        List<GatoTransito> gatos=this.service.listarAsignacionesGatos(email);
+        return this.successResponse(this.asignGatoMapper.mapToListDto(gatos));
     }
 
 }
