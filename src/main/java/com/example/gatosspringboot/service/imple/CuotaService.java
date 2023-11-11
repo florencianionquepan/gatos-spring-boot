@@ -59,6 +59,7 @@ public class CuotaService implements ICuotaService {
         return cuotasTotales;
     }
 
+    //cuando se adopta un gato se elimina su padrino para no seguir actualizando su cuota
     private List<Cuota> actualizarCuotas(List<Cuota> cuotas, Padrino padri) {
         List<Gato> gatosPadrino= padri.getListaGatos();
         LocalDate fechaActual = LocalDate.now();

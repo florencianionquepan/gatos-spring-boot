@@ -1,11 +1,16 @@
 package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.CuotaDTO;
+import com.example.gatosspringboot.dto.CuotaRespDTO;
+import com.example.gatosspringboot.dto.GatoDTO;
 import com.example.gatosspringboot.model.Cuota;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Padrino;
 import com.example.gatosspringboot.model.Persona;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CuotaMapper implements ICuotaMapper{
@@ -24,5 +29,25 @@ public class CuotaMapper implements ICuotaMapper{
         cuota.setGato(gato);
         cuota.setMontoMensual(dto.getGato().getMontoMensual());
         return cuota;
+    }
+
+    @Override
+    public CuotaRespDTO mapToDto(Cuota entity) {
+        CuotaRespDTO dto=new CuotaRespDTO();
+        dto.setId(entity.getId());
+        dto.setFechaCreacion(entity.getFechaCreacion());
+        dto.setFechaPago(entity.getFechaPago());
+        dto.setMontoMensual(entity.getMontoMensual());
+        GatoDTO gatodto=new GatoDTO(entity.getGato().getId(),entity.getGato().getAdoptadoFecha(),entity.getGato().getNombre());
+        dto.setGato(gatodto);
+        dto.setEstadoPago(entity.getEstadoPago());
+        return dto;
+    }
+
+    @Override
+    public List<CuotaRespDTO> mapToListDto(List<Cuota> entities) {
+        return entities.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 }

@@ -57,8 +57,9 @@ public class GatoDTO {
 
     private LocalDate adoptado;
 
-    public GatoDTO(Long id, LocalDate adoptado) {
+    public GatoDTO(Long id, LocalDate adoptado, String nombre) {
         this.id = id;
         this.adoptado = adoptado;
+        this.nombre = nombre;
     }
 }

@@ -30,10 +30,11 @@ public class TransitoMapper implements ITransitoMapper{
         List<GatoDTO> gatos=new ArrayList<>();
         if(entity.getAsignacionesGatos() != null && !entity.getAsignacionesGatos().isEmpty()){
             List<Gato> gatitos=entity.getAsignacionesGatos().stream()
+                    .filter(asign->asign.getFechaFin()==null)
                     .map(GatoTransito::getGato)
                     .collect(Collectors.toList());
             List<GatoDTO> gatosdto = gatitos.stream()
-                    .map(gato -> new GatoDTO(gato.getId(), gato.getAdoptadoFecha()))
+                    .map(gato -> new GatoDTO(gato.getId(), gato.getAdoptadoFecha(),gato.getNombre()))
                     .collect(Collectors.toList());
             dto.setGatos(gatosdto);
         }else{

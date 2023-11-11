@@ -33,6 +33,6 @@ public class Cuota implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "gato_id")
-    @JsonIgnoreProperties(value={"padrino","solicitudesAdopcion","cuotas"})
+    @JsonIgnoreProperties(value={"padrino","solicitudesAdopcion","cuotas","asignacionesTransitos"})
     private Gato gato;
 }

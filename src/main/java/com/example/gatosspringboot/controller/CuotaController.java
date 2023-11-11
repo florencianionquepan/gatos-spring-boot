@@ -42,7 +42,7 @@ public class CuotaController {
     @GetMapping("/padrino/{email}")
     public ResponseEntity<?> verByPadrino(@PathVariable String email){
         List<Cuota> cuotas=this.service.listarByPadrino(email);
-        return this.successResponse(cuotas);
+        return this.successResponse(this.mapper.mapToListDto(cuotas));
     }
 
     @PostMapping
