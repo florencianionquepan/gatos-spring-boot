@@ -86,8 +86,14 @@ public class GatoMapper implements IGatoMapper{
             Persona perso=entity.getPadrino().getPersona();
             PadrinoDTO dtoPad=new PadrinoDTO();
             dtoPad.setId(entity.getPadrino().getId());
-            dtoPad.setNombre(perso.getNombre());
-            dtoPad.setDni(perso.getDni());
+            dtoPad.setNombre(entity.getPadrino().getPersona().getNombre());
+            dtoPad.setApellido(entity.getPadrino().getPersona().getApellido());
+            dtoPad.setDni(entity.getPadrino().getPersona().getDni());
+            dtoPad.setFechaNac(entity.getPadrino().getPersona().getFechaNac());
+            dtoPad.setTel(entity.getPadrino().getPersona().getTel());
+            dtoPad.setDire(entity.getPadrino().getPersona().getDire());
+            dtoPad.setLocalidad(entity.getPadrino().getPersona().getLocalidad());
+            dtoPad.setEmail(entity.getPadrino().getPersona().getEmail());
             dto.setPadrino(dtoPad);
         }
         //aca le paso el ultimo

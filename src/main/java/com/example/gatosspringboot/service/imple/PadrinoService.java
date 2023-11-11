@@ -96,7 +96,7 @@ public class PadrinoService implements IPadrinoService {
                 .filter(cuota->cuota.getEstadoPago()!= EstadoPago.APROBADO)
                 .collect(Collectors.toList());
         for(Cuota cuota:cuotas){
-            cuota.setEstadoPago(EstadoPago.CENCELADO);
+            cuota.setEstadoPago(EstadoPago.CANCELADO);
             this.cuotaRepo.save(cuota);
         }
     }

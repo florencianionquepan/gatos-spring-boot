@@ -17,10 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class JWTGenerationFilter extends OncePerRequestFilter {
 
@@ -41,9 +38,9 @@ public class JWTGenerationFilter extends OncePerRequestFilter {
                     .setExpiration(new Date((new Date()).getTime() + 30000000))
                     .signWith(key).compact();
             response.setHeader(SecurityConstants.JWT_HEADER, jwt);
-            //response.getHeaderNames().forEach(n->
-            //        logger.info("Header {}: {}", n, response.getHeader(n)));
-            //logger.info(" "+authentication);
+//            response.getHeaderNames().forEach(n->
+//                    logger.info("Header {}: {}", n, response.getHeader(n)));
+//            logger.info(" "+authentication);
         }
         filterChain.doFilter(request, response);
     }

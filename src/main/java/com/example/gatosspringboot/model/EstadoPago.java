@@ -5,5 +5,5 @@ public enum EstadoPago {
     APROBADO,
     RECHAZADO,
     DESCONOCIDO,
-    CENCELADO
+    CANCELADO
 }

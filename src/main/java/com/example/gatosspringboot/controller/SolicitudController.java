@@ -9,6 +9,7 @@ import com.example.gatosspringboot.model.SolicitudAdopcion;
 import com.example.gatosspringboot.service.interfaces.ISolicitudService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,15 +70,17 @@ public class SolicitudController {
     }
 
     @GetMapping("/gato/{id}")
+    //agregar permiso
     private ResponseEntity<?> listarByGato(@PathVariable Long id){
         List<SolicitudAdopcion> solicitudes=this.service.verByGato(id);
         List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }
 
-    @GetMapping("/solicitante/{dni}")
-    private ResponseEntity<?> listarBySoli(@PathVariable String dni){
-        List<SolicitudAdopcion> solicitudes=this.service.verBySolicitante(dni);
+    @GetMapping("/solicitante/{email}")
+    //@PreAuthorize("#email==authentication.principal")
+    private ResponseEntity<?> listarBySoli(@PathVariable String email){
+        List<SolicitudAdopcion> solicitudes=this.service.verBySolicitante(email);
         List<SolicitudRespDTO> dtos=this.mapper.mapListToDto(solicitudes);
         return this.successResponse(dtos);
     }

@@ -1,8 +1,11 @@
 package com.example.gatosspringboot.config;
 
+import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Rol;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
