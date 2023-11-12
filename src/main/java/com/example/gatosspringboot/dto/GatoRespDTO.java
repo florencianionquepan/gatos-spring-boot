@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.dto;
 
+import com.example.gatosspringboot.model.Persona;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,4 +37,6 @@ public class GatoRespDTO {
     private TransitoRespDTO transito;
 
     private LocalDate adoptado;
+
+    private PersonaDTO adoptante;
 }

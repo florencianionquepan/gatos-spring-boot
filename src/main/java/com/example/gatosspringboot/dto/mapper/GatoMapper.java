@@ -2,10 +2,14 @@ package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.*;
 import com.example.gatosspringboot.model.*;
+import com.example.gatosspringboot.service.imple.GatoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -16,6 +20,8 @@ public class GatoMapper implements IGatoMapper{
     private final ITransitoMapper transitoMap;
     private final IFichaMapper fichaMap;
     private final IEstadoMapper estadoMapper;
+
+    private Logger logger= LoggerFactory.getLogger(GatoMapper.class);
 
     public GatoMapper(IVoluntarioEmailMapper volMap,
                       IVoluntarioMapper voluMapper,
@@ -106,6 +112,18 @@ public class GatoMapper implements IGatoMapper{
         }
         dto.setVoluntario(this.voluMapper.mapToDto(entity.getVoluntario()));
         dto.setAdoptado(entity.getAdoptadoFecha());
+        if(entity.getAdoptadoFecha()!=null){
+            Optional<SolicitudAdopcion> solicitudAprobada = entity.getSolicitudesAdopcion().stream()
+                    .filter(soli -> soli.getEstados().stream().anyMatch(estado -> estado.getEstado().equals(EstadoNombre.APROBADA)))
+                    .findFirst();
+            if(solicitudAprobada.isPresent()){
+                Persona adoptante=solicitudAprobada.get().getSolicitante();
+                PersonaDTO perso=new PersonaDTO(adoptante.getId(), adoptante.getDni(),
+                        adoptante.getNombre(), adoptante.getApellido(), adoptante.getTel(), adoptante.getEmail(),
+                        adoptante.getFechaNac(), adoptante.getDire(), adoptante.getLocalidad(), null);
+                dto.setAdoptante(perso);
+            }
+        }
         return dto;
     }
 
