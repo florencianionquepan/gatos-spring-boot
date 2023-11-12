@@ -197,7 +197,7 @@ public class GatoController {
     }
 
     @GetMapping("/{id}/transitos")
-    @PreAuthorize("hasRole('VOLUNTARIO')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> listarTransitosByGato(@PathVariable Long id){
         List<GatoTransito> asignGato=this.gatoSer.asignaciones(id);
         return this.successResponse(this.asignMapper.mapToListDtoTransito(asignGato));

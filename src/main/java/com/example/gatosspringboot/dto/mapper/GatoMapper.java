@@ -2,7 +2,6 @@ package com.example.gatosspringboot.dto.mapper;
 
 import com.example.gatosspringboot.dto.*;
 import com.example.gatosspringboot.model.*;
-import com.example.gatosspringboot.service.imple.GatoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,6 +19,7 @@ public class GatoMapper implements IGatoMapper{
     private final ITransitoMapper transitoMap;
     private final IFichaMapper fichaMap;
     private final IEstadoMapper estadoMapper;
+    private final IPadrinoMapper padrinoMapper;
 
     private Logger logger= LoggerFactory.getLogger(GatoMapper.class);
 
@@ -27,12 +27,14 @@ public class GatoMapper implements IGatoMapper{
                       IVoluntarioMapper voluMapper,
                       ITransitoMapper transitoMap,
                       IFichaMapper fichaMap,
-                      IEstadoMapper estadoMapper) {
+                      IEstadoMapper estadoMapper,
+                      IPadrinoMapper padrinoMapper) {
         this.volMap = volMap;
         this.voluMapper = voluMapper;
         this.transitoMap = transitoMap;
         this.fichaMap = fichaMap;
         this.estadoMapper = estadoMapper;
+        this.padrinoMapper = padrinoMapper;
     }
 
 
@@ -49,9 +51,8 @@ public class GatoMapper implements IGatoMapper{
         if(dto.getMontoMensual()!=null){
             gato.setMontoMensual(dto.getMontoMensual());
         }
-        gato.setFichaVet(this.fichaMap.mapToEntity(dto.getFichaDTO()));
+        gato.setFichaVet(this.fichaMap.mapToEntity(dto.getFicha()));
         gato.setVoluntario(this.volMap.mapToEntity(dto.getVoluntario()));
-        gato.setPadrino(dto.getPadrino());
         gato.setAdoptadoFecha(dto.getAdoptado());
         List<Foto> fotos = new ArrayList<>();
         if(dto.getFotos()!=null){
@@ -88,18 +89,8 @@ public class GatoMapper implements IGatoMapper{
             dto.setSolicitudes(this.mapSoliToDto(entity.getSolicitudesAdopcion()));
         }
         if(entity.getPadrino()!=null){
-            //luego ver que otros datos necesito...
             Persona perso=entity.getPadrino().getPersona();
-            PadrinoDTO dtoPad=new PadrinoDTO();
-            dtoPad.setId(entity.getPadrino().getId());
-            dtoPad.setNombre(entity.getPadrino().getPersona().getNombre());
-            dtoPad.setApellido(entity.getPadrino().getPersona().getApellido());
-            dtoPad.setDni(entity.getPadrino().getPersona().getDni());
-            dtoPad.setFechaNac(entity.getPadrino().getPersona().getFechaNac());
-            dtoPad.setTel(entity.getPadrino().getPersona().getTel());
-            dtoPad.setDire(entity.getPadrino().getPersona().getDire());
-            dtoPad.setLocalidad(entity.getPadrino().getPersona().getLocalidad());
-            dtoPad.setEmail(entity.getPadrino().getPersona().getEmail());
+            PadrinoDTO dtoPad=this.padrinoMapper.mapToDto(perso);
             dto.setPadrino(dtoPad);
         }
         //aca le paso el ultimo
@@ -145,16 +136,12 @@ public class GatoMapper implements IGatoMapper{
         dto.setColor(entity.getColor());
         dto.setTipoPelo(entity.getTipoPelo());
         dto.setMontoMensual(entity.getMontoMensual());
-        dto.setFichaDTO(this.fichaMap.mapToDto(entity.getFichaVet()));
+        dto.setFicha(this.fichaMap.mapToDto(entity.getFichaVet()));
         if(entity.getSolicitudesAdopcion()!=null){
             dto.setSolicitudes(this.mapSoliToDto(entity.getSolicitudesAdopcion()));
         }
         if(entity.getPadrino()!=null){
-            Padrino dtoPad=new Padrino();
-            Persona perso=new Persona();
-            perso.setNombre(entity.getPadrino().getPersona().getNombre());
-            perso.setDni(entity.getPadrino().getPersona().getDni());
-            dtoPad.setPersona(perso);
+            PadrinoDTO dtoPad=this.padrinoMapper.mapToDto(entity.getPadrino().getPersona());
             dto.setPadrino(dtoPad);
         }
         dto.setAdoptado(entity.getAdoptadoFecha());

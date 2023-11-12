@@ -30,6 +30,7 @@ public class GatoService implements IGatoService {
     private final ICloudinaryService cloudService;
     private final FotoRepository fotoRepo;
     private final GatoTransitoRepository asociacionRepo;
+    private final IPadrinoService padrinoService;
 
     private Logger logger= LoggerFactory.getLogger(GatoService.class);
 
@@ -39,7 +40,7 @@ public class GatoService implements IGatoService {
                        ITransitoService tranSer,
                        ICloudinaryService cloudService,
                        FotoRepository fotoRepo,
-                       GatoTransitoRepository asociacionRepo) {
+                       GatoTransitoRepository asociacionRepo, IPadrinoService padrinoService) {
         this.gatoRepo = gatoRepo;
         this.voluService = voluService;
         this.fichaService = fichaService;
@@ -47,6 +48,7 @@ public class GatoService implements IGatoService {
         this.cloudService = cloudService;
         this.fotoRepo = fotoRepo;
         this.asociacionRepo = asociacionRepo;
+        this.padrinoService = padrinoService;
     }
 
     @Override
@@ -200,7 +202,7 @@ public class GatoService implements IGatoService {
         gati.setAdoptadoFecha(LocalDate.now());
         //notificarPadrino y transito
         if(gati.getPadrino()!=null){
-            //this.padrinoservice.notificarAdopcion...
+            this.padrinoService.notificarAdopcion(gati.getPadrino(),gati);
             //hago esto para que ya no sea parte del listado de padrino, por la renovacion de cuotas
             gati.setPadrino(null);
         }
@@ -276,7 +278,7 @@ public class GatoService implements IGatoService {
         gati.setAsignacionesTransitos(transitosAsign);
         Transito tran=this.tranSer.addGato(nueva);
         if(gati.getPadrino() !=null){
-            //agregar al padrino la creacion de notificaciones
+            this.padrinoService.notificarTransitoNuevo(gati.getPadrino(),gati);
         }
         return this.gatoRepo.save(gati);
     }

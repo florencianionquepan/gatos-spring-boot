@@ -45,7 +45,7 @@ public class GatoDTO {
     private String tipoPelo;
     private Double montoMensual;
 
-    private FichaDTO fichaDTO;
+    private FichaDTO ficha;
 
     @JsonIgnoreProperties(value="gato")
     private List<SolicitudReqDTO> solicitudes;
@@ -53,7 +53,7 @@ public class GatoDTO {
     @Valid
     private VoluntarioEmailDTO voluntario;
 
-    private Padrino padrino;
+    private PadrinoDTO padrino;
 
     private LocalDate adoptado;
 
