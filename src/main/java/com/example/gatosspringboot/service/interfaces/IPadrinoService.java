@@ -6,6 +6,7 @@ import com.example.gatosspringboot.model.Padrino;
 public interface IPadrinoService {
     Padrino buscarByEmailOrException(String email);
     void notificarAdopcion(Padrino padrino, Gato gato);
+    void notificarTransitoNuevo(Padrino padrino, Gato gato);
     Padrino removerGato(String email, Gato gato);
     Padrino revisarCuotasImpagas(Long id);
 }

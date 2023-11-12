@@ -56,6 +56,11 @@ public class PadrinoService implements IPadrinoService {
     }
 
     @Override
+    public void notificarTransitoNuevo(Padrino padrino, Gato gato) {
+        Notificacion noti=this.notiService.asignacionTransito(gato, padrino);
+    }
+
+    @Override
     public Padrino removerGato(String email, Gato gato) {
         Padrino padri=this.buscarByEmailOrException(email);
         Optional<Gato> oGato=this.gatoRepo.findById(gato.getId());

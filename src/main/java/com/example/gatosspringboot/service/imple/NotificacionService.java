@@ -39,8 +39,8 @@ public class NotificacionService implements INotificacionService {
     //al propio transito
     public Notificacion asignacionTransito(Gato gato, Transito transito) {
         Notificacion nueva=new Notificacion();
-        nueva.setDescripcion("Gracias por brindarle a "+gato.getNombre()+"" +
-                "un hogar temporal. Ahora, "+gato.getNombre()+" forma parte de tu listado!");
+        nueva.setDescripcion("Gracias por brindarle a "+gato.getNombre()+
+                " un hogar temporal. Ahora, "+gato.getNombre()+" forma parte de tu listado!");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(transito.getPersona());
@@ -52,7 +52,7 @@ public class NotificacionService implements INotificacionService {
     public Notificacion asignacionTransito(Gato gato, Padrino padrino) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion(gato.getNombre()+" esta en un nuevo hogar temporal!" +
-                "Accede a tu listado para ver su ubicacion actual y ponerte en contacto con su nuevo transito");
+                "Accede a su perfil para mas información.");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(padrino.getPersona());
@@ -83,7 +83,7 @@ public class NotificacionService implements INotificacionService {
     public Notificacion aprobacionAdopcion(Gato gato, Persona solicitante) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Nos alegra contarte que adoptaste a "+gato.getNombre()+
-                "!.Un voluntario se estara comunicando para coordinar el traspaso:)");
+                "! Un voluntario se estara comunicando para coordinar el traspaso :)");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(solicitante);
@@ -94,7 +94,7 @@ public class NotificacionService implements INotificacionService {
     public Notificacion notificarAdopcion(Transito transito, Gato gato) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Queremos notificarte que tu transito "+gato.getNombre()+
-                "fue adoptado!.Un voluntario se estara comunicando para coordinar el traspaso:)");
+                " fue adoptado!.Un voluntario se estara comunicando para coordinar el traspaso :)");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(transito.getPersona());
@@ -105,7 +105,7 @@ public class NotificacionService implements INotificacionService {
     public Notificacion notificarAdopcion(Padrino padrino, Gato gato) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Queremos notificarte que "+gato.getNombre()+
-                "fue adoptado!.Podés seguir apadrinando algunos de nuestros michis!");
+                " fue adoptado!.Podés seguir apadrinando algunos de nuestros michis!");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(padrino.getPersona());
