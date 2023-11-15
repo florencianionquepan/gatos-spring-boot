@@ -18,6 +18,7 @@ public class CuotaRespDTO {
     private LocalDate fechaCreacion;
     private LocalDate fechaPago;
     private double montoMensual;
+    private String preferencia_id;
     @JsonIgnoreProperties(value = "padrino")
     private GatoDTO gato;
     private EstadoPago estadoPago;
