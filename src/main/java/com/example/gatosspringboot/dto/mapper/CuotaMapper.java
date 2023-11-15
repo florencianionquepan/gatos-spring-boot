@@ -38,6 +38,7 @@ public class CuotaMapper implements ICuotaMapper{
         dto.setFechaCreacion(entity.getFechaCreacion());
         dto.setFechaPago(entity.getFechaPago());
         dto.setMontoMensual(entity.getMontoMensual());
+        dto.setPreferencia_id(entity.getPreferencia_id());
         GatoDTO gatodto=new GatoDTO(entity.getGato().getId(),entity.getGato().getAdoptadoFecha(),entity.getGato().getNombre());
         if(entity.getGato().getFotos().size()>0){
             List<String> urls = entity.getGato().getFotos()
