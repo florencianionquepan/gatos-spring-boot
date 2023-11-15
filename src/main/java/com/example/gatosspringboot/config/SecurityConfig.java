@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.config;
 
+import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.filter.*;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
@@ -56,18 +58,19 @@ public class SecurityConfig {
                         return config;
                     }
                 }))
-                .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos/**","/personas/**","/cuotas",
-                                "/generic/**","/usuarios/**","/cloudinary/**","/ficha/**","/solicitudes/**","/notificaciones/**")
+                .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos/**","/personas/**","/cuotas/**",
+                                "/generic/**","/usuarios/**","/cloudinary/**","/ficha/**","/solicitudes/**","/notificaciones/**","/padrinos/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 //.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTValidationFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new EmailValidationFilter(repo), JWTGenerationFilter.class)
+                .addFilterAfter(new EmailNonExistingFilter(repo), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
-                        .requestMatchers("/transitos/**","/socios/**","/voluntariados/**","/voluntarios/**",
+                        .requestMatchers("/socios/**","/voluntariados/**","/voluntarios/**",
                                 "/solicitudes/**","/auth/**","/notificaciones/**").authenticated()
-                        .requestMatchers("/gatos/**","/cuotas",
-                                "/generic/**","/usuarios/**","/cloudinary/**","/ficha/**","/personas/**").permitAll())
+                        .requestMatchers("/gatos/**","/cuotas/**",
+                                "/generic/**","/usuarios/**","/cloudinary/**","/ficha/**","/personas/**","/transitos/**","/padrinos/**").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
