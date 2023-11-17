@@ -40,19 +40,11 @@ public class SolicitudVoluntariadoController {
         return ResponseEntity.ok(mensajeBody);
     }
 
-    private ResponseEntity<?> notSuccessResponse(String mensaje,int id){
-        mensajeBody.put("success",Boolean.FALSE);
-        mensajeBody.put("data", String.format(mensaje,id));
-        return ResponseEntity
-                .badRequest()
-                .body(mensajeBody);
-    }
-
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> nueva(@RequestBody @Validated(PostValidationGroup.class)
                                    SolicitudVoluntariadoDTO dto){
         SolicitudVoluntariado creada=this.service.nueva(this.mapper.mapToEntity(dto));
+        logger.info("creada"+creada);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.mapper.mapToDto(creada));
     }
 

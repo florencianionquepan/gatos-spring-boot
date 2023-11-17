@@ -37,7 +37,6 @@ public class SolicitudVoluntariado {
             joinColumns = @JoinColumn(name="voluntariado_id"),
             inverseJoinColumns = @JoinColumn(name="estado_id")
     )
-    @NotNull
     private List<Estado> estados;
 
     @ManyToOne(cascade = CascadeType.MERGE)

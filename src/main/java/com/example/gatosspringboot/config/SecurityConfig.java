@@ -59,7 +59,7 @@ public class SecurityConfig {
                     }
                 }))
                 .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/gatos/**","/personas/**","/cuotas/**",
-                                "/generic/**","/usuarios/**","/cloudinary/**","/ficha/**","/solicitudes/**","/notificaciones/**","/padrinos/**")
+                                "/generic/**","/usuarios/**","/cloudinary/**","/ficha/**","/solicitudes/**","/notificaciones/**","/padrinos/**","/voluntariados/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 //.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JWTGenerationFilter(), BasicAuthenticationFilter.class)
@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .addFilterAfter(new EmailValidationFilter(repo), JWTGenerationFilter.class)
                 .addFilterAfter(new EmailNonExistingFilter(repo), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
-                        .requestMatchers("/socios/**","/voluntariados/**","/voluntarios/**",
+                        .requestMatchers("/socios/**","/voluntariados/**","/voluntariados","/voluntarios/**",
                                 "/solicitudes/**","/auth/**","/notificaciones/**").authenticated()
                         .requestMatchers("/gatos/**","/cuotas/**",
                                 "/generic/**","/usuarios/**","/cloudinary/**","/ficha/**","/personas/**","/transitos/**","/padrinos/**").permitAll())

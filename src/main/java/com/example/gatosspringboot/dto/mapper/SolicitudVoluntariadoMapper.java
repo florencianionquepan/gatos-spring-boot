@@ -60,7 +60,9 @@ public class SolicitudVoluntariadoMapper implements ISolicitudVoluntariadoMapper
         dto.setAspirante(perso);
         dto.setVoluntariado(entity.getTipoVoluntariado().name());
         dto.setEstados(this.estadoMapper.mapToListDto(entity.getEstados()));
-        dto.setSocio(this.socioMapper.mapToDto(entity.getSocio()));
+        if(entity.getSocio()!=null){
+            dto.setSocio(this.socioMapper.mapToDto(entity.getSocio()));
+        }
         return dto;
     }
 
