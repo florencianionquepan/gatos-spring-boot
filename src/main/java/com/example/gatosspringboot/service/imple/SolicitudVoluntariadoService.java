@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoService {
@@ -44,8 +45,17 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     }
 
     @Override
+    @Transactional
     public SolicitudVoluntariado nueva(SolicitudVoluntariado solicitud) {
         Persona aspirantebd=this.persoService.findByEmailOrException(solicitud.getAspirante().getEmail());
+        //chequear sino es ese voluntario tambien
+        List<String> tiposVoluntario = persoService.tiposVoluntario(aspirantebd.getDni());
+        List<String> tipos=tiposVoluntario.stream()
+                .map(String::toUpperCase)
+                .collect(Collectors.toList());
+        if(tipos.contains(solicitud.getTipoVoluntariado().toString())){
+            throw new ExistingException("Ya eres "+solicitud.getTipoVoluntariado());
+        }
         //tiene solicitudes de voluntariados del mismo tipo?
         List<SolicitudVoluntariado> voluntariados=aspirantebd.getSolicitudesVoluntariados();
         Optional<SolicitudVoluntariado> solicitudExistente = voluntariados.stream()
@@ -55,9 +65,11 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
             this.mismaSolicitudExistente(solicitudExistente.get());
             //si paso 1 mes de su solicitud rechazada sigue:
         }
-        Estado pendiente=this.estadoService.crearPendiente();
+        Estado pendiente=estadoService.crearPendiente();
+        List<Estado> estados=new ArrayList<>();
+        estados.add(pendiente);
+        solicitud.setEstados(estados);
         solicitud.setAspirante(aspirantebd);
-        solicitud.setEstados(new ArrayList<>(Arrays.asList(pendiente)));
         return this.repo.save(solicitud);
     }
 
