@@ -74,6 +74,17 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     }
 
     @Override
+    public List<SolicitudVoluntariado> listarByPersona(String email) {
+        Optional<Persona> oPerso=this.persoRepo.findByEmail(email);
+        if(oPerso.isEmpty()){
+            throw new NonExistingException(
+                    String.format("La persona con email %s no existe",email)
+            );
+        }
+        return this.repo.findByAspirante(email);
+    }
+
+    @Override
     @Transactional
     public SolicitudVoluntariado rechazar(SolicitudVoluntariado solicitud, Long id, String motivo) {
         SolicitudVoluntariado soli=this.findById(id);
@@ -188,17 +199,6 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         } else {
             throw new NonExistingException("El estado proporcionado no es válido.");
         }
-    }
-
-    @Override
-    public List<SolicitudVoluntariado> listarByPersona(String dni) {
-        Optional<Persona> oPerso=this.persoRepo.findByDni(dni);
-        if(oPerso.isEmpty()){
-            throw new NonExistingException(
-                    String.format("La persona con dni %s no existe",dni)
-            );
-        }
-        return this.repo.findByAspirante(dni);
     }
 
     @Override

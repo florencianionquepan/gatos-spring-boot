@@ -44,8 +44,14 @@ public class SolicitudVoluntariadoController {
     public ResponseEntity<?> nueva(@RequestBody @Validated(PostValidationGroup.class)
                                    SolicitudVoluntariadoDTO dto){
         SolicitudVoluntariado creada=this.service.nueva(this.mapper.mapToEntity(dto));
-        logger.info("creada"+creada);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.mapper.mapToDto(creada));
+    }
+
+    @GetMapping("/aspirante/{email}")
+    @PreAuthorize("#email==authentication.principal")
+    public ResponseEntity<?> verByAspirante(@PathVariable String email){
+        List<SolicitudVoluntariado> solicitudes=this.service.listarByPersona(email);
+        return this.successResponse(this.mapper.mapToListDto(solicitudes));
     }
 
     @PutMapping("/{id}/estados/aceptada")
@@ -70,13 +76,6 @@ public class SolicitudVoluntariadoController {
     @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<?> verByEstado(@PathVariable String estado){
         List<SolicitudVoluntariado> solicitudes=this.service.listarByEstado(estado);
-        return this.successResponse(this.mapper.mapToListDto(solicitudes));
-    }
-
-    @GetMapping("/aspirante/{dni}")
-    @PreAuthorize("hasRole('SOCIO')")
-    public ResponseEntity<?> verByAspirante(@PathVariable String dni){
-        List<SolicitudVoluntariado> solicitudes=this.service.listarByPersona(dni);
         return this.successResponse(this.mapper.mapToListDto(solicitudes));
     }
 
