@@ -129,10 +129,10 @@ public class UsuarioService implements IUsuarioService {
         }
         roles.add(oVoluRol.get());
         usuario.setRoles(roles);
-        String subject="Su solicitud como voluntario ha sido aceptada!";
+        /*String subject="Su solicitud como voluntario ha sido aceptada!";
         String content="Ya puede gestionar todos los gatitos para dar en adopcion!" +
                 "\nEsperamos que disfrute formar parte de Gatshan :) ";
-        this.emailService.sendMessage(email,subject,content);
+        this.emailService.sendMessage(email,subject,content);*/
         return this.usRepo.save(usuario);
     }
 

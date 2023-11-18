@@ -119,15 +119,15 @@ public class TransitoService implements ITransitoService {
         this.emailSer.armarEnviarEmail(transito.getPersona().getEmail(),subject,noti.getDescripcion());
     }
 
-    //si ya existe con otro dni o email no prosigue-
+    //si ya existe ese transito con otro dni o email no prosigue-
     private void TransitoExistente(Transito transito){
-        Optional<Persona> oPersoDB=this.persoRepo.findByDni(transito.getPersona().getDni());
-        if(oPersoDB.isPresent()){
+        Optional<Transito> oTrans=this.repo.findByDni(transito.getPersona().getDni());
+        if(oTrans.isPresent()){
             throw new ExistingException(
                     String.format("El transito con dni %s ya existe",transito.getPersona().getDni()));
         }
-        Optional<Persona> oPersoEmailDB=this.persoRepo.findByEmail(transito.getPersona().getEmail());
-        if(oPersoEmailDB.isPresent()){
+        Optional<Transito> oTransEmail=this.repo.findByEmail(transito.getPersona().getEmail());
+        if(oTransEmail.isPresent()){
             throw new ExistingException(
                     String.format("El transito con email %s ya existe",transito.getPersona().getEmail()));
         }

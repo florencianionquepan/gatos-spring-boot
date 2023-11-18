@@ -26,6 +26,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
     private final ISocioService socioService;
     private final IVoluntarioService voluService;
     private final ITransitoService transitoService;
+    private final INotificacionService notiService;
     private Logger logger= LoggerFactory.getLogger(SolicitudVoluntariadoService.class);
 
     public SolicitudVoluntariadoService(SolicitudVoluntariadoRepository repo,
@@ -34,7 +35,8 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
                                         IEstadoService estadoService,
                                         ISocioService socioService,
                                         IVoluntarioService voluService,
-                                        ITransitoService transitoService) {
+                                        ITransitoService transitoService,
+                                        INotificacionService notiService) {
         this.repo = repo;
         this.persoRepo = persoRepo;
         this.persoService = persoService;
@@ -42,6 +44,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         this.socioService = socioService;
         this.voluService = voluService;
         this.transitoService = transitoService;
+        this.notiService = notiService;
     }
 
     @Override
@@ -95,6 +98,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         soli.setEstados(estados);
         soli.setSocio(socio);
         //enviar email a solicitante con motivo
+        this.notiService.rechazoVoluntariado(soli.getAspirante(),soli.getTipoVoluntariado());
         return this.repo.save(soli);
     }
 
@@ -110,6 +114,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         Socio socio=this.socioService.buscarByEmailOrException(emailSocio);
         solidb.setSocio(socio);
         this.crearTipoVoluntariado(solidb);
+        this.notiService.aceptarVoluntariado(solidb.getAspirante(),solidb.getTipoVoluntariado());
         return this.repo.save(solidb);
     }
 
@@ -121,7 +126,6 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
             vol.setPersona(perso);
             vol.setListaGatos(null);
             this.voluService.altaVolunt(vol);
-            //enviar email notificando aceptacion (en alta usuario esta hecho)
         } else if (voluntariado == TipoVoluntariado.TRANSITO) {
             Transito transito=new Transito();
             transito.setPersona(perso);
