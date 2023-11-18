@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class EstadoDTO {
 
+    private Long id;
     private LocalDate fecha;
     private String estado;
     private String motivo;

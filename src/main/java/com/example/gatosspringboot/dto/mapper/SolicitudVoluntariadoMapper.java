@@ -15,11 +15,14 @@ public class SolicitudVoluntariadoMapper implements ISolicitudVoluntariadoMapper
 
     private final ISocioMapper socioMapper;
     private final IEstadoMapper estadoMapper;
+    private final IPersonaMapper persoMapper;
 
     public SolicitudVoluntariadoMapper(ISocioMapper socioMapper,
-                                       IEstadoMapper estadoMapper) {
+                                       IEstadoMapper estadoMapper,
+                                       IPersonaMapper persoMapper) {
         this.socioMapper = socioMapper;
         this.estadoMapper = estadoMapper;
+        this.persoMapper = persoMapper;
     }
 
     @Override
@@ -55,9 +58,7 @@ public class SolicitudVoluntariadoMapper implements ISolicitudVoluntariadoMapper
     public SolicitudVoluntariadoDTO mapToDto(SolicitudVoluntariado entity) {
         SolicitudVoluntariadoDTO dto=new SolicitudVoluntariadoDTO();
         dto.setId(entity.getId());
-        PersonaEmailDTO perso=new PersonaEmailDTO();
-        perso.setEmail(entity.getAspirante().getEmail());
-        dto.setAspirante(perso);
+        dto.setAspirante(this.persoMapper.mapToDto(entity.getAspirante()));
         dto.setVoluntariado(entity.getTipoVoluntariado().name());
         dto.setEstados(this.estadoMapper.mapToListDto(entity.getEstados()));
         if(entity.getSocio()!=null){

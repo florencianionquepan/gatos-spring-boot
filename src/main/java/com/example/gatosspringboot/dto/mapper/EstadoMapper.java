@@ -23,6 +23,7 @@ public class EstadoMapper implements IEstadoMapper{
     @Override
     public EstadoDTO mapToDto(Estado entidad) {
         EstadoDTO dto=new EstadoDTO();
+        dto.setId(entidad.getId());
         dto.setFecha(entidad.getFecha());
         dto.setEstado(entidad.getEstado().name());
         dto.setMotivo(entidad.getMotivo());
