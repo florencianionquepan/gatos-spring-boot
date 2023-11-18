@@ -1,6 +1,6 @@
-package com.example.gatosspringboot.dto;
+package com.example.gatosspringboot.dto.mapper;
 
-import com.example.gatosspringboot.dto.mapper.ISocioMapper;
+import com.example.gatosspringboot.dto.SocioDTO;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Socio;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,11 @@ public class SocioMapper implements ISocioMapper {
 
     @Override
     public Socio mapToEntity(SocioDTO dto) {
-        return null;
+        Socio socio=new Socio();
+        Persona perso=new Persona();
+        perso.setEmail(dto.getEmail());
+        socio.setPersona(perso);
+        return socio;
     }
 
     @Override
