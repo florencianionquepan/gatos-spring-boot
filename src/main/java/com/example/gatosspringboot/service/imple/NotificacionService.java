@@ -3,6 +3,7 @@ package com.example.gatosspringboot.service.imple;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.NotificacionRepository;
+import com.example.gatosspringboot.service.interfaces.IEmailService;
 import com.example.gatosspringboot.service.interfaces.INotificacionService;
 import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,14 @@ public class NotificacionService implements INotificacionService {
 
     private final NotificacionRepository repo;
     private final IPersonaService persoSer;
+    private final IEmailService emailSer;
 
     public NotificacionService(NotificacionRepository repo,
-                               IPersonaService persoSer) {
+                               IPersonaService persoSer,
+                               IEmailService emailSer) {
         this.repo = repo;
         this.persoSer = persoSer;
+        this.emailSer = emailSer;
     }
 
     @Override
@@ -139,6 +143,30 @@ public class NotificacionService implements INotificacionService {
             notiLeidas.add(leida);
         }
         return notiLeidas;
+    }
+
+    @Override
+    public Notificacion rechazoVoluntariado(Persona aspirante, TipoVoluntariado tipo) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Tu solicitud para ser "+tipo.name().toLowerCase()+" ha sido rechazada." +
+                "Accede a tus solicitudes para mas información");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(aspirante);
+        this.emailSer.armarEnviarEmail(aspirante.getEmail(), "Rechazo voluntariado",nueva.getDescripcion());
+        return this.repo.save(nueva);
+    }
+
+    @Override
+    public Notificacion aceptarVoluntariado(Persona aspirante, TipoVoluntariado tipo) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Bienvenido a Rescats "+aspirante.getNombre() +
+                "! Ahora eres uno de nuestros "+tipo.name().toLowerCase()+"s!");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(aspirante);
+        this.emailSer.armarEnviarEmail(aspirante.getEmail(), "Bienvenido a Rescats!",nueva.getDescripcion());
+        return this.repo.save(nueva);
     }
 
     private Notificacion findByIdOrException(Notificacion noti){

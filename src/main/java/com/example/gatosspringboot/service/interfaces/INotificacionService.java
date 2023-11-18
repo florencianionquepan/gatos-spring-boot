@@ -16,4 +16,6 @@ public interface INotificacionService {
     Notificacion cierreAdopcion(Gato gato, Persona solicitante);
     List<Notificacion> verByPersona(String email);
     List<Notificacion> setearComoLeidas(List<Notificacion> notificaciones);
+    Notificacion rechazoVoluntariado(Persona aspirante, TipoVoluntariado tipo);
+    Notificacion aceptarVoluntariado(Persona aspirante, TipoVoluntariado tipo);
 }
