@@ -1,10 +1,8 @@
 package com.example.gatosspringboot.dto.mapper;
 
-import com.example.gatosspringboot.dto.RolDTO;
 import com.example.gatosspringboot.dto.UserResponseDTO;
 import com.example.gatosspringboot.dto.UsuarioRespDTO;
 import com.example.gatosspringboot.model.Persona;
-import com.example.gatosspringboot.model.Rol;
 import com.example.gatosspringboot.model.Usuario;
 
 import java.util.HashMap;

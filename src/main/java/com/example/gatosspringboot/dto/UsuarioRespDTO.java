@@ -14,8 +14,8 @@ import java.util.List;
 public class UsuarioRespDTO {
     Long id;
     PersonaDTO persona;
-    boolean verificado;
-    boolean bloqueado;
+    Boolean verificado;
+    Boolean habilitado;
     @NotNull
     String motivo;
     List<RolDTO> roles;
