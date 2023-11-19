@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface IUsuarioService {
     HashMap<Usuario, Persona> verTodos();
+    Usuario bloquearUsuario(Long id, String motivo);
     Usuario altaUsuario(Usuario usuario);
     Boolean validarUsuario(Long id, String token);
     void enviarValidacion(String email);

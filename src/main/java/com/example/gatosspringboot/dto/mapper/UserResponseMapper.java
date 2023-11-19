@@ -42,6 +42,10 @@ public class UserResponseMapper implements IUserResponseMapper{
             Persona perso=entry.getValue();
             if(usuario!=null && perso!=null){
                 UsuarioRespDTO dto=new UsuarioRespDTO();
+                dto.setId(usuario.getId());
+                if(usuario.getMotivo()!=null){
+                    dto.setMotivo(usuario.getMotivo());
+                }
                 dto.setPersona(this.persoMapper.mapToDto(perso));
                 dto.setVerificado(usuario.getValidado());
                 if(usuario.getHabilitado()!=null){

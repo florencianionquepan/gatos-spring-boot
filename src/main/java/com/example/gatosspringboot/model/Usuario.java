@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +25,7 @@ public class Usuario implements Serializable {
     private Boolean validado;
     @Column(columnDefinition = "boolean default true")
     private Boolean habilitado;
+    private String motivo;
 
     @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     @JoinTable(
@@ -43,5 +43,10 @@ public class Usuario implements Serializable {
                 ", mail='" + email + '\'' +
                 ", roles=" + roles +
                 '}';
+    }
+
+    public Usuario() {
+        this.validado = false;
+        this.habilitado = true;
     }
 }

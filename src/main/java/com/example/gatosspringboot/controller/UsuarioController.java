@@ -2,6 +2,7 @@ package com.example.gatosspringboot.controller;
 
 import com.example.gatosspringboot.dto.UserResponseDTO;
 import com.example.gatosspringboot.dto.UsuarioPasswordDTO;
+import com.example.gatosspringboot.dto.UsuarioRespDTO;
 import com.example.gatosspringboot.dto.mapper.IUserResponseMapper;
 import com.example.gatosspringboot.dto.mapper.IUsuarioMapper;
 import com.example.gatosspringboot.dto.mapper.IUsuarioPasswordMapper;
@@ -60,6 +61,14 @@ public class UsuarioController {
     public ResponseEntity<?> obtenerTodos(){
         HashMap<Usuario, Persona> usuarios=this.usService.verTodos();
         return successResponse(this.userMapper.mapToListDto(usuarios));
+    }
+
+    @PutMapping("/{id}/bloqueado")
+    @PreAuthorize("hasRole('SOCIO')")
+    public ResponseEntity<?> bloquearUsuario(@PathVariable Long id,
+                                             @RequestBody @Valid UsuarioRespDTO dto){
+        Usuario usuario=this.usService.bloquearUsuario(id, dto.getMotivo());
+        return successResponse(this.usMap.mapToDto(usuario));
     }
 
     @PutMapping

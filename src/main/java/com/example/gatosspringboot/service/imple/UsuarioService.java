@@ -56,6 +56,20 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
+    public Usuario bloquearUsuario(Long id, String motivo) {
+        Optional<Usuario> oUser=this.usRepo.findById(id);
+        if(oUser.isEmpty()){
+            throw new NonExistingException(
+                    String.format("El usuario con id %d no existe",id)
+            );
+        }
+        Usuario user=oUser.get();
+        user.setMotivo(motivo);
+        user.setHabilitado(false);
+        return this.usRepo.save(user);
+    }
+
+    @Override
     public Usuario altaUsuario(Usuario usuario) {
         this.existeEmail(usuario.getEmail());
         List<Rol> rolesUser=new ArrayList<Rol>(
