@@ -1,10 +1,12 @@
 package com.example.gatosspringboot.controller;
 
+import com.example.gatosspringboot.dto.UserResponseDTO;
 import com.example.gatosspringboot.dto.UsuarioPasswordDTO;
-import com.example.gatosspringboot.dto.UsuarioEmailDTO;
+import com.example.gatosspringboot.dto.mapper.IUserResponseMapper;
 import com.example.gatosspringboot.dto.mapper.IUsuarioMapper;
 import com.example.gatosspringboot.dto.mapper.IUsuarioPasswordMapper;
 import com.example.gatosspringboot.exception.NonExistingException;
+import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
 import jakarta.annotation.security.PermitAll;
@@ -23,6 +25,7 @@ public class UsuarioController {
 
     private final IUsuarioMapper usMap;
     private final IUsuarioPasswordMapper usPasswordMapper;
+    private final IUserResponseMapper userMapper;
     public Map<String,Object> mensajeBody= new HashMap<>();
     private Logger logger= LoggerFactory.getLogger(UsuarioController.class);
 
@@ -34,9 +37,9 @@ public class UsuarioController {
                 .body(mensajeBody);
     }
 
-    private ResponseEntity<?> successResponse(String email){
+    private ResponseEntity<?> successResponse(Object data){
         mensajeBody.put("success",Boolean.TRUE);
-        mensajeBody.put("data",email);
+        mensajeBody.put("data",data);
         return ResponseEntity.ok(mensajeBody);
     }
 
@@ -44,16 +47,19 @@ public class UsuarioController {
 
     public UsuarioController(IUsuarioMapper usMap,
                              IUsuarioPasswordMapper usPasswordMapper,
+                             IUserResponseMapper userMapper,
                              IUsuarioService usService) {
         this.usMap = usMap;
         this.usPasswordMapper = usPasswordMapper;
+        this.userMapper = userMapper;
         this.usService = usService;
     }
 
     @GetMapping
     @PreAuthorize("hasRole('SOCIO')")
-    public List<UsuarioEmailDTO> obtenerTodos(){
-        return this.usMap.mapListToDto(this.usService.verTodos());
+    public ResponseEntity<?> obtenerTodos(){
+        HashMap<Usuario, Persona> usuarios=this.usService.verTodos();
+        return successResponse(this.userMapper.mapToListDto(usuarios));
     }
 
     @PutMapping

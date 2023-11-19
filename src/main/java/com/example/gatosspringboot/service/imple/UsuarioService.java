@@ -2,8 +2,10 @@ package com.example.gatosspringboot.service.imple;
 
 import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
+import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Rol;
 import com.example.gatosspringboot.model.Usuario;
+import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.RolRepository;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
@@ -14,10 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -27,22 +26,33 @@ public class UsuarioService implements IUsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final RolRepository rolRepo;
     private final IEmailService emailService;
+    private final PersonaRepository persoRepo;
     private ConcurrentHashMap<Long, String> tokenCache = new ConcurrentHashMap<>();
     private Logger logger= LoggerFactory.getLogger(UsuarioService.class);
 
     public UsuarioService(UsuarioRepository usRepo,
                           PasswordEncoder passwordEncoder,
                           RolRepository rolRepo,
-                          IEmailService emailService) {
+                          IEmailService emailService,
+                          PersonaRepository persoRepo) {
         this.usRepo = usRepo;
         this.passwordEncoder = passwordEncoder;
         this.rolRepo = rolRepo;
         this.emailService = emailService;
+        this.persoRepo = persoRepo;
     }
 
     @Override
-    public List<Usuario> verTodos() {
-        return (List<Usuario>) this.usRepo.findAll();
+    public HashMap<Usuario, Persona> verTodos() {
+        List<Usuario> usuarios= (List<Usuario>) this.usRepo.findAll();
+        HashMap<Usuario,Persona> usuarioPersonaMap=new HashMap<>();
+        for(Usuario usuario:usuarios){
+            Optional<Persona> oPerso=this.persoRepo.findByEmail(usuario.getEmail());
+            if(oPerso.isPresent()){
+                usuarioPersonaMap.put(usuario,oPerso.get());
+            }
+        }
+        return usuarioPersonaMap;
     }
 
     @Override

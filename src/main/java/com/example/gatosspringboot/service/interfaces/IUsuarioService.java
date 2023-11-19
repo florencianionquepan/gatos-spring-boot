@@ -1,11 +1,13 @@
 package com.example.gatosspringboot.service.interfaces;
 
+import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Usuario;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface IUsuarioService {
-    List<Usuario> verTodos();
+    HashMap<Usuario, Persona> verTodos();
     Usuario altaUsuario(Usuario usuario);
     Boolean validarUsuario(Long id, String token);
     void enviarValidacion(String email);
