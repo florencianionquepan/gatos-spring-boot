@@ -16,6 +16,7 @@ public class SocioMapper implements ISocioMapper {
         Persona perso=entity.getPersona();
         dto.setId(entity.getId());
         dto.setNombre(perso.getNombre());
+        dto.setApellido(perso.getApellido());
         dto.setDni(perso.getDni());
         dto.setEmail(perso.getEmail());
         dto.setFechaNac(perso.getFechaNac());
