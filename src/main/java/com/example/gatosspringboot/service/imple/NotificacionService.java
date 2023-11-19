@@ -3,9 +3,9 @@ package com.example.gatosspringboot.service.imple;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.NotificacionRepository;
+import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
 import com.example.gatosspringboot.service.interfaces.INotificacionService;
-import com.example.gatosspringboot.service.interfaces.IPersonaService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,14 +17,14 @@ import java.util.Optional;
 public class NotificacionService implements INotificacionService {
 
     private final NotificacionRepository repo;
-    private final IPersonaService persoSer;
+    private final PersonaRepository persorepo;
     private final IEmailService emailSer;
 
     public NotificacionService(NotificacionRepository repo,
-                               IPersonaService persoSer,
+                               PersonaRepository persorepo,
                                IEmailService emailSer) {
         this.repo = repo;
-        this.persoSer = persoSer;
+        this.persorepo = persorepo;
         this.emailSer = emailSer;
     }
 
@@ -129,8 +129,13 @@ public class NotificacionService implements INotificacionService {
 
     @Override
     public List<Notificacion> verByPersona(String email) {
-        Persona perso=this.persoSer.findByEmailOrException(email);
-        return this.repo.findAllByPersona(perso);
+        Optional<Persona> oPerso=this.persorepo.findByEmail(email);
+        if(oPerso.isEmpty()){
+            throw new NonExistingException(
+                    String.format("La persona con email %s no existe",email)
+            );
+        }
+        return this.repo.findAllByPersona(oPerso.get());
     }
 
     @Override

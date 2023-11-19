@@ -50,11 +50,11 @@ public class SocioController {
         return this.successResponse(dtos);
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('SOCIO')")
-    public ResponseEntity<?> altaSocio(@RequestBody @Valid SocioDTO dto){
-        Socio nuevo=this.service.altaSocio(this.mapper.mapToEntity(dto));
-        return this.successResponse(this.mapper.mapToDto(nuevo));
-    }
+//    @PostMapping
+//    @PreAuthorize("hasRole('SOCIO')")
+//    public ResponseEntity<?> altaSocio(@RequestBody @Valid SocioDTO dto){
+//        Socio nuevo=this.service.altaSocio(this.mapper.mapToEntity(dto));
+//        return this.successResponse(this.mapper.mapToDto(nuevo));
+//    }
 
 }
