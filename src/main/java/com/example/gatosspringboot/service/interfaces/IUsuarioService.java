@@ -15,7 +15,7 @@ public interface IUsuarioService {
     void enviarValidacion(String email);
     Usuario agregarRolVoluntario(String email);
     String modiPassword(Usuario user, String oldPassword);
-    Usuario altaUsuarioSocio(String email);
-    Usuario agregarRolSocio(Usuario user);
+    //Usuario altaUsuarioSocio(String email);
+    Usuario agregarRolSocio(Long id);
     Usuario buscarByEmail(String email);
 }

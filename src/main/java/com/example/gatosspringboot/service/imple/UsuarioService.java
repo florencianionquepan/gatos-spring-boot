@@ -4,18 +4,21 @@ import com.example.gatosspringboot.exception.ExistingException;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.Persona;
 import com.example.gatosspringboot.model.Rol;
+import com.example.gatosspringboot.model.Socio;
 import com.example.gatosspringboot.model.Usuario;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.repository.database.RolRepository;
+import com.example.gatosspringboot.repository.database.SocioRepository;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
+import com.example.gatosspringboot.service.interfaces.INotificacionService;
 import com.example.gatosspringboot.service.interfaces.IUsuarioService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,6 +30,8 @@ public class UsuarioService implements IUsuarioService {
     private final RolRepository rolRepo;
     private final IEmailService emailService;
     private final PersonaRepository persoRepo;
+    private final SocioRepository socioRepo;
+    private final INotificacionService notiService;
     private ConcurrentHashMap<Long, String> tokenCache = new ConcurrentHashMap<>();
     private Logger logger= LoggerFactory.getLogger(UsuarioService.class);
 
@@ -34,12 +39,16 @@ public class UsuarioService implements IUsuarioService {
                           PasswordEncoder passwordEncoder,
                           RolRepository rolRepo,
                           IEmailService emailService,
-                          PersonaRepository persoRepo) {
+                          PersonaRepository persoRepo,
+                          SocioRepository socioRepo,
+                          INotificacionService notiService) {
         this.usRepo = usRepo;
         this.passwordEncoder = passwordEncoder;
         this.rolRepo = rolRepo;
         this.emailService = emailService;
         this.persoRepo = persoRepo;
+        this.socioRepo = socioRepo;
+        this.notiService = notiService;
     }
 
     @Override
@@ -139,7 +148,7 @@ public class UsuarioService implements IUsuarioService {
         //String content="\nHaga click en el siguiente link: \n"+url;
         String content = "<p style=\"font-size: 20px;text-align: center;\">Haga clic en el siguiente botón:</p>";
         content += "<p style=\"text-align: center;\"><a href=\"" + url + "\" style=\"display: inline-block; background-color: #F5CDFF; color: #202124; padding: 10px 20px; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 16px;\">Validar Email</a></p>";
-        content += "<p style=\"font-size: 15px;text-align: center;\">Copie y pegue la url: "+url+"</p>";
+        content += "<p style=\"font-size: 15px;text-align: center;\">O copie y pegue la url: "+url+"</p>";
         String emailContent = "<html><head><style>"
                 + "p { font-size: 20px; }"
                 + "a { display: inline-block; background-color: #F5CDFF; color: #202124; padding: 10px 20px; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 16px; }"
@@ -171,10 +180,6 @@ public class UsuarioService implements IUsuarioService {
         }
         roles.add(oVoluRol.get());
         usuario.setRoles(roles);
-        /*String subject="Su solicitud como voluntario ha sido aceptada!";
-        String content="Ya puede gestionar todos los gatitos para dar en adopcion!" +
-                "\nEsperamos que disfrute formar parte de Gatshan :) ";
-        this.emailService.sendMessage(email,subject,content);*/
         return this.usRepo.save(usuario);
     }
 
@@ -200,35 +205,30 @@ public class UsuarioService implements IUsuarioService {
         return modi.getEmail();
     }
 
-    @Override
-    public Usuario altaUsuarioSocio(String email) {
-        Usuario nuevoUsuario=new Usuario();
-        nuevoUsuario.setEmail(email);
-        String password=this.generarPasswordAleatoria();
-        nuevoUsuario.setContrasenia(password);
-        Usuario admin=this.altaUsuarioSocio(nuevoUsuario);
-        if(!admin.getEmail().isEmpty()){
-            String subject="Su cuenta como socio ha sido generada!";
-            String content="\nPuede iniciar sesión con su email y su contraseña: "+password;
-            this.emailService.sendMessage(email,subject,content);
-        }
-        return admin;
-    }
 
     @Override
-    //por ahora siempre traera sus roles de bd:
-    public Usuario agregarRolSocio(Usuario user) {
+    @Transactional
+    public Usuario agregarRolSocio(Long id) {
+        Usuario user=this.findByIdOrException(id);
+        Optional<Persona> oPerso=this.persoRepo.findByEmail(user.getEmail());
+        if(oPerso.isEmpty()){
+            throw new NonExistingException("Los datos personales del usuario no existen");
+        }
         List<Rol> roles=user.getRoles();
+        if (roles.stream()
+                .anyMatch(rol->"ROLE_SOCIO".equals(rol.getNombre()))){
+            throw new ExistingException("El usuario ya tiene rol admin");
+        }
         Optional<Rol> oSocioRol=this.rolRepo.findById(3);
         if(oSocioRol.isEmpty()){
             throw new NonExistingException("El rol socio no existe en la bd");
         }
-        if(roles.stream().noneMatch(rol->rol.getId()==3)){
-            roles.add(oSocioRol.get());
-            user.setRoles(roles);
-            return this.usRepo.save(user);
-        }
-        return user;
+        roles.add(oSocioRol.get());
+        user.setRoles(roles);
+        Socio socio=new Socio(null,oPerso.get(),null);
+        this.socioRepo.save(socio);
+        this.notiService.nuevoRolSocio(oPerso.get());
+        return this.usRepo.save(user);
     }
 
     @Override
@@ -239,17 +239,6 @@ public class UsuarioService implements IUsuarioService {
                     String.format("El usuario con email %s no existe",email));
         }
         return oUser.get();
-    }
-
-    private Usuario altaUsuarioSocio(Usuario admin){
-        this.existeEmail(admin.getEmail());
-        //traigo role_admin
-        List<Rol> roles=new ArrayList<Rol>(
-                List.of(this.rolRepo.findById(2).get())
-        );
-        admin.setRoles(roles);
-        admin.setContrasenia(passwordEncoder.encode(admin.getContrasenia()));
-        return this.usRepo.save(admin);
     }
 
     private Usuario buscarByEmailOrException(String email){
@@ -272,6 +261,35 @@ public class UsuarioService implements IUsuarioService {
         }
     }
 
+    //Esto no se esta usando-> el rol socio se le da a usuarios existentes
+/*    @Override
+    public Usuario altaUsuarioSocio(String email) {
+        Usuario nuevoUsuario=new Usuario();
+        nuevoUsuario.setEmail(email);
+        String password=this.generarPasswordAleatoria();
+        nuevoUsuario.setContrasenia(password);
+        Usuario admin=this.altaUsuarioSocio(nuevoUsuario);
+        if(!admin.getEmail().isEmpty()){
+            String subject="Su cuenta como socio ha sido generada!";
+            String content="\nPuede iniciar sesión con su email y su contraseña: "+password;
+            this.emailService.sendMessage(email,subject,content);
+        }
+        return admin;
+    }
+
+
+
+    private Usuario altaUsuarioSocio(Usuario admin){
+        this.existeEmail(admin.getEmail());
+        //traigo role_admin
+        List<Rol> roles=new ArrayList<Rol>(
+                List.of(this.rolRepo.findById(2).get())
+        );
+        admin.setRoles(roles);
+        admin.setContrasenia(passwordEncoder.encode(admin.getContrasenia()));
+        return this.usRepo.save(admin);
+    }
+
     private String generarPasswordAleatoria(){
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[4];
@@ -281,6 +299,6 @@ public class UsuarioService implements IUsuarioService {
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
-    }
+    }*/
 
 }
