@@ -18,4 +18,5 @@ public interface INotificacionService {
     List<Notificacion> setearComoLeidas(List<Notificacion> notificaciones);
     Notificacion rechazoVoluntariado(Persona aspirante, TipoVoluntariado tipo);
     Notificacion aceptarVoluntariado(Persona aspirante, TipoVoluntariado tipo);
+    Notificacion nuevoRolSocio(Persona persona);
 }

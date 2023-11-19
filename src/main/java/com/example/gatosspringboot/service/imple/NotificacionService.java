@@ -169,6 +169,18 @@ public class NotificacionService implements INotificacionService {
         return this.repo.save(nueva);
     }
 
+    @Override
+    public Notificacion nuevoRolSocio(Persona persona) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Su usuario tiene ahora permisos de administrador!");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(persona);
+        this.emailSer.armarEnviarEmail(persona.getEmail(), "Nuevos permisos en su cuenta de Rescats!"
+                ,nueva.getDescripcion());
+        return this.repo.save(nueva);
+    }
+
     private Notificacion findByIdOrException(Notificacion noti){
         Optional<Notificacion> oNoti =this.repo.findById(noti.getId());
         if(oNoti.isEmpty()){
