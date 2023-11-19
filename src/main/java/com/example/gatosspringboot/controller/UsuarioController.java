@@ -71,6 +71,14 @@ public class UsuarioController {
         return successResponse(this.usMap.mapToDto(usuario));
     }
 
+    @PutMapping("/{id}/desbloqueado")
+    @PreAuthorize("hasRole('SOCIO')")
+    public ResponseEntity<?> desbloquearUsuario(@PathVariable Long id,
+                                             @RequestBody @Valid UsuarioRespDTO dto){
+        Usuario usuario=this.usService.desbloquearUsuario(id, dto.getMotivo());
+        return successResponse(this.usMap.mapToDto(usuario));
+    }
+
     @PutMapping
     //puede modificar su password con la password actual cualquiera sea su rol
     public ResponseEntity<?> modificarPassword(@RequestBody @Valid UsuarioPasswordDTO dto){

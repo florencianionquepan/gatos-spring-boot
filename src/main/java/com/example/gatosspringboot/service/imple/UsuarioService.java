@@ -57,16 +57,34 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public Usuario bloquearUsuario(Long id, String motivo) {
+        Usuario user=this.findByIdOrException(id);
+        user.setMotivo(motivo);
+        if(user.getHabilitado()!=null && !user.getHabilitado()){
+            throw new NonExistingException("El usuario ya esta bloqueado");
+        }
+        user.setHabilitado(false);
+        return this.usRepo.save(user);
+    }
+
+    @Override
+    public Usuario desbloquearUsuario(Long id, String motivo) {
+        Usuario user=this.findByIdOrException(id);
+        user.setMotivo(motivo);
+        if(user.getHabilitado()!=null && user.getHabilitado()){
+            throw new NonExistingException("El usuario ya esta desbloqueado");
+        }
+        user.setHabilitado(true);
+        return this.usRepo.save(user);
+    }
+
+    private Usuario findByIdOrException(Long id){
         Optional<Usuario> oUser=this.usRepo.findById(id);
         if(oUser.isEmpty()){
             throw new NonExistingException(
                     String.format("El usuario con id %d no existe",id)
             );
         }
-        Usuario user=oUser.get();
-        user.setMotivo(motivo);
-        user.setHabilitado(false);
-        return this.usRepo.save(user);
+        return oUser.get();
     }
 
     @Override

@@ -49,7 +49,9 @@ public class UserResponseMapper implements IUserResponseMapper{
                 dto.setPersona(this.persoMapper.mapToDto(perso));
                 dto.setVerificado(usuario.getValidado());
                 if(usuario.getHabilitado()!=null){
-                    dto.setBloqueado(usuario.getHabilitado());
+                    dto.setHabilitado(usuario.getHabilitado());
+                }else{
+                    dto.setHabilitado(true);
                 }
                 dto.setRoles(this.rolMapper.mapToListRolDto(usuario.getRoles()));
                 dtos.add(dto);
