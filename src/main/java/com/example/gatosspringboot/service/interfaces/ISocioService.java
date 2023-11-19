@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ISocioService {
     Socio buscarByEmailOrException(String email);
-    Socio altaSocio(Socio socio);
+    //Socio altaSocio(Socio socio);
     List<Socio> listarTodos();
 }

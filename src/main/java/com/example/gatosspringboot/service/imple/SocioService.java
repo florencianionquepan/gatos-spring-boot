@@ -45,10 +45,12 @@ public class SocioService implements ISocioService {
         }
         return oSocio.get();
     }
+/*
 
     @Override
     @Transactional
     //le dara de alta otro socio
+    //esto no se esta usando
     public Socio altaSocio(Socio socio) {
         this.socioExistente(socio);
         Optional<Persona> oPersoDni=this.persoRepo.findByDni(socio.getPersona().getDni());
@@ -62,7 +64,7 @@ public class SocioService implements ISocioService {
         //si ya existe como persona
         //si ya tiene el rol admin no se vuelve a agregar
         Usuario user=oUser.isEmpty()?this.usService.altaUsuarioSocio(socio.getPersona().getEmail())
-                :this.usService.agregarRolSocio(oUser.get());
+                :this.usService.agregarRolSocio(oUser.get().getId());
         Persona perso=oPersoDni.get();
         socio.getPersona().setUsuario(user);
         this.repo.save(socio);
@@ -82,6 +84,7 @@ public class SocioService implements ISocioService {
                     String.format("El socio con email %s ya existe",socio.getPersona().getEmail()));
         }
     }
+*/
 
     @Override
     public List<Socio> listarTodos() {
