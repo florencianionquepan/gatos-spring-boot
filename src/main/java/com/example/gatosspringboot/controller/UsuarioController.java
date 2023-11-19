@@ -79,6 +79,14 @@ public class UsuarioController {
         return successResponse(this.usMap.mapToDto(usuario));
     }
 
+    @GetMapping("/{id}/rol/socio")
+    @PreAuthorize("hasRole('SOCIO')")
+    //a un usuario existente se le da permisos de admin
+    public ResponseEntity<?> crearSocio(@PathVariable Long id){
+        Usuario usuario=this.usService.agregarRolSocio(id);
+        return successResponse(this.usMap.mapToDto(usuario));
+    }
+
     @PutMapping
     //puede modificar su password con la password actual cualquiera sea su rol
     public ResponseEntity<?> modificarPassword(@RequestBody @Valid UsuarioPasswordDTO dto){
