@@ -14,6 +14,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class CuotaMapper implements ICuotaMapper{
+
+    private final IPadrinoMapper padriMap;
+
+    public CuotaMapper(IPadrinoMapper padriMap) {
+        this.padriMap = padriMap;
+    }
+
     @Override
     public Cuota mapToEntity(CuotaDTO dto) {
         Cuota cuota=new Cuota();
@@ -49,6 +56,8 @@ public class CuotaMapper implements ICuotaMapper{
         }
         dto.setGato(gatodto);
         dto.setEstadoPago(entity.getEstadoPago());
+        Persona perso=entity.getPadrino().getPersona();
+        dto.setPadrino(this.padriMap.mapToDto(perso));
         return dto;
     }
 
