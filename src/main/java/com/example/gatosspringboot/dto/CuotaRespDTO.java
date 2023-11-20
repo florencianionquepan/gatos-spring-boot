@@ -22,4 +22,5 @@ public class CuotaRespDTO {
     @JsonIgnoreProperties(value = "padrino")
     private GatoDTO gato;
     private EstadoPago estadoPago;
+    private PadrinoDTO padrino;
 }
