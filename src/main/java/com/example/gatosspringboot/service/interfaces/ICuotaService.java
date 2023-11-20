@@ -8,6 +8,8 @@ public interface ICuotaService {
 
     List<Cuota> listarByPadrino(String email);
     List<Cuota> actualizarCuotas();
+    List<Cuota> listarByEstado(String estado);
+    List<Cuota> listarAll();
     String creacionPreferenciaPrimeraCuota(Cuota cuota);
     Cuota creacionCuota(Cuota cuota);
     String creacionPreferencia(Long idCuota);
