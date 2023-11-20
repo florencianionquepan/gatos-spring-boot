@@ -73,6 +73,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         estados.add(pendiente);
         solicitud.setEstados(estados);
         solicitud.setAspirante(aspirantebd);
+        solicitud.setSocio(null);
         return this.repo.save(solicitud);
     }
 
