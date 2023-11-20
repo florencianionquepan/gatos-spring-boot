@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -26,17 +25,14 @@ public class CuotaController {
 
     private final ICuotaService service;
     private final ICuotaMapper mapper;
-    private final SimpMessagingTemplate messagingTemplate;
 
     public Map<String,Object> mensajeBody= new HashMap<>();
     private Logger logger= LoggerFactory.getLogger(MercadoPagoService.class);
 
     public CuotaController(ICuotaService service,
-                           ICuotaMapper mapper,
-                           SimpMessagingTemplate messagingTemplate) {
+                           ICuotaMapper mapper) {
         this.service = service;
         this.mapper = mapper;
-        this.messagingTemplate = messagingTemplate;
     }
 
     private ResponseEntity<?> successResponse(Object data){
@@ -112,6 +108,20 @@ public class CuotaController {
     @PreAuthorize("hasRole('ROLE_SOCIO')")
     public ResponseEntity<?> actualizarCuotas(){
         List<Cuota> cuotas=this.service.actualizarCuotas();
+        return this.successResponse(this.mapper.mapToListDto(cuotas));
+    }
+
+    @GetMapping("/estado/{estado}")
+    @PreAuthorize("hasRole('ROLE_SOCIO')")
+    public ResponseEntity<?> listarByEstado(@PathVariable String estado){
+        List<Cuota> cuotas=this.service.listarByEstado(estado);
+        return this.successResponse(this.mapper.mapToListDto(cuotas));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_SOCIO')")
+    public ResponseEntity<?> listarAll(){
+        List<Cuota> cuotas=this.service.listarAll();
         return this.successResponse(this.mapper.mapToListDto(cuotas));
     }
 
