@@ -41,6 +41,7 @@ public class PadrinoController {
     }
 
     @GetMapping("/{idPadrino}/cuotas")
+    //Se remueven las cuotas impagas de un padrino
     public ResponseEntity<?> revisarCuotas(@PathVariable Long idPadrino){
         Padrino modi=this.service.revisarCuotasImpagas(idPadrino);
         return this.successResponse(modi);
