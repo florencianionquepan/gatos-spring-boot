@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PadrinoDTO extends PersonaDTO {
-
     @JsonIgnoreProperties(value = "padrino")
     private List<GatoDTO> gatos;
 

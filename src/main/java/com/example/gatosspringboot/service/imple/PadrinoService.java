@@ -76,8 +76,8 @@ public class PadrinoService implements IPadrinoService {
     }
 
     @Override
-    public Padrino revisarCuotasImpagas(Long id) {
-        Optional<Padrino> oPadri=this.repo.findById(id);
+    public List<Cuota> revisarCuotasImpagas(String dni) {
+        Optional<Padrino> oPadri=this.repo.findByDni(dni);
         if(oPadri.isEmpty()){
             throw new NonExistingException("El padrino no existe");
         }
@@ -92,7 +92,7 @@ public class PadrinoService implements IPadrinoService {
                 this.removerGato(oPadri.get().getPersona().getEmail(), cuota.getGato());
             });
         }
-        return padrino;
+        return cuotasImpagas;
     }
 
     private void cerrarCuotasGatoNoAprobadas(Padrino padri, Gato gato) {
