@@ -32,7 +32,7 @@ public class NotificacionService implements INotificacionService {
     public Notificacion nuevaSolicitudAdopcion(Gato gato) {
         Notificacion nueva=new Notificacion();
         Voluntario volu=gato.getVoluntario();
-        nueva.setDescripcion("El gato "+gato.getNombre()+" recibio una nueva solicitud para ser adoptado");
+        nueva.setDescripcion("El gato "+gato.getNombre()+" recibio una nueva solicitud para ser adoptado.");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(volu.getPersona());
@@ -97,8 +97,8 @@ public class NotificacionService implements INotificacionService {
     @Override
     public Notificacion notificarAdopcion(Transito transito, Gato gato) {
         Notificacion nueva=new Notificacion();
-        nueva.setDescripcion("Queremos notificarte que tu transito "+gato.getNombre()+
-                " fue adoptado!.Un voluntario se estara comunicando para coordinar el traspaso :)");
+        nueva.setDescripcion("Tu transito "+gato.getNombre()+
+                " fue adoptado! Un voluntario se estara comunicando para coordinar el traspaso :)");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(transito.getPersona());
@@ -124,6 +124,16 @@ public class NotificacionService implements INotificacionService {
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(solicitante);
+        return this.repo.save(nueva);
+    }
+
+    @Override
+    public Notificacion actualizacionCuota(Padrino padrino, Gato gato) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion("Se actualizo la cuota mensual de "+gato.getNombre()+".");
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        nueva.setPersona(padrino.getPersona());
         return this.repo.save(nueva);
     }
 
