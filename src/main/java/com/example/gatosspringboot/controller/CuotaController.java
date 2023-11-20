@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -24,13 +26,17 @@ public class CuotaController {
 
     private final ICuotaService service;
     private final ICuotaMapper mapper;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public Map<String,Object> mensajeBody= new HashMap<>();
     private Logger logger= LoggerFactory.getLogger(MercadoPagoService.class);
 
-    public CuotaController(ICuotaService service, ICuotaMapper mapper) {
+    public CuotaController(ICuotaService service,
+                           ICuotaMapper mapper,
+                           SimpMessagingTemplate messagingTemplate) {
         this.service = service;
         this.mapper = mapper;
+        this.messagingTemplate = messagingTemplate;
     }
 
     private ResponseEntity<?> successResponse(Object data){
@@ -101,5 +107,12 @@ public class CuotaController {
 //    public RedirectView obtenerPreferencia(@PathVariable String id){
 //        return new RedirectView("https://sandbox.mercadopago.com.ar/checkout/preferences/"+id);
 //    }
+
+    @GetMapping("/actualizacion")
+    @PreAuthorize("hasRole('ROLE_SOCIO')")
+    public ResponseEntity<?> actualizarCuotas(){
+        List<Cuota> cuotas=this.service.actualizarCuotas();
+        return this.successResponse(this.mapper.mapToListDto(cuotas));
+    }
 
 }
