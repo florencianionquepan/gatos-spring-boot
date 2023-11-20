@@ -7,6 +7,7 @@ import java.util.List;
 public interface ICuotaService {
 
     List<Cuota> listarByPadrino(String email);
+    List<Cuota> actualizarCuotas();
     String creacionPreferenciaPrimeraCuota(Cuota cuota);
     Cuota creacionCuota(Cuota cuota);
     String creacionPreferencia(Long idCuota);

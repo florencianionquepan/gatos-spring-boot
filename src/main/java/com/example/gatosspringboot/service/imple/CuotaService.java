@@ -54,14 +54,27 @@ public class CuotaService implements ICuotaService {
                     String.format("El padrino con email %s no existe",email));
         }
         List<Cuota> cuotas=this.repo.listarByPadrino(email);
-        //chequear  estado aprobado (fecha de esas cuotas) y ver si hay que crear nuevas
-        List<Cuota> cuotasTotales=this.actualizarCuotas(cuotas, oPadri.get());
-        return cuotasTotales;
+        return cuotas;
+    }
+
+    @Override
+    public List<Cuota> actualizarCuotas() {
+        List<Padrino> padrinos= (List<Padrino>) this.padriRepo.findAll();
+        logger.info("Comenzando la actualizacion de cuotas por padrino...");
+        List<Cuota> cuotasCreadas=new ArrayList<>();
+        for(Padrino padri:padrinos){
+            //chequear  estado aprobado (fecha de esas cuotas) y ver si hay que crear nuevas
+            logger.info("Se revisan las cuotas del padrino: "+padri.getPersona().getNombre());
+            List<Cuota> cuotasCreadasByPadrino=this.actualizarCuotasByPadri(padri);
+            cuotasCreadas.addAll(cuotasCreadasByPadrino);
+        }
+        return cuotasCreadas;
     }
 
     //cuando se adopta un gato se elimina su padrino para no seguir actualizando su cuota
-    private List<Cuota> actualizarCuotas(List<Cuota> cuotas, Padrino padri) {
+    private List<Cuota> actualizarCuotasByPadri(Padrino padri) {
         List<Gato> gatosPadrino= padri.getListaGatos();
+        List<Cuota> cuotas=this.repo.listarByPadrino(padri.getPersona().getEmail());
         LocalDate fechaActual = LocalDate.now();
         List<Cuota> cuotasFiltradas1 = cuotas.stream()
                 //revisar si es parte del listado de gatos de padrino
@@ -76,15 +89,19 @@ public class CuotaService implements ICuotaService {
                     mapCuotas.put(cuota.getGato().getId(),cuota);
             }
         }
+        logger.info("Ultimas cuotas por gato:");
+        cuotasFiltradas1.forEach(cuota -> {
+            logger.info("Del gato: "+cuota.getGato().getNombre());
+            logger.info("Fecha de creacion: "+cuota.getFechaCreacion());
+        });
         for(Map.Entry<Long,Cuota> entry:mapCuotas.entrySet()){
             cuotasFiltradas2.add(entry.getValue());
         }
-
+        List<Cuota> cuotasCreadas=new ArrayList<>();
         //una vez que obtuve la ultima cuota del gato, ahi chequeo si es de otro mes distinto...
         List<Cuota> cuotasFiltradasFinales = cuotasFiltradas2.stream()
                 .filter(cuota -> cuota.getFechaCreacion().getMonth() != fechaActual.getMonth())
                 .collect(Collectors.toList());
-
         if(!cuotasFiltradasFinales.isEmpty()){
             cuotasFiltradasFinales.forEach(cuota->{
                 Cuota nueva=new Cuota();
@@ -96,11 +113,14 @@ public class CuotaService implements ICuotaService {
                 nueva.setEstadoPago(EstadoPago.PENDIENTE);
                 //actualizo monto de cuota al del gato
                 nueva.setMontoMensual(gatodb.getMontoMensual());
+                logger.info("Nueva cuota para gato: "+nueva.getGato().getNombre());
+                //nueva.getPadrino()
+                //nueva.getGato()
                 Cuota nuevaGuardada=this.repo.save(nueva);
-                cuotas.add(nuevaGuardada);
+                cuotasCreadas.add(nuevaGuardada);
             });
         }
-        return cuotas;
+        return cuotasCreadas;
     }
 
     @Override
