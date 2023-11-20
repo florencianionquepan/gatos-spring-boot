@@ -1,5 +1,6 @@
 package com.example.gatosspringboot.service.imple;
 
+import ch.qos.logback.classic.LoggerContext;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.*;
@@ -121,6 +122,22 @@ public class CuotaService implements ICuotaService {
             });
         }
         return cuotasCreadas;
+    }
+
+    @Override
+    public List<Cuota> listarByEstado(String estado) {
+        EstadoPago estadoP;
+        try {
+            estadoP = EstadoPago.valueOf(estado.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new NonExistingException("Ese no es un estado valido");
+        }
+        return this.repo.findAllByEstadoPago(estadoP);
+    }
+
+    @Override
+    public List<Cuota> listarAll() {
+        return (List<Cuota>) this.repo.findAll();
     }
 
     @Override
