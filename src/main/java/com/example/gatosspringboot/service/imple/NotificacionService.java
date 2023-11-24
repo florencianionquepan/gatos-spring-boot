@@ -32,10 +32,11 @@ public class NotificacionService implements INotificacionService {
     public Notificacion nuevaSolicitudAdopcion(Gato gato) {
         Notificacion nueva=new Notificacion();
         Voluntario volu=gato.getVoluntario();
-        nueva.setDescripcion("El gato "+gato.getNombre()+" recibio una nueva solicitud para ser adoptado.");
+        nueva.setDescripcion(gato.getNombre()+" recibio una nueva solicitud para ser adoptado.");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(volu.getPersona());
+        nueva.setPath("/backoffice/misgatos");
         return this.repo.save(nueva);
     }
 
@@ -48,6 +49,7 @@ public class NotificacionService implements INotificacionService {
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(transito.getPersona());
+        nueva.setPath("/backoffice/gatosentransito");
         return this.repo.save(nueva);
     }
 
@@ -55,11 +57,12 @@ public class NotificacionService implements INotificacionService {
     //al padrino
     public Notificacion asignacionTransito(Gato gato, Padrino padrino) {
         Notificacion nueva=new Notificacion();
-        nueva.setDescripcion(gato.getNombre()+" esta en un nuevo hogar temporal!" +
+        nueva.setDescripcion(gato.getNombre()+" esta en un nuevo hogar temporal!." +
                 "Accede a su perfil para mas información.");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(padrino.getPersona());
+        nueva.setPath("/gatos/"+gato.getId());
         return this.repo.save(nueva);
     }
 
@@ -70,6 +73,7 @@ public class NotificacionService implements INotificacionService {
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(transitoAnterior.getPersona());
+        nueva.setPath("/backoffice/gatosentransito");
         return this.repo.save(nueva);
     }
 
@@ -80,6 +84,7 @@ public class NotificacionService implements INotificacionService {
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(solicitante);
+        nueva.setPath("/backoffice/missolicitudes");
         return this.repo.save(nueva);
     }
 
@@ -87,10 +92,11 @@ public class NotificacionService implements INotificacionService {
     public Notificacion aprobacionAdopcion(Gato gato, Persona solicitante) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Nos alegra contarte que adoptaste a "+gato.getNombre()+
-                "! Un voluntario se estara comunicando para coordinar el traspaso :)");
+                "!. Un voluntario se estara comunicando para coordinar el traspaso :)");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(solicitante);
+        nueva.setPath("/backoffice/missolicitudes");
         return this.repo.save(nueva);
     }
 
@@ -98,10 +104,11 @@ public class NotificacionService implements INotificacionService {
     public Notificacion notificarAdopcion(Transito transito, Gato gato) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Tu transito "+gato.getNombre()+
-                " fue adoptado! Un voluntario se estara comunicando para coordinar el traspaso :)");
+                " fue adoptado!. Un voluntario se estara comunicando para coordinar el traspaso :)");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(transito.getPersona());
+        nueva.setPath("/backoffice/gatosentransito");
         return this.repo.save(nueva);
     }
 
@@ -109,10 +116,11 @@ public class NotificacionService implements INotificacionService {
     public Notificacion notificarAdopcion(Padrino padrino, Gato gato) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Queremos notificarte que "+gato.getNombre()+
-                " fue adoptado!.Podés seguir apadrinando algunos de nuestros michis!");
+                " fue adoptado!.Podés seguir apadrinando otros michis!");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(padrino.getPersona());
+        nueva.setPath(" ");
         return this.repo.save(nueva);
     }
 
@@ -120,10 +128,11 @@ public class NotificacionService implements INotificacionService {
     public Notificacion cierreAdopcion(Gato gato, Persona solicitante) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Tu solicitud de adopcion por "+gato.getNombre()+
-                " ha sido cerrada porque se acepto otra solicitud.");
+                " ha sido cerrada. El voluntario aceptó otro solicitante.");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(solicitante);
+        nueva.setPath("/backoffice/missolicitudes");
         return this.repo.save(nueva);
     }
 
@@ -134,6 +143,7 @@ public class NotificacionService implements INotificacionService {
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(padrino.getPersona());
+        nueva.setPath("/backoffice/miscuotas");
         return this.repo.save(nueva);
     }
 
@@ -168,6 +178,7 @@ public class NotificacionService implements INotificacionService {
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(aspirante);
+        nueva.setPath("/backoffice/missolicitudes");
         this.emailSer.armarEnviarEmail(aspirante.getEmail(), "Rechazo voluntariado",nueva.getDescripcion());
         return this.repo.save(nueva);
     }
@@ -176,10 +187,11 @@ public class NotificacionService implements INotificacionService {
     public Notificacion aceptarVoluntariado(Persona aspirante, TipoVoluntariado tipo) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Bienvenido a Rescats "+aspirante.getNombre() +
-                "! Ahora eres uno de nuestros "+tipo.name().toLowerCase()+"s!");
+                "!. Ahora eres uno de nuestros "+tipo.name().toLowerCase()+"s!");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(aspirante);
+        nueva.setPath("/backoffice/perfil");
         this.emailSer.armarEnviarEmail(aspirante.getEmail(), "Bienvenido a Rescats!",nueva.getDescripcion());
         return this.repo.save(nueva);
     }
@@ -191,6 +203,7 @@ public class NotificacionService implements INotificacionService {
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(persona);
+        nueva.setPath("/backoffice/usuarios");
         this.emailSer.armarEnviarEmail(persona.getEmail(), "Nuevos permisos en su cuenta de Rescats!"
                 ,nueva.getDescripcion());
         return this.repo.save(nueva);

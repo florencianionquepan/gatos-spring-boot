@@ -30,6 +30,7 @@ public class Notificacion {
     @NotNull
     @JsonIgnoreProperties(value={"notificaciones","solicitudesAdopcion","solicitudesVoluntariados","usuario"})
     private Persona persona;
+    private String path;
 
     @PrePersist
     protected void onCreate() {
