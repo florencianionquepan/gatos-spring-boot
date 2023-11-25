@@ -92,7 +92,7 @@ public class NotificacionService implements INotificacionService {
     public Notificacion aprobacionAdopcion(Gato gato, Persona solicitante) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Nos alegra contarte que adoptaste a "+gato.getNombre()+
-                "!. Un voluntario se estara comunicando para coordinar el traspaso :)");
+                "!. Un voluntario se comunicará para coordinar el traspaso!");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(solicitante);
