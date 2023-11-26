@@ -7,10 +7,13 @@ import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.FotoRepository;
 import com.example.gatosspringboot.repository.database.GatoRepository;
 import com.example.gatosspringboot.repository.database.GatoTransitoRepository;
+import com.example.gatosspringboot.repository.database.GatosPaginados;
 import com.example.gatosspringboot.service.interfaces.*;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +34,7 @@ public class GatoService implements IGatoService {
     private final FotoRepository fotoRepo;
     private final GatoTransitoRepository asociacionRepo;
     private final IPadrinoService padrinoService;
+    private final GatosPaginados gatoPageRepo;
 
     private Logger logger= LoggerFactory.getLogger(GatoService.class);
 
@@ -40,7 +44,8 @@ public class GatoService implements IGatoService {
                        ITransitoService tranSer,
                        ICloudinaryService cloudService,
                        FotoRepository fotoRepo,
-                       GatoTransitoRepository asociacionRepo, IPadrinoService padrinoService) {
+                       GatoTransitoRepository asociacionRepo,
+                       IPadrinoService padrinoService, GatosPaginados gatoPageRepo) {
         this.gatoRepo = gatoRepo;
         this.voluService = voluService;
         this.fichaService = fichaService;
@@ -49,11 +54,17 @@ public class GatoService implements IGatoService {
         this.fotoRepo = fotoRepo;
         this.asociacionRepo = asociacionRepo;
         this.padrinoService = padrinoService;
+        this.gatoPageRepo = gatoPageRepo;
     }
 
     @Override
     public List<Gato> verTodos() {
         return (List<Gato>) this.gatoRepo.findAll();
+    }
+
+    @Override
+    public Page<Gato> verTodosPaginados(Pageable pageable) {
+        return this.gatoPageRepo.findAll(pageable);
     }
 
     @Override

@@ -12,6 +12,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -129,6 +132,15 @@ public class GatoController {
     public ResponseEntity<?> verTodos(){
         List<Gato> gatos=this.gatoSer.verTodos();
         return this.successResponse(this.mapper.mapListToDto(gatos));
+    }
+
+    @GetMapping("/paginated")
+    public ResponseEntity<?> listar(Pageable pageable){
+        Page<Gato> gatos=this.gatoSer.verTodosPaginados(pageable);
+        List<GatoRespDTO> dtos=this.mapper.mapListToDto(gatos.getContent());
+        Page<GatoRespDTO> gatosPaginados=
+                new PageImpl<>(dtos,gatos.getPageable(),gatos.getTotalElements());
+        return this.successResponse(gatosPaginados);
     }
 
     @GetMapping("/{id}")
