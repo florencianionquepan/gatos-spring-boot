@@ -1,6 +1,5 @@
 package com.example.gatosspringboot.service.imple;
 
-import ch.qos.logback.classic.LoggerContext;
 import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.exception.PersonNotFound;
 import com.example.gatosspringboot.model.*;
@@ -10,6 +9,7 @@ import com.example.gatosspringboot.repository.database.PadrinoRepository;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
 import com.example.gatosspringboot.service.interfaces.ICuotaService;
 import com.example.gatosspringboot.service.interfaces.IMercadoPagoService;
+import com.example.gatosspringboot.service.interfaces.INotificacionService;
 import com.example.gatosspringboot.service.interfaces.IPadrinoService;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
@@ -31,6 +31,7 @@ public class CuotaService implements ICuotaService {
     private final PadrinoRepository padriRepo;
     private final IPadrinoService padriService;
     private final IMercadoPagoService MPservice;
+    private final INotificacionService notiser;
     private Logger logger= LoggerFactory.getLogger(CuotaService.class);
 
     public CuotaService(CuotaRepository repo,
@@ -38,13 +39,15 @@ public class CuotaService implements ICuotaService {
                         PersonaRepository persoRepo,
                         PadrinoRepository padriRepo,
                         IPadrinoService padriService,
-                        IMercadoPagoService mPservice) {
+                        IMercadoPagoService mPservice,
+                        INotificacionService notiser) {
         this.repo = repo;
         this.gatoRepo = gatoRepo;
         this.persoRepo = persoRepo;
         this.padriRepo = padriRepo;
         this.padriService = padriService;
         MPservice = mPservice;
+        this.notiser = notiser;
     }
 
     @Override
@@ -115,8 +118,7 @@ public class CuotaService implements ICuotaService {
                 //actualizo monto de cuota al del gato
                 nueva.setMontoMensual(gatodb.getMontoMensual());
                 logger.info("Nueva cuota para gato: "+nueva.getGato().getNombre());
-                //nueva.getPadrino()
-                //nueva.getGato()
+                this.notiser.actualizacionCuota(padri,gatodb);
                 Cuota nuevaGuardada=this.repo.save(nueva);
                 cuotasCreadas.add(nuevaGuardada);
             });
