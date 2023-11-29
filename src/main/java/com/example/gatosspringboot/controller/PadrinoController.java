@@ -43,7 +43,7 @@ public class PadrinoController {
     //este endpoint es para que el propio padrino remueva un gato
     public ResponseEntity<?> removerGato(@PathVariable String email, @RequestBody GatoIdDTO dto){
         Padrino modi=this.service.removerGato(email,this.gatoMapper.mapToEntity(dto));
-        return this.successResponse(modi);
+        return this.successResponse("ok");
     }
 
 /*    @GetMapping("/{idPadrino}/cuotas")

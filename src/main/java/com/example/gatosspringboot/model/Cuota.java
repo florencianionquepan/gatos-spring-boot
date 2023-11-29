@@ -35,4 +35,12 @@ public class Cuota implements Serializable {
     @JoinColumn(name = "gato_id")
     @JsonIgnoreProperties(value={"padrino","solicitudesAdopcion","cuotas","asignacionesTransitos"})
     private Gato gato;
+
+    @Override
+    public String toString() {
+        return "Cuota{" +
+                "padrino=" + padrino +
+                ", gato=" + gato +
+                '}';
+    }
 }

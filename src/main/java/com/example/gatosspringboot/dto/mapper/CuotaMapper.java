@@ -3,6 +3,7 @@ package com.example.gatosspringboot.dto.mapper;
 import com.example.gatosspringboot.dto.CuotaDTO;
 import com.example.gatosspringboot.dto.CuotaRespDTO;
 import com.example.gatosspringboot.dto.GatoDTO;
+import com.example.gatosspringboot.dto.PadrinoDTO;
 import com.example.gatosspringboot.model.Cuota;
 import com.example.gatosspringboot.model.Gato;
 import com.example.gatosspringboot.model.Padrino;
@@ -53,6 +54,11 @@ public class CuotaMapper implements ICuotaMapper{
                     .map(foto -> foto.getFotoUrl())
                     .collect(Collectors.toList());
             gatodto.setFotos(urls);
+        }
+        if(entity.getGato().getPadrino()!=null){
+            PadrinoDTO padri=new PadrinoDTO();
+            padri.setEmail(entity.getPadrino().getPersona().getEmail());
+            gatodto.setPadrino(padri);
         }
         dto.setGato(gatodto);
         dto.setEstadoPago(entity.getEstadoPago());
