@@ -4,6 +4,7 @@ import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.model.*;
 import com.example.gatosspringboot.repository.database.NotificacionRepository;
 import com.example.gatosspringboot.repository.database.PersonaRepository;
+import com.example.gatosspringboot.repository.database.SocioRepository;
 import com.example.gatosspringboot.service.interfaces.IEmailService;
 import com.example.gatosspringboot.service.interfaces.INotificacionService;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,16 @@ public class NotificacionService implements INotificacionService {
     private final NotificacionRepository repo;
     private final PersonaRepository persorepo;
     private final IEmailService emailSer;
+    private final SocioRepository socioRepo;
 
     public NotificacionService(NotificacionRepository repo,
                                PersonaRepository persorepo,
-                               IEmailService emailSer) {
+                               IEmailService emailSer,
+                               SocioRepository socioRepo) {
         this.repo = repo;
         this.persorepo = persorepo;
         this.emailSer = emailSer;
+        this.socioRepo = socioRepo;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class NotificacionService implements INotificacionService {
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(volu.getPersona());
-        nueva.setPath("/backoffice/misgatos");
+        nueva.setPath("/backoffice/misgatos/");
         return this.repo.save(nueva);
     }
 
@@ -171,6 +175,20 @@ public class NotificacionService implements INotificacionService {
     }
 
     @Override
+    public Notificacion nuevaSolicitudVoluntariado(Persona solicitante, TipoVoluntariado tipo) {
+        Notificacion nueva=new Notificacion();
+        nueva.setDescripcion(solicitante.getNombre()+" quiere formar parte de Rescats." +
+                "Revisa su solicitud para ser "+tipo.name().toLowerCase());
+        LocalDate fecha=LocalDate.now();
+        nueva.setFechaCreacion(fecha);
+        List<Socio> socios= (List<Socio>) this.socioRepo.findAll();
+        for(Socio socio:socios) {
+            nueva.setPersona(socio.getPersona());
+        }
+        return this.repo.save(nueva);
+    }
+
+    @Override
     public Notificacion rechazoVoluntariado(Persona aspirante, TipoVoluntariado tipo) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Tu solicitud para ser "+tipo.name().toLowerCase()+" ha sido rechazada." +
@@ -187,7 +205,8 @@ public class NotificacionService implements INotificacionService {
     public Notificacion aceptarVoluntariado(Persona aspirante, TipoVoluntariado tipo) {
         Notificacion nueva=new Notificacion();
         nueva.setDescripcion("Bienvenido a Rescats "+aspirante.getNombre() +
-                "!. Ahora eres uno de nuestros "+tipo.name().toLowerCase()+"s!");
+                "!. Ahora eres uno de nuestros "+tipo.name().toLowerCase()+"s!." +
+                "Vuelve a iniciar sesión para ver los cambios.");
         LocalDate fecha=LocalDate.now();
         nueva.setFechaCreacion(fecha);
         nueva.setPersona(aspirante);
