@@ -74,6 +74,7 @@ public class SolicitudVoluntariadoService implements ISolicitudVoluntariadoServi
         solicitud.setEstados(estados);
         solicitud.setAspirante(aspirantebd);
         solicitud.setSocio(null);
+        this.notiService.nuevaSolicitudVoluntariado(aspirantebd, solicitud.getTipoVoluntariado());
         return this.repo.save(solicitud);
     }
 

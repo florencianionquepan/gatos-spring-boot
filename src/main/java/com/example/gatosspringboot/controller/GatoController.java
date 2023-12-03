@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/gatos")
@@ -135,8 +132,8 @@ public class GatoController {
     @GetMapping("/paginated")
     public ResponseEntity<?> listar(Pageable pageable){
         Pageable pageableSortedByIdDesc = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(), Sort.by("id").descending());
-        Page<Gato> gatos=this.gatoSer.verTodosPaginados(pageableSortedByIdDesc);
+                pageable.getPageSize(),  Sort.by("id").descending());
+        Page<Gato> gatos=this.gatoSer.verTodosPaginados(pageable);
         List<GatoRespDTO> dtos=this.mapper.mapListToDto(gatos.getContent());
         Page<GatoRespDTO> gatosPaginados=
                 new PageImpl<>(dtos,gatos.getPageable(),gatos.getTotalElements());
