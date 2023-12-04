@@ -185,6 +185,7 @@ public class NotificacionService implements INotificacionService {
         for(Socio socio:socios) {
             nueva.setPersona(socio.getPersona());
         }
+        nueva.setPath("/backoffice/solicitudes");
         return this.repo.save(nueva);
     }
 

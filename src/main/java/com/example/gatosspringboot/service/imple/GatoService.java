@@ -132,6 +132,9 @@ public class GatoService implements IGatoService {
         if(gatodb.getPadrino()!=null){
             gato.setPadrino(gatodb.getPadrino());
         }
+        if(gatodb.getSolicitudesAdopcion()!=null){
+            gato.setSolicitudesAdopcion(gatodb.getSolicitudesAdopcion());
+        }
         List<Foto> fotosMantener=this.eliminarFotos(gato, id);
         if(existenFiles(files)){
             List<Foto> fotosGatitos = this.guardarFotos(files, gatodb);
