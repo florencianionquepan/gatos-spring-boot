@@ -1,14 +1,17 @@
 package com.example.gatosspringboot.controller;
 
+import com.example.gatosspringboot.config.MPConfig;
 import com.example.gatosspringboot.dto.CuotaDTO;
 import com.example.gatosspringboot.dto.mapper.ICuotaMapper;
 import com.example.gatosspringboot.model.Cuota;
 import com.example.gatosspringboot.service.imple.MercadoPagoService;
 import com.example.gatosspringboot.service.interfaces.ICuotaService;
+import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.exceptions.MPException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,8 @@ public class CuotaController {
 
     private final ICuotaService service;
     private final ICuotaMapper mapper;
+    @Autowired
+    private MPConfig mpconfig;
 
     public Map<String,Object> mensajeBody= new HashMap<>();
     private Logger logger= LoggerFactory.getLogger(MercadoPagoService.class);
@@ -49,19 +54,21 @@ public class CuotaController {
 
     @PostMapping
     public ResponseEntity<?> crearCuotaPrimeraVez(@RequestBody CuotaDTO cuota){
+        MercadoPagoConfig.setAccessToken(mpconfig.getAccessToken());
         String response=this.service.creacionPreferenciaPrimeraCuota(this.mapper.mapToEntity(cuota));
         return this.successResponse(response);
     }
 
     @GetMapping("/preferencia/{id}")
     public ResponseEntity<?> realizarPagoRechazadoDesconocido(@PathVariable String id){
+        MercadoPagoConfig.setAccessToken(mpconfig.getAccessToken());
         String response="https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id="+id;
-        logger.info(response);
         return this.successResponse(response);
     }
 
     @GetMapping("/pendiente/{idCuota}")
     public ResponseEntity<?> realizarPagoPendiente(@PathVariable Long idCuota){
+        MercadoPagoConfig.setAccessToken(mpconfig.getAccessToken());
         String response=this.service.creacionPreferencia(idCuota);
         return this.successResponse(response);
     }
@@ -98,11 +105,6 @@ public class CuotaController {
         }
         return new RedirectView("http://localhost:4200/backoffice/cuotas/failure");
     }
-
-//    @GetMapping("/preferencia/{id}")
-//    public RedirectView obtenerPreferencia(@PathVariable String id){
-//        return new RedirectView("https://sandbox.mercadopago.com.ar/checkout/preferences/"+id);
-//    }
 
     @GetMapping("/actualizacion")
     @PreAuthorize("hasRole('ROLE_SOCIO')")
