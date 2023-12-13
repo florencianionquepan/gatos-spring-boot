@@ -3,4 +3,4 @@
  
  ## Diagrama de clases
  
-![diagrama_r2](https://github.com/florencianionquepan/gatos-spring-boot/assets/85314154/0abac1ce-3a24-43b8-97f4-cd395e212432)
+![Diagrama en blanco](https://github.com/florencianionquepan/gatos-spring-boot/assets/85314154/253dc0df-6b96-4555-94e9-38868537df0d)
