@@ -8,6 +8,7 @@ import com.example.gatosspringboot.service.imple.MercadoPagoService;
 import com.example.gatosspringboot.service.interfaces.ICuotaService;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.exceptions.MPException;
+import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,7 @@ public class CuotaController {
     }
 
     @PostMapping
+    @PermitAll
     public ResponseEntity<?> crearCuotaPrimeraVez(@RequestBody CuotaDTO cuota){
         MercadoPagoConfig.setAccessToken(mpconfig.getAccessToken());
         String response=this.service.creacionPreferenciaPrimeraCuota(this.mapper.mapToEntity(cuota));

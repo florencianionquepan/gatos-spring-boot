@@ -1,6 +1,5 @@
 package com.example.gatosspringboot.config;
 
-import com.example.gatosspringboot.exception.NonExistingException;
 import com.example.gatosspringboot.filter.*;
 import com.example.gatosspringboot.repository.database.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +18,10 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -49,7 +50,7 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration config=new CorsConfiguration();
-                        config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                        config.setAllowedOrigins(Arrays.asList("http://localhost:4200/","http://127.0.0.1:8080/"));
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
@@ -68,9 +69,8 @@ public class SecurityConfig {
                 .addFilterAfter(new EmailNonExistingFilter(repo), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
                         .requestMatchers("/socios/**","/voluntariados/**","/voluntariados","/voluntarios/**",
-                                "/solicitudes/**","/auth/**","/notificaciones/**").authenticated()
-                        .requestMatchers("/gatos/**","/cuotas/**",
-                                "/generic/**","/usuarios/**","/cloudinary/**","/ficha/**","/personas/**","/transitos/**","/padrinos/**").permitAll())
+                                "/solicitudes/**","/auth/**","/notificaciones/**","/cuotas/**","/padrinos/**","/transitos/**").authenticated()
+                        .requestMatchers("/gatos/**", "/usuarios/**","/personas/**","/cloudinary/**").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
