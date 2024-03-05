@@ -76,8 +76,8 @@ public class SecurityConfig {
                                 "/solicitudes/**", "/auth/**", "/notificaciones/**").authenticated()
                         .requestMatchers("/gatos/**", "/cuotas/**",
                                 "/generic/**", "/usuarios/**", "/cloudinary/**", "/ficha/**", "/personas/**", "/transitos/**", "/padrinos/**").permitAll())
-                .oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer -> httpSecurityOAuth2ResourceServerConfigurer
-                        .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+                .oauth2ResourceServer(oauth2ResourceServerCustomizer ->
+                oauth2ResourceServerCustomizer.jwt(jwtCustomizer -> jwtCustomizer.jwtAuthenticationConverter(jwtAuthenticationConverter)));
         return http.build();
     }
 }
