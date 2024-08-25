@@ -8,7 +8,7 @@
 ## Funcionalidades 🐱
 
 ### Usuarios Comunes:
-- 🔐 Registro y login de usuarios (Autenticación manual, próxima integración con Google Auth).
+- 🔐 Registro y login de usuarios.
 - 📝 Enviar solicitudes de adopción.
 - 🙋‍♂️ Aplicar para ser voluntario o transito.
 - 🌟 Apadrinar a un gatito mediante [MercadoPago](https://www.mercadopago.com/) (cuota mensual).
@@ -22,7 +22,7 @@
 - 📋 Revisar solicitudes de voluntariado.
 - 🔒 Bloquear usuarios.
 - 👑 Dar permisos de admin a otros usuarios.
-- 🔄 Actualizar cuotas mensuales (actualmente manual, futura implementación automática).
+- 🔄 Actualizar cuotas mensuales.
 
 ### Integraciones 🌐
 
